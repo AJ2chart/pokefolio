@@ -302,7 +302,7 @@ const detailCache = {};
 
 function t(k,vars){let s=(I18N[settings.lang]||I18N.fr)[k]??I18N.fr[k]??k;if(vars)for(const[a,b]of Object.entries(vars))s=s.replaceAll('{'+a+'}',b);return s}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[-_'’.,:]/g,' ').replace(/\s+/g,' ').trim();
+const norm=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[-_'’.,:]/g,' ').replace(/\s+/g,' ').trim();
 const fmtEur=v=>v==null||isNaN(v)?'—':new Intl.NumberFormat(settings.lang==='fr'?'fr-FR':'en-GB',{style:'currency',currency:'EUR'}).format(v);
 const fmtUsd=v=>v==null||isNaN(v)?'—':new Intl.NumberFormat(settings.lang==='fr'?'fr-FR':'en-US',{style:'currency',currency:'USD'}).format(v);
 const fmtPct=v=>v==null||!isFinite(v)?'':(v>=0?'+':'')+v.toFixed(1).replace('.',settings.lang==='fr'?',':'.')+' %';
@@ -536,7 +536,7 @@ function ebayUrl(name,num,setName,grade){
 function cmUrl(name,setName){
   return `https://www.cardmarket.com/${settings.lang==='fr'?'fr':'en'}/Pokemon/Products/Search?searchString=${encodeURIComponent(name+(setName?' '+setName:''))}`;
 }
-const numLabel=(l,off)=>off?`${l}/${String(off).padStart(String(l).replace(/\D/g,'').length||1,'0')}`:l;
+const numLabel=(l,off)=>off&&/^\d+$/.test(l)?`${l}/${String(off).padStart(String(l).replace(/\D/g,'').length||1,'0')}`:l;
 
 /* ============ accounts & cloud sync (Supabase) ============ */
 const SB_URL='https://ufowenlhdsaezyshhwgz.supabase.co';
