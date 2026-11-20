@@ -507,7 +507,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 /* images: TCGdex (card language) → TCGdex EN → Scrydex (EN scans, covers very recent sets) → text */
 const SCRYDEX_SET={'30th':'me55','30th-c':'me55c'};
 // sets whose numbering differs on Scrydex: explicit localId → number map, unknown cards get no fallback
-const SCRYDEX_NUM={'30th-c':{'002':'5','003':'11','005':'18','006':'19','007':'25','009':'41','011':'47','012':'50','015':'69','018':'94','019':'99','020':'100','021':'101','024':'106','025':'108','026':'114','028':'138','029':'149','030':'203'}};
+const SCRYDEX_NUM={'30th-c':{'001':'4','002':'5','003':'11','004':'11g','005':'18','006':'19','007':'25','008':'33','009':'41','010':'43','011':'47','012':'50','013':'57','014':'58','015':'69','016':'85','017':'89','018':'94','019':'99','020':'100','021':'101','022':'106p','023':'106m','024':'106','025':'108','026':'114','027':'123','028':'138','029':'149','030':'203'}};
 function scrydexId(setId,localId){
   if(!setId||!localId)return null;
   if(SCRYDEX_NUM[setId]){const n=SCRYDEX_NUM[setId][localId];return n?SCRYDEX_SET[setId]+'-'+n:null}
