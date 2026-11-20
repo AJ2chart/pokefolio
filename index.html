@@ -42,6 +42,8 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .hactions{display:flex;gap:6px;align-items:center}
 #accBtn{position:relative}#accBtn .dot{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
 #accBtn .dot.ok{background:var(--ok)}#accBtn .dot.syncing{background:var(--accent)}#accBtn .dot.error{background:var(--ko)}
+.pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
+.pwdeye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);cursor:pointer;padding:6px;display:grid;place-items:center}.pwdeye:hover{color:var(--text)}
 .acc-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#1a1d24;font-weight:700;font-size:12px;display:grid;place-items:center}
 .flag{border:2px solid transparent;border-radius:6px;padding:0;width:34px;height:24px;cursor:pointer;background:none;overflow:hidden;opacity:.55;display:flex}
 .flag svg{width:100%;height:100%}
@@ -207,7 +209,7 @@ fr:{
  scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_read:'Texte lu :',scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
  scan_found:'Carte lue : « {q} » ({n} résultats), choisis la bonne.',
  scan_retry:'Carte full art ? Nouvelle tentative de lecture du numéro…',
- account:'Compte',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (6 caractères min.)',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
+ account:'Compte',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
  account_why:'Crée un compte gratuit pour retrouver ta collection sur ton PC et ton téléphone. Sans compte, elle reste sur cet appareil.',
  check_mail:'Compte créé ! Clique sur le lien reçu par e-mail pour le confirmer, puis connecte-toi.',reset_sent:'E-mail envoyé : suis le lien pour choisir un nouveau mot de passe.',
  logged_in:'Connecté ! Synchronisation…',logged_out:'Déconnecté',sync_first:'Collection synchronisée ({n} entrées)',
@@ -215,7 +217,7 @@ fr:{
  sync_now:'Synchroniser maintenant',sync_ok:'synchronisé à {d}',sync_running:'Synchronisation…',sync_error:'Échec de synchronisation (réessai automatique)',sync_off:'Non connecté',
  sb_unavailable:'Le service de comptes est inaccessible pour le moment (connexion internet ?).',
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
- err_rate:'Trop de tentatives ou d’e-mails envoyés : réessaie dans quelques minutes.',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 6 caractères minimum.',err_email:'Indique ton e-mail.',
+ err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
  reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
@@ -265,7 +267,7 @@ en:{
  scan_fail:"I couldn't identify the card.",scan_read:'Text read:',scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
  scan_found:'Card read: “{q}” ({n} results), pick the right one.',
  scan_retry:'Full-art card? Retrying to read the number…',
- account:'Account',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 6 characters)',forgot:'Forgot password?',new_pwd:'New password',
+ account:'Account',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
  account_why:'Create a free account to get your collection on both your computer and your phone. Without an account, it stays on this device.',
  check_mail:'Account created! Click the link in the email to confirm it, then log in.',reset_sent:'Email sent: follow the link to choose a new password.',
  logged_in:'Logged in! Syncing…',logged_out:'Logged out',sync_first:'Collection synced ({n} entries)',
@@ -273,7 +275,7 @@ en:{
  sync_now:'Sync now',sync_ok:'synced at {d}',sync_running:'Syncing…',sync_error:'Sync failed (will retry)',sync_off:'Not logged in',
  sb_unavailable:'The account service is unreachable right now (internet connection?).',
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
- err_rate:'Too many attempts or emails sent: try again in a few minutes.',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 6 characters.',err_email:'Enter your email.',
+ err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
  reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
@@ -607,7 +609,8 @@ function authErr(e){
   if(/invalid login/i.test(m))return t('err_login');
   if(/not confirmed/i.test(m))return t('err_confirm');
   if(/already registered|already exists/i.test(m))return t('err_exists');
-  if(/rate limit|too many|security purposes/i.test(m))return t('err_rate');
+  if(/security purposes|after \d+ seconds/i.test(m))return t('err_wait');
+  if(/rate limit|too many/i.test(m))return t('err_rate');
   if(/password/i.test(m))return t('err_pwd')+' ('+m+')';
   return m||t('err_net');
 }
@@ -628,31 +631,54 @@ function openAccount(){
   }
   const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('account')}</h2><p class="muted small">${t('account_why')}</p>
     <form class="form" id="aForm" style="grid-template-columns:1fr">
-      <label>E-mail<input type="email" name="email" required autocomplete="email" style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px"></label>
-      <label>${t('password')}<input type="password" name="pwd" minlength="6" autocomplete="current-password" style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px"></label>
+      <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
+      <label>${t('password')}${pwdField('pwd','current-password')}</label>
       <p id="aMsg" class="small" style="margin:0"></p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('login')}</button><button class="btn" type="button" id="aUp">${t('signup')}</button><button class="btn" type="button" id="aForgot" style="border:0;background:none;text-decoration:underline">${t('forgot')}</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('login')}</button><button class="btn" type="button" id="aUp">${t('signup')}</button></div>
+      <button class="btn" type="button" id="aForgot" style="border:0;background:none;text-decoration:underline;padding:4px 0;justify-self:start">${t('forgot')}</button>
     </form></div>`,'sm');
+  bindPwdToggles(m);
   const f=m.querySelector('#aForm'),msg=m.querySelector('#aMsg');
   const say=(x,ok)=>{msg.textContent=x;msg.style.color=ok?'var(--ok)':'var(--ko)'};
   f.onsubmit=async ev=>{ev.preventDefault();say('');
+    if(!f.email.checkValidity()||!f.pwd.value){say(t('err_fields_login'));return}
     const{error}=await sb.auth.signInWithPassword({email:f.email.value.trim(),password:f.pwd.value});
     if(error)say(authErr(error));else{closeModal();toast(t('logged_in'))}};
   m.querySelector('#aUp').onclick=async()=>{
-    if(!f.email.checkValidity()||f.pwd.value.length<6){say(t('err_fields'));return}
+    if(!f.email.checkValidity()||f.pwd.value.length<PWD_MIN){say(t('err_fields'));return}
     const{data,error}=await sb.auth.signUp({email:f.email.value.trim(),password:f.pwd.value,options:{emailRedirectTo:APP_URL}});
     if(error)say(authErr(error));else if(!data.session)say(t('check_mail'),true);else{closeModal();toast(t('logged_in'))}};
-  m.querySelector('#aForgot').onclick=async()=>{
-    if(!f.email.checkValidity()){say(t('err_email'));return}
+  m.querySelector('#aForgot').onclick=()=>openForgot(f.email.value.trim());
+}
+const PWD_MIN=8;
+const EYE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7c2 0 3.8.7 5.2 1.6M22 12s-3.6 7-10 7c-2 0-3.8-.7-5.2-1.6"/><path d="M3 3l18 18"/></svg>';
+function pwdField(name,ac){return `<span class="pwdwrap"><input type="password" name="${name}" autocomplete="${ac}" ${ac==='new-password'?`minlength="${PWD_MIN}"`:''}><button type="button" class="pwdeye" aria-label="${t('show_pwd')}" title="${t('show_pwd')}">${EYE}</button></span>`}
+function bindPwdToggles(root){root.querySelectorAll('.pwdeye').forEach(b=>b.onclick=()=>{const i=b.previousElementSibling,show=i.type==='password';i.type=show?'text':'password';b.innerHTML=show?EYE_OFF:EYE;b.title=b.ariaLabel=t(show?'hide_pwd':'show_pwd');i.focus()})}
+function openForgot(prefill){
+  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('forgot_title')}</h2><p class="muted small">${t('forgot_why')}</p>
+    <form class="form" id="fForm" style="grid-template-columns:1fr">
+      <label>E-mail<input type="email" name="email" required autocomplete="email" value="${esc(prefill||'')}"></label>
+      <p id="fMsg" class="small" style="margin:0"></p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('forgot_send')}</button><button class="btn" type="button" id="fBack">${t('back')}</button></div>
+    </form></div>`,'sm');
+  const f=m.querySelector('#fForm'),msg=m.querySelector('#fMsg');
+  setTimeout(()=>f.email.focus(),30);
+  m.querySelector('#fBack').onclick=()=>openAccount();
+  f.onsubmit=async ev=>{ev.preventDefault();
+    if(!f.email.checkValidity()){msg.textContent=t('err_email');msg.style.color='var(--ko)';return}
+    const btn=f.querySelector('[type=submit]');btn.disabled=true;
     const{error}=await sb.auth.resetPasswordForEmail(f.email.value.trim(),{redirectTo:APP_URL});
-    say(error?authErr(error):t('reset_sent'),!error)};
+    btn.disabled=false;msg.textContent=error?authErr(error):t('reset_sent');msg.style.color=error?'var(--ko)':'var(--ok)'};
 }
 function openRecovery(){
   const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 10px 0">${t('new_pwd')}</h2><form class="form" id="rForm" style="grid-template-columns:1fr">
-    <label>${t('password')}<input type="password" name="pwd" minlength="6" required autocomplete="new-password" style="background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px"></label>
+    <label>${t('password')}${pwdField('pwd','new-password')}</label>
     <p id="rMsg" class="small" style="margin:0;color:var(--ko)"></p><div><button class="btn primary" type="submit">${t('save')}</button></div></form></div>`,'sm');
+  bindPwdToggles(m);
   const f=m.querySelector('#rForm');
-  f.onsubmit=async ev=>{ev.preventDefault();const{error}=await sb.auth.updateUser({password:f.pwd.value});if(error)m.querySelector('#rMsg').textContent=authErr(error);else{closeModal();toast(t('saved'))}};
+  f.onsubmit=async ev=>{ev.preventDefault();if(f.pwd.value.length<PWD_MIN){m.querySelector('#rMsg').textContent=t('err_pwd_len');return}
+    const{error}=await sb.auth.updateUser({password:f.pwd.value});if(error)m.querySelector('#rMsg').textContent=authErr(error);else{closeModal();toast(t('saved'))}};
 }
 
 /* ============ routing & shell ============ */
