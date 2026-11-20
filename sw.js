@@ -1,6 +1,6 @@
-// Pokéfolio service worker: makes the app installable and opens it even offline.
+// Gleamvault service worker: makes the app installable and opens it even offline.
 // The page itself is fetched network-first so updates show up on the next launch.
-const CACHE = 'pokefolio-v2';
+const CACHE = 'gleamvault-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {

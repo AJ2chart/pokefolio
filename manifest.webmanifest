@@ -1,6 +1,6 @@
 {
-  "name": "Pokéfolio",
-  "short_name": "Pokéfolio",
+  "name": "Gleamvault",
+  "short_name": "Gleamvault",
   "description": "Suivi de collection Pokémon TCG : cartes FR/EN, prix Cardmarket, scan, alertes de prix.",
   "lang": "fr",
   "start_url": "./",

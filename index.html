@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pokéfolio</title>
+<title>Gleamvault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap">
 <meta name="theme-color" content="#0f1117">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Pokéfolio">
+<meta name="apple-mobile-web-app-title" content="Gleamvault">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -143,7 +143,7 @@ canvas{max-width:100%}
   <div class="hwrap">
     <a class="logo" href="#collection">
       <svg viewBox="0 0 32 32"><rect x="3" y="6" width="17" height="23" rx="3" transform="rotate(-12 11 17)" fill="#e3350d"/><rect x="11" y="3" width="17" height="23" rx="3" transform="rotate(8 19 14)" fill="#ffcb05" stroke="#1a1d24" stroke-width="1.5"/><path d="M19.6 9.5l1.6 3.4 3.7.4-2.8 2.5.8 3.6-3.2-1.9-3.2 1.9.8-3.6-2.8-2.5 3.7-.4z" fill="#1a1d24"/></svg>
-      Pokéfolio
+      Gleamvault
     </a>
     <nav id="nav"></nav>
     <div class="hactions">
@@ -409,7 +409,7 @@ function checkAlerts(notify){
   LS.set('pf_collection',collection);
   if(hits.length&&notify){
     toast('🔔 '+t('alert_toast',{n:hits.length}));
-    try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Pokéfolio',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}
+    try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}
   }
   return hits;
 }
@@ -484,7 +484,7 @@ async function refreshPrices(silent){
   settings.lastRefresh=Date.now();saveSettings();saveCollection();
   refreshing=false;
   const hits=checkAlerts(false);
-  if(hits.length){toast('🔔 '+t('alert_toast',{n:hits.length}));try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Pokéfolio',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}}
+  if(hits.length){toast('🔔 '+t('alert_toast',{n:hits.length}));try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}}
   else if(!silent||failed)toast(failed?t('err_net'):t('saved'));
   render();
 }
@@ -1131,11 +1131,11 @@ function viewData(m){
   <div class="toolbar"><button class="btn" id="clr">↻ ${t('clear_cache')}</button><button class="btn" id="notif">🔔 ${t('notif_btn')}</button><span class="muted small" id="notifState"></span></div>
   <p class="muted small">${t('notif_note')}</p>
   <p class="muted small" style="margin-top:30px">${t('sources')}</p>`;
-  m.querySelector('#exJson').onclick=()=>download(`pokefolio-${today()}.json`,JSON.stringify({app:'pokefolio',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
+  m.querySelector('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
   m.querySelector('#exCsv').onclick=()=>{
     const cols=['name','setName','localId','official','lang','variant','cond','grade','cert','qty','status','buy','date','value','manual','notes'];
     const rows=collection.map(e=>cols.map(c=>{const v=c==='value'?(entryValue(e)??''):c==='grade'?gradeStr(e):c==='cert'?(e.grade?.cert||''):e[c]??'';return '"'+String(v).replace(/"/g,'""')+'"'}).join(';'));
-    download(`pokefolio-${today()}.csv`,'﻿'+cols.join(';')+'\n'+rows.join('\n'),'text/csv');
+    download(`gleamvault-${today()}.csv`,'﻿'+cols.join(';')+'\n'+rows.join('\n'),'text/csv');
   };
   m.querySelector('#imp').onchange=async ev=>{
     const file=ev.target.files[0];if(!file)return;

@@ -1,4 +1,4 @@
-# Pokéfolio
+# Gleamvault
 
 Suivi de collection Pokémon TCG, installable sur PC et téléphone.
 
