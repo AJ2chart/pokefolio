@@ -217,7 +217,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Trop de tentatives ou d’e-mails envoyés : réessaie dans quelques minutes.',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 6 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta liste de souhaits.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -275,7 +275,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Too many attempts or emails sent: try again in a few minutes.',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 6 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- reprint:'Reprint (original number printed on the card)',
+ reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -912,7 +912,7 @@ function renderResults(out,data,res,lang){
       <div class="img">${imgTag(c.i,c.s,c.l,c.n)}</div>
       <div class="nm" title="${esc(c.n)}">${esc(c.n)}</div>
       <div class="meta">${esc(st?.n||c.s)} · ${esc(numLabel(c.l,st?.off))}</div>
-      ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)">♻ ${t('reprint')}</div>`:''}
+      ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:''}
     </div>`).join('')}</div>${out.length>shown.length?`<div style="text-align:center;margin:20px"><button class="btn" id="more">${t('show_more')}</button></div>`:''}`
     :`<div class="empty">${t('no_results')}</div>`;
   res.querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>openCard(lang,el.dataset.id));
