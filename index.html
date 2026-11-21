@@ -108,11 +108,11 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .afilters .cf-panel{align-items:center}
 .more-sentinel{display:flex;justify-content:center;min-height:40px;padding:14px}
 .tile .img{position:relative}
-.qadd{position:absolute;z-index:2;right:8px;bottom:8px;width:calc(var(--pill) + 4px);height:calc(var(--pill) + 4px);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;color:#ffcb05;background:rgba(14,16,22,.9);box-shadow:inset 0 0 0 1.5px rgba(255,203,5,.8),0 0 0 1px rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
+.qadd{position:absolute;z-index:2;right:8px;bottom:8px;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
 .qadd::before{content:'';position:absolute;inset:-8px;border-radius:50%}
 .qadd svg{width:var(--pillic);height:var(--pillic);display:block}
 .qadd .qa-ok{display:none}
-@media (hover:hover){.qadd:hover{background:var(--accent);color:#1a1d24}}
+@media (hover:hover){.qadd:hover{background:#ffcb05;color:#1a1d24}}
 .qadd:active{transform:scale(.88)}.qadd.busy{opacity:.55}
 .qadd.done{background:#3ecf8e;color:#0f1117;box-shadow:0 2px 6px rgba(0,0,0,.35)}.qadd.done .qa-plus{display:none}.qadd.done .qa-ok{display:block}
 .ah-t{font-size:15px;margin:18px 0 10px;display:flex;align-items:center;gap:10px}
@@ -175,7 +175,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 html[data-pill=s]{--pill:15px;--pillfs:9px;--pillic:10px;--pillx:8px}
 html[data-pill=l]{--pill:25px;--pillfs:13.5px;--pillic:17px;--pillx:13px}
 .badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:var(--pillfs);font-weight:700;line-height:1;min-width:var(--pill);height:var(--pill);padding:0 calc(var(--pill)*.27);display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
-.wbtn{position:absolute;top:14px;right:14px;z-index:2;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 4px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.wbtn{position:absolute;top:14px;right:14px;z-index:2;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent;transition:transform .12s}
 .wbtn svg{width:var(--pillic);height:var(--pillic);margin-top:1px}
 .wbtn::before{content:'';position:absolute;inset:-10px;border-radius:50%}
 .wbtn:active{transform:scale(.9)}
@@ -183,10 +183,10 @@ html[data-pill=l]{--pill:25px;--pillfs:13.5px;--pillic:17px;--pillx:13px}
 .wbtn.on svg path{fill:currentColor}
 .wbtn.busy{opacity:.6}
 .xbtn svg{width:var(--pillx);height:var(--pillx);margin:0}
-.bbtn{right:auto;left:14px;color:var(--muted)}
+.bbtn{right:auto;left:14px;color:rgba(255,255,255,.72)}
 .tile.has-count .bbtn{left:calc(20px + var(--pill))}
 .bbtn svg{width:calc(var(--pillic) - 1px);height:calc(var(--pillic) - 1px);margin:0}
-.bbtn.on{color:var(--accent)}.bbtn.on svg path:first-child{fill:currentColor}
+.bbtn.on{color:#ffcb05}.bbtn.on svg path:first-child{fill:currentColor}
 .bbtn.hit{color:var(--accent2)}
 .xbtn:hover{color:var(--ko)}
 .tile.has-x .lbadge{right:calc(20px + var(--pill))}
@@ -351,7 +351,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-31';
+const APP_VERSION = '2026.11.21-32';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
