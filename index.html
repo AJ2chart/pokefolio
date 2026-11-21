@@ -233,6 +233,44 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .prio{border:0;background:none;padding:0 4px 0 0;font-size:15px;line-height:1;color:var(--muted);cursor:pointer;vertical-align:-1px}
 .prio.on{color:var(--accent)}
 .sh-wish .sh-prio{margin-left:auto;margin-right:12px}.sh-prio.on{color:var(--accent)!important}
+.ev-hero{padding:6px 0 4px}
+.ev-lbl{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.ev-ref{width:30px;height:30px;font-size:15px}
+.ev-big{font-size:42px;font-weight:800;letter-spacing:-.01em;line-height:1.1;margin:6px 0 4px}
+.ev-gain{font-weight:700;font-size:16px}.ev-gain span{font-weight:600;font-size:14px;opacity:.9}
+.ev-cost{font-size:13px;color:var(--muted);margin-top:4px}
+.ev-chart{position:relative;height:190px;margin:14px -4px 8px}
+.ev-nochart{margin:14px 0 8px;padding:28px 16px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted);font-size:13.5px}
+.ev-seg{display:flex;gap:6px}
+.ev-chart+.ev-seg,.ev-nochart+.ev-seg{max-width:380px}
+.ev-seg button{flex:1;padding:8px 0;border-radius:10px;font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--line);cursor:pointer}
+.ev-seg button.on{color:#1a1d24;background:var(--accent);border-color:transparent}
+.ev-box .ev-seg{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px;margin-bottom:8px}
+.ev-box .ev-seg button{border:0;background:none;padding:7px 0;border-radius:8px}
+.ev-box .ev-seg button.on{background:var(--card2);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+.ev-perchg{font-size:13.5px;color:var(--muted);margin-top:9px}
+.ev-sec{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 12px}.ev-sec h2{margin:0;font-size:17px}.ev-sec a{font-size:13.5px;color:var(--muted);text-decoration:none}
+.ev-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 12px;scrollbar-width:none;padding:0 0 6px}.ev-car::-webkit-scrollbar{display:none}
+.ev-cc{flex:none;width:124px;scroll-snap-align:start;border:0;background:none;padding:0;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.ev-im{display:block;position:relative;aspect-ratio:63/88;border-radius:9px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4);background:var(--card2)}
+.ev-im img{width:100%;height:100%;object-fit:cover;display:block}
+.ev-rk{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;background:rgba(14,16,22,.9);color:#fff;font-size:11.5px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.ev-n{display:block;font-size:13px;font-weight:600;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-v{display:block;font-size:13.5px;font-weight:700;color:var(--accent)}
+.ev-two{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+.ev-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.ev-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid var(--line);cursor:pointer}
+.ev-box .ev-seg+.ev-row{border-top:0}
+.ev-th{width:30px;flex:none}.ev-th img{width:100%;border-radius:4px;display:block}
+.ev-row .t{flex:1;min-width:0}.ev-row .t>div:first-child{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ev-row .t>div+div{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-row .r{text-align:right;font-weight:700;font-size:14px;white-space:nowrap}.ev-row .r small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.ev-empty{margin:10px 2px}
+.ev-more{display:block;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--text);font:inherit;font-size:13.5px;padding:11px 0 3px;cursor:pointer}
+.ev-stack{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:6px 0 12px;gap:2px}
+.ev-leg{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:5px 0}.ev-leg i{width:10px;height:10px;border-radius:3px;flex:none}.ev-leg span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ev-leg em{font-style:normal;color:var(--muted);font-size:12.5px;width:44px;text-align:right}.ev-leg b{min-width:74px;text-align:right}
+.ev-wl{display:flex;align-items:center;gap:12px;margin-top:22px;padding:14px;border-radius:14px;text-decoration:none;color:var(--text);background:color-mix(in srgb,var(--accent) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
+.ev-wl-ic svg{width:22px;height:22px;display:block}
+.ev-wl div{flex:1;min-width:0}.ev-wl div b{display:block;font-size:15px}.ev-wl div span{font-size:12.5px;color:var(--muted)}.ev-wl em{font-style:normal;color:var(--accent);font-weight:800;font-size:18px}
 .nr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .nr-acts .btn{white-space:nowrap;gap:6px}.nr-acts svg{width:17px;height:12px;border-radius:2px;flex:none}
 .cf-toggle.on{border-color:var(--accent);color:var(--accent)}
@@ -414,6 +452,10 @@ canvas{max-width:100%}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   .hide-m{display:none}
+  .ev-two{grid-template-columns:1fr}
+  .ev-car{margin:0 -12px;padding:0 12px 6px}
+  .ev-chart+.ev-seg,.ev-nochart+.ev-seg{max-width:none}
+  .ev-big{font-size:38px}
   .stat.wbudget{width:auto}
   .sh{display:block;padding:0 16px 6px}
   .sh-hero{position:relative;margin:0 -16px;padding:calc(58px + env(safe-area-inset-top)) 0 20px;display:flex;justify-content:center}
@@ -489,7 +531,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-47';
+const APP_VERSION = '2026.11.21-48';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -523,7 +565,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',deals_title:'Bonnes affaires ({n})',deal_hit:'sous ton seuil',prio:'Priorité',prio_on:'« {n} » marquée prioritaire',prio_off:'« {n} » n’est plus prioritaire',since_added:'Évolution depuis l’ajout à la wishlist (vert = baisse de prix)',tour_hi:'Bienvenue sur Gleamvault',tour_hi_d:'Ta collection Pokémon TCG dans ta poche : retrouve tes cartes, suis leur valeur et ne rate aucune bonne affaire. Petit tour en 1 minute ?',tour_go:'C’est parti',tour_skip:'Passer',tour_next:'Suivant',tour_try:'Essayer',tour_coll:'<b>Collection</b> : toutes tes cartes, avec leur valeur. Touche une carte pour voir sa fiche et tes exemplaires.',tour_add:'<b>Ajouter</b> : cherche une carte par son nom, son extension ou son numéro, ou scanne-la avec l’appareil photo.',tour_wish:'<b>Wishlist</b> : les cartes que tu cherches, avec leur budget et des alertes de prix 🔔.',tour_value:'<b>Valeur</b> : l’évolution de ta collection, tes cartes les plus précieuses et les plus grosses variations.',tour_set:'<b>Réglages</b> : ton compte pour synchroniser tes appareils, le thème, la langue et le Mode Safe.',tour_trial:'À toi de jouer',tour_search:'Prends une carte que tu as sous la main et tape son nom (ou son numéro, ex. 199/165) dans la barre de recherche.',tour_addit:'Trouve ta carte et touche le bouton <b>＋</b> pour l’ajouter. Tu peux aussi toucher la carte pour choisir la version et l’état.',tour_bravo:'Bravo !',tour_bravo_d:'Ta première carte est dans ta collection. Crée un compte gratuit pour la sauvegarder et la retrouver sur ton téléphone et ton PC.',tour_bravo_u:'Ta première carte est dans ta collection, et elle est déjà synchronisée avec ton compte.',tour_acc:'Créer un compte gratuit',tour_local:'Continuer sans compte',tour_local_d:'Sans compte, ta collection reste sur cet appareil. Tu pourras créer un compte plus tard dans Réglages, sans rien perdre.',tour_end:'Voir ma collection',tour_again:'Présentation de l’app',tour_again_d:'Revoir la visite guidée et l’essai d’ajout d’une carte.',tour_again_btn:'Revoir',al_active:'Alerte active',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',ev_value:'Valeur de ma collection',n_cards:'{n} cartes',ev_no_period:'Pas assez d’historique sur cette période.',p_7:'7 j',p_30:'30 j',p_365:'1 an',p_all:'Tout',pl_7:'7 jours',pl_30:'30 jours',pl_365:'1 an',pl_all:'toute la période',ev_over:'Sur {p} :',ev_best:'Mes plus belles cartes',see_all:'Tout voir',see_less:'Voir moins',ev_moves:'Mouvements',ev_7d:'7 jours',ev_vs_buy:'vs prix d’achat',ev_up:'Hausses',ev_down:'Baisses',ev_gains:'Plus-values',ev_no_gain:'Ajoute un prix d’achat à tes cartes pour voir tes plus-values.',ev_see_n:'Voir les {n}',ev_rep:'Répartition',ev_lang:'Langue',rar_none:'Sans rareté',others:'Autres ({n})',ev_deals:'{n} en bonne affaire',deals_title:'Bonnes affaires ({n})',deal_hit:'sous ton seuil',prio:'Priorité',prio_on:'« {n} » marquée prioritaire',prio_off:'« {n} » n’est plus prioritaire',since_added:'Évolution depuis l’ajout à la wishlist (vert = baisse de prix)',tour_hi:'Bienvenue sur Gleamvault',tour_hi_d:'Ta collection Pokémon TCG dans ta poche : retrouve tes cartes, suis leur valeur et ne rate aucune bonne affaire. Petit tour en 1 minute ?',tour_go:'C’est parti',tour_skip:'Passer',tour_next:'Suivant',tour_try:'Essayer',tour_coll:'<b>Collection</b> : toutes tes cartes, avec leur valeur. Touche une carte pour voir sa fiche et tes exemplaires.',tour_add:'<b>Ajouter</b> : cherche une carte par son nom, son extension ou son numéro, ou scanne-la avec l’appareil photo.',tour_wish:'<b>Wishlist</b> : les cartes que tu cherches, avec leur budget et des alertes de prix 🔔.',tour_value:'<b>Valeur</b> : l’évolution de ta collection, tes cartes les plus précieuses et les plus grosses variations.',tour_set:'<b>Réglages</b> : ton compte pour synchroniser tes appareils, le thème, la langue et le Mode Safe.',tour_trial:'À toi de jouer',tour_search:'Prends une carte que tu as sous la main et tape son nom (ou son numéro, ex. 199/165) dans la barre de recherche.',tour_addit:'Trouve ta carte et touche le bouton <b>＋</b> pour l’ajouter. Tu peux aussi toucher la carte pour choisir la version et l’état.',tour_bravo:'Bravo !',tour_bravo_d:'Ta première carte est dans ta collection. Crée un compte gratuit pour la sauvegarder et la retrouver sur ton téléphone et ton PC.',tour_bravo_u:'Ta première carte est dans ta collection, et elle est déjà synchronisée avec ton compte.',tour_acc:'Créer un compte gratuit',tour_local:'Continuer sans compte',tour_local_d:'Sans compte, ta collection reste sur cet appareil. Tu pourras créer un compte plus tard dans Réglages, sans rien perdre.',tour_end:'Voir ma collection',tour_again:'Présentation de l’app',tour_again_d:'Revoir la visite guidée et l’essai d’ajout d’une carte.',tour_again_btn:'Revoir',al_active:'Alerte active',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -581,7 +623,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',deals_title:'Good deals ({n})',deal_hit:'below your target',prio:'Priority',prio_on:'“{n}” marked as priority',prio_off:'“{n}” is no longer a priority',since_added:'Change since added to the wishlist (green = price drop)',tour_hi:'Welcome to Gleamvault',tour_hi_d:'Your Pokémon TCG collection in your pocket: find your cards, track their value and never miss a deal. Quick 1-minute tour?',tour_go:'Let’s go',tour_skip:'Skip',tour_next:'Next',tour_try:'Try it',tour_coll:'<b>Collection</b>: all your cards with their value. Tap a card to see its sheet and your copies.',tour_add:'<b>Add</b>: search a card by name, set or number, or scan it with the camera.',tour_wish:'<b>Wishlist</b>: the cards you’re after, with their budget and price alerts 🔔.',tour_value:'<b>Value</b>: how your collection evolves, your most valuable cards and the biggest moves.',tour_set:'<b>Settings</b>: your account to sync your devices, theme, language and Safe mode.',tour_trial:'Your turn',tour_search:'Grab a card you have at hand and type its name (or number, e.g. 199/165) in the search bar.',tour_addit:'Find your card and tap <b>＋</b> to add it. You can also tap the card to pick the version and condition.',tour_bravo:'Well done!',tour_bravo_d:'Your first card is in your collection. Create a free account to back it up and get it on your phone and computer.',tour_bravo_u:'Your first card is in your collection and already synced with your account.',tour_acc:'Create a free account',tour_local:'Continue without an account',tour_local_d:'Without an account, your collection stays on this device. You can create one later in Settings without losing anything.',tour_end:'See my collection',tour_again:'App tour',tour_again_d:'Replay the guided tour and the add-a-card trial.',tour_again_btn:'Replay',al_active:'Alert on',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',ev_value:'My collection value',n_cards:'{n} cards',ev_no_period:'Not enough history for this period.',p_7:'7 d',p_30:'30 d',p_365:'1 y',p_all:'All',pl_7:'7 days',pl_30:'30 days',pl_365:'1 year',pl_all:'the whole period',ev_over:'Over {p}:',ev_best:'My best cards',see_all:'See all',see_less:'See less',ev_moves:'Movements',ev_7d:'7 days',ev_vs_buy:'vs purchase price',ev_up:'Gainers',ev_down:'Losers',ev_gains:'Profits',ev_no_gain:'Add a purchase price to your cards to see your profits.',ev_see_n:'See all {n}',ev_rep:'Breakdown',ev_lang:'Language',rar_none:'No rarity',others:'Others ({n})',ev_deals:'{n} good deal(s)',deals_title:'Good deals ({n})',deal_hit:'below your target',prio:'Priority',prio_on:'“{n}” marked as priority',prio_off:'“{n}” is no longer a priority',since_added:'Change since added to the wishlist (green = price drop)',tour_hi:'Welcome to Gleamvault',tour_hi_d:'Your Pokémon TCG collection in your pocket: find your cards, track their value and never miss a deal. Quick 1-minute tour?',tour_go:'Let’s go',tour_skip:'Skip',tour_next:'Next',tour_try:'Try it',tour_coll:'<b>Collection</b>: all your cards with their value. Tap a card to see its sheet and your copies.',tour_add:'<b>Add</b>: search a card by name, set or number, or scan it with the camera.',tour_wish:'<b>Wishlist</b>: the cards you’re after, with their budget and price alerts 🔔.',tour_value:'<b>Value</b>: how your collection evolves, your most valuable cards and the biggest moves.',tour_set:'<b>Settings</b>: your account to sync your devices, theme, language and Safe mode.',tour_trial:'Your turn',tour_search:'Grab a card you have at hand and type its name (or number, e.g. 199/165) in the search bar.',tour_addit:'Find your card and tap <b>＋</b> to add it. You can also tap the card to pick the version and condition.',tour_bravo:'Well done!',tour_bravo_d:'Your first card is in your collection. Create a free account to back it up and get it on your phone and computer.',tour_bravo_u:'Your first card is in your collection and already synced with your account.',tour_acc:'Create a free account',tour_local:'Continue without an account',tour_local_d:'Without an account, your collection stays on this device. You can create one later in Settings without losing anything.',tour_end:'See my collection',tour_again:'App tour',tour_again_d:'Replay the guided tour and the add-a-card trial.',tour_again_btn:'Replay',al_active:'Alert on',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -1850,38 +1892,83 @@ function viewWish(m){
 }
 
 /* ============ view: evolution ============ */
+let evoPer='30',evoMov='up',evoRep='set',evoMore=false;
+const REP_COLORS=['#ffcb05','#8b7bff','#3ecf8e','#5ec8ff','#ff7ac3','#59617a'];
 function viewEvo(m){
   const owned=collection.filter(e=>e.status!=='wish');
-  const tt=totals(owned);const gainCls=tt.gain>=0?'pos':'neg';
+  const tt=totals(owned);
   if(owned.length&&settings.hidePrices){m.innerHTML=`<h1>${t('evo_title')}</h1><div class="empty"><p style="font-size:28px;margin:0 0 6px">🛡</p><p>${t('safe_value')}</p><button class="btn primary" id="safeOff">${t('priv_show')}</button></div>`;m.querySelector('#safeOff').onclick=()=>setPriv(false);return}
   if(!owned.length){m.innerHTML=`<h1>${t('evo_title')}</h1><div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`;return}
+  // chart period
+  const days={'7':7,'30':30,'365':365,all:1e5}[evoPer];
+  const from=new Date(Date.now()-days*864e5).toISOString().slice(0,10);
+  const snaps=snapshots.filter(s=>s.d>=from&&s.value!=null);
+  const pd=snaps.length>1?snaps[snaps.length-1].value-snaps[0].value:null,pp=pd!=null&&snaps[0].value?pd/snaps[0].value*100:null;
+  // top cards
   const top=[...owned].filter(e=>entryValue(e)!=null).sort((a,b)=>entryValue(b)*b.qty-entryValue(a)*a.qty).slice(0,10);
-  const movers=owned.map(e=>({e,c:change7(e)})).filter(x=>x.c!=null&&Math.abs(x.c)>=0.5).sort((a,b)=>Math.abs(b.c)-Math.abs(a.c)).slice(0,8);
-  const group=key=>{const g={};for(const e of owned){const k=key(e);g[k]=(g[k]||0)+(entryValue(e)||0)*e.qty}return Object.entries(g).sort((a,b)=>b[1]-a[1])};
-  const bars=(rows,label=x=>esc(x))=>{const max=rows[0]?.[1]||1;return rows.map(([n,v])=>`<div class="vbar"><div class="vb-row small"><span>${label(n)}</span><b>${fmtEur(v)}</b></div><div class="bar"><i style="width:${Math.max(2,v/max*100)}%"></i></div></div>`).join('')};
-  const li=(e,right)=>`<div class="li" data-open="${e.uid}"><span style="width:38px;flex:none">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><div class="grow"><div><b>${esc(e.name)}</b>${e.qty>1?` <span class="muted small">×${e.qty}</span>`:''}</div><div class="muted small">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}</div></div>${right}</div>`;
-  m.innerHTML=`<h1>${t('evo_title')}</h1>
-  <div class="stats">
-    <div class="stat"><div class="lbl">${t('stat_value')}</div><div class="val">${fmtEur(tt.value)}</div><div class="sub">${settings.lastRefresh?t('updated_at',{d:fmtDate(settings.lastRefresh)}):''}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_cards')}</div><div class="val">${tt.count}</div><div class="sub">${t('unique_cards',{n:tt.unique})}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_cost')}</div><div class="val">${fmtEur(tt.cost)}</div><div class="sub">${t('gain_on',{n:tt.withCost})}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_gain')}</div><div class="val ${tt.withCost?gainCls:''}">${tt.withCost?(settings.hidePrices?'':tt.gain>=0?'+':'')+fmtEur(tt.gain):'—'}</div><div class="sub ${gainCls}">${tt.withCost?fmtPct(tt.gainPct):''}</div></div>
+  // movements
+  const ch=owned.map(e=>{const c=change7(e),v=entryValue(e);return{e,c,d:c!=null&&v!=null?(v-v/(1+c/100))*e.qty:null}}).filter(x=>x.c!=null&&Math.abs(x.c)>=0.5);
+  const lists={up:ch.filter(x=>x.c>0).sort((a,b)=>b.c-a.c),down:ch.filter(x=>x.c<0).sort((a,b)=>a.c-b.c),
+    gain:owned.filter(e=>e.buy>0&&entryValue(e)!=null).map(e=>{const v=entryValue(e);return{e,c:(v-e.buy)/e.buy*100,d:(v-e.buy)*e.qty}}).sort((a,b)=>b.d-a.d)};
+  const mv=lists[evoMov],shown=evoMore?mv:mv.slice(0,5);
+  // breakdown
+  const key={set:e=>e.setName||'—',lang:e=>e.lang,rar:e=>e.rarity||t('rar_none')}[evoRep];
+  const g={};for(const e of owned){const k=key(e);g[k]=(g[k]||0)+(entryValue(e)||0)*e.qty}
+  let rows=Object.entries(g).sort((a,b)=>b[1]-a[1]);const sum=rows.reduce((a,r)=>a+r[1],0)||1;
+  if(rows.length>5){const rest=rows.slice(4);rows=[...rows.slice(0,4),[t('others',{n:rest.length}),rest.reduce((a,r)=>a+r[1],0),1]]}
+  const lab=n=>evoRep==='lang'&&FLAGS[n]?`<span class="lflag">${FLAGS[n]}</span>${esc(LANG_NAMES[n]||n)}`:esc(n);
+  // wishlist summary
+  const wl=collection.filter(e=>e.status==='wish');const wBudget=wl.reduce((a,e)=>a+(entryValue(e)||0)*(e.qty||1),0);const wDeals=wl.filter(wishDeal).length;
+  const seg=(name,cur,opts)=>`<div class="ev-seg" role="tablist">${opts.map(([k,l])=>`<button type="button" data-${name}="${k}" class="${k===cur?'on':''}" role="tab" aria-selected="${k===cur}">${l}</button>`).join('')}</div>`;
+  const thumb=e=>`<span class="ev-th">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span>`;
+  m.innerHTML=`
+  <div class="ev-hero">
+    <div class="ev-lbl">${t('ev_value')} <button class="iconbtn ev-ref hide-m" id="refreshBtn" title="${esc(t('refresh'))}" aria-label="${esc(t('refresh'))}">↻</button></div>
+    <div class="ev-big">${fmtEur(tt.value)}</div>
+    ${tt.withCost?`<div class="ev-gain ${tt.gain>=0?'pos':'neg'}">${tt.gain>=0?'▲ +':'▼ '}${fmtEur(tt.gain)} <span>(${fmtPct(tt.gainPct)})</span></div>`:''}
+    <div class="ev-cost">${tt.withCost?`${t('stat_cost')} ${fmtEur(tt.cost)} · `:''}${t('n_cards',{n:tt.count})}</div>
   </div>
-  <div class="toolbar" style="justify-content:flex-end;margin:10px 0 4px"><button class="btn" id="refreshBtn">↻ ${t('refresh')}</button></div>
-  <h2>${t('evo_chart')}</h2>
-  ${settings.hidePrices?`<div class="empty small">🙈 ${t('priv_chart')}</div>`:snapshots.length>1?`<div class="panel"><div class="chartbox"><canvas id="evo"></canvas></div></div>`:`<div class="empty small">${t('evo_empty')}</div>`}
-  <div class="two" style="margin-top:16px">
-    <div class="panel"><b>${t('top_cards')}</b><div class="list">${top.map(e=>li(e,`<b>${fmtEur(entryValue(e)*e.qty)}</b>`)).join('')}</div></div>
-    <div class="panel"><b>${t('movers')}</b>${movers.length?`<div class="list">${movers.map(x=>li(x.e,`<b class="${x.c>=0?'pos':'neg'}">${fmtPct(x.c)}</b>`)).join('')}</div>`:`<p class="muted small">${t('no_movers')}</p>`}</div>
-    <div class="panel"><b>${t('by_set')}</b>${bars(group(e=>e.setName).slice(0,8))}</div>
-    <div class="panel"><b>${t('by_lang')}</b>${bars(group(e=>e.lang),l=>`${FLAGS[l]?`<span class="lflag">${FLAGS[l]}</span>`:''}${esc(LANG_NAMES[l]||l)}`)}</div>
-  </div>`;
-  m.querySelector('#refreshBtn').onclick=()=>refreshPrices();
+  ${snaps.length>1&&window.Chart?`<div class="ev-chart"><canvas id="evo"></canvas></div>`:`<div class="ev-nochart">${t(snapshots.length>1?'ev_no_period':'evo_empty')}</div>`}
+  ${seg('per',evoPer,[['7',t('p_7')],['30',t('p_30')],['365',t('p_365')],['all',t('p_all')]])}
+  ${pd!=null?`<div class="ev-perchg">${t('ev_over',{p:t('pl_'+evoPer)})} <b class="${pd>=0?'pos':'neg'}">${pd>=0?'+':''}${fmtEur(pd)} (${fmtPct(pp)})</b></div>`:''}
+
+  <div class="ev-sec"><h2>${t('ev_best')}</h2><a href="#collection" id="evAll">${t('see_all')} ›</a></div>
+  <div class="ev-car">${top.map((e,i)=>`<button class="ev-cc" data-open="${e.uid}"><span class="ev-im">${imgTag(e.image,e.setId,e.localId,e.name,'low','',e.lang)}<span class="ev-rk">${i+1}</span></span><span class="ev-n">${esc(e.name)}${e.qty>1?` <span class="muted">×${e.qty}</span>`:''}</span><span class="ev-v">${fmtEur(entryValue(e)*e.qty)}</span></button>`).join('')}</div>
+
+  <div class="ev-two">
+  <div>
+    <div class="ev-sec"><h2>${t('ev_moves')}</h2><span class="muted small">${t(evoMov==='gain'?'ev_vs_buy':'ev_7d')}</span></div>
+    <div class="ev-box">
+      ${seg('mov',evoMov,[['up','▲ '+t('ev_up')],['down','▼ '+t('ev_down')],['gain',t('ev_gains')]])}
+      ${shown.length?shown.map(x=>`<div class="ev-row" data-open="${x.e.uid}">${thumb(x.e)}<div class="t"><div>${esc(x.e.name)}${x.e.qty>1?` <span class="muted small">×${x.e.qty}</span>`:''}</div><div>${esc(x.e.setName)} · ${esc(numLabel(x.e.localId,x.e.official))}</div></div><div class="r ${x.c>=0?'pos':'neg'}">${fmtPct(x.c)}<small>${x.d>=0?'+':''}${fmtEur(x.d)}</small></div></div>`).join(''):`<p class="muted small ev-empty">${t(evoMov==='gain'?'ev_no_gain':'no_movers')}</p>`}
+      ${mv.length>5?`<button class="ev-more" id="evMore">${evoMore?t('see_less'):t('ev_see_n',{n:mv.length})} ${evoMore?'‹':'›'}</button>`:''}
+    </div>
+  </div>
+  <div>
+    <div class="ev-sec"><h2>${t('ev_rep')}</h2></div>
+    <div class="ev-box">
+      ${seg('rep',evoRep,[['set',t('set')],['lang',t('ev_lang')],['rar',t('rarity')]])}
+      <div class="ev-stack">${rows.map(([n,v],i)=>`<i style="width:${Math.max(1.5,v/sum*100)}%;background:${REP_COLORS[i===rows.length-1&&rows[i][2]?5:i]}"></i>`).join('')}</div>
+      ${rows.map(([n,v],i)=>`<div class="ev-leg"><i style="background:${REP_COLORS[i===rows.length-1&&rows[i][2]?5:i]}"></i><span>${lab(n)}</span><em>${Math.round(v/sum*100)} %</em><b>${fmtEur(v)}</b></div>`).join('')}
+    </div>
+  </div>
+  </div>
+
+  ${wl.length?`<a class="ev-wl" href="#wishlist"><span class="ev-wl-ic">${HEART}</span><div><b>${t('nav_wish')}</b><span>${t('wish_count',{n:wl.reduce((a,e)=>a+(e.qty||1),0)})}${wDeals?' · '+t('ev_deals',{n:wDeals}):''}</span></div><em>${fmtEur(wBudget)}</em><span class="muted">›</span></a>`:''}`;
+  const rb=m.querySelector('#refreshBtn');if(rb)rb.onclick=()=>refreshPrices();
   m.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openEntry(el.dataset.open));
-  if(!settings.hidePrices&&snapshots.length>1&&window.Chart){
-    charts.push(new Chart(m.querySelector('#evo'),{type:'line',data:{labels:snapshots.map(s=>fmtDate(s.d)),datasets:[
-      {label:t('value'),data:snapshots.map(s=>s.value),borderColor:getCss('--accent'),backgroundColor:'transparent',tension:.25,pointRadius:2},
-      {label:t('cost'),data:snapshots.map(s=>s.cost),borderColor:getCss('--muted'),borderDash:[5,4],backgroundColor:'transparent',tension:.25,pointRadius:0}]},options:chartOpts(true)}));
+  m.querySelector('#evAll').onclick=()=>{settings.sort='value';saveSettings()};
+  m.querySelectorAll('[data-per]').forEach(b=>b.onclick=()=>{evoPer=b.dataset.per;render()});
+  m.querySelectorAll('[data-mov]').forEach(b=>b.onclick=()=>{evoMov=b.dataset.mov;evoMore=false;render()});
+  m.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>{evoRep=b.dataset.rep;render()});
+  const mo=m.querySelector('#evMore');if(mo)mo.onclick=()=>{evoMore=!evoMore;render()};
+  if(snaps.length>1&&window.Chart){
+    const cv=m.querySelector('#evo'),ctx=cv.getContext('2d'),up=pd>=0,col=up?getCss('--ok'):getCss('--ko');
+    const grad=ctx.createLinearGradient(0,0,0,cv.parentElement.clientHeight||170);grad.addColorStop(0,up?'rgba(62,207,142,.32)':'rgba(255,93,93,.28)');grad.addColorStop(1,'rgba(0,0,0,0)');
+    const mc=getCss('--muted'),gc=getCss('--line');
+    charts.push(new Chart(cv,{type:'line',data:{labels:snaps.map(s=>fmtDate(s.d)),datasets:[{data:snaps.map(s=>s.value),borderColor:col,backgroundColor:grad,fill:true,tension:.35,pointRadius:0,pointHoverRadius:5,borderWidth:2.5}]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,callbacks:{label:x=>fmtEur(x.parsed.y)}}},
+        scales:{x:{display:false},y:{position:'right',grid:{color:gc,drawTicks:false},border:{display:false},ticks:{color:mc,maxTicksLimit:4,padding:6,callback:v=>fmtEur(v).replace(/,00/,'')}}}}}));
   }
 }
 
