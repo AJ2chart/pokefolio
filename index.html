@@ -207,6 +207,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .tour-bub{position:fixed;pointer-events:auto;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.5);font-size:14.5px;line-height:1.45;transition:top .25s,left .25s}
 .tour-bub p{margin:0 0 12px}.tour-bub h2{margin:0 0 6px;font-size:20px}
 .tour-bub::before{content:'';position:absolute;left:calc(var(--ax,50%) - 8px);width:16px;height:16px;background:var(--bg2);border:1px solid var(--line);transform:rotate(45deg)}
+.tour-bub:not([data-arrow=up]):not([data-arrow=down])::before{display:none}
 .tour-bub[data-arrow=up]::before{top:-9px;border-right:0;border-bottom:0}
 .tour-bub[data-arrow=down]::before{bottom:-9px;border-left:0;border-top:0}
 .tour.center .tour-bub{left:50%!important;top:50%!important;transform:translate(-50%,-50%);width:min(360px,calc(100vw - 32px))!important;text-align:center;padding:24px 20px}
@@ -478,7 +479,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-44';
+const APP_VERSION = '2026.11.21-45';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -518,7 +519,7 @@ fr:{
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
  del_confirm:'Supprimer « {n} » de ta collection ?',mark_owned:'Je l’ai eue !',
  unit_value:'Valeur unitaire',total_value:'Valeur totale',gain:'Plus-value',history:'Historique du prix',no_history:"L'historique se construit à chaque actualisation des prix.",
- wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Depuis « Ajouter », choisis le statut « Dans ma wishlist ».',wish_total:'Budget total pour tout compléter : {v}',
+ wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Dans « Ajouter », touche le cœur d’une carte pour l’y ajouter.',wish_total:'Budget total pour tout compléter : {v}',
  evo_title:'Valeur de la collection',evo_chart:'Évolution dans le temps',by_lang:'Répartition par langue',see_value:'Détails',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
  data_title:'Réglages',not_logged:'Non connecté',manage:'Gérer mon compte',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',sec_backup:'Sauvegarde',sec_alerts:'Alertes de prix',sec_advanced:'Avancé',exp_json_t:'Exporter une sauvegarde',exp_json_d:'Fichier JSON avec toute ta collection ({n} cartes), pour la restaurer plus tard.',imp_t:'Restaurer une sauvegarde',imp_d:'Remplace la collection actuelle par celle d’un fichier exporté.',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',notif_d:'Être prévenu sur cet appareil quand une alerte de prix se déclenche (app ouverte).',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',btn_export:'Exporter',btn_import:'Importer',btn_enable:'Activer',btn_reload:'Recharger',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
@@ -576,7 +577,7 @@ en:{
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
  del_confirm:'Remove “{n}” from your collection?',mark_owned:'Got it!',
  unit_value:'Unit value',total_value:'Total value',gain:'Gain',history:'Price history',no_history:'History builds up with each price refresh.',
- wish_title:'Wishlist',wish_empty:'No wanted cards yet. From “Add”, pick the “Wanted” status.',wish_total:'Total budget to complete: {v}',
+ wish_title:'Wishlist',wish_empty:'Your wishlist is empty. In “Add”, tap a card’s heart to add it here.',wish_total:'Total budget to complete: {v}',
  evo_title:'Collection value',evo_chart:'Over time',by_lang:'Breakdown by language',see_value:'Details',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',cost:'Cost',
  data_title:'Settings',not_logged:'Not logged in',manage:'Manage my account',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',sec_backup:'Backup',sec_alerts:'Price alerts',sec_advanced:'Advanced',exp_json_t:'Export a backup',exp_json_d:'JSON file with your whole collection ({n} cards), to restore it later.',imp_t:'Restore a backup',imp_d:'Replaces the current collection with an exported file.',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',notif_d:'Get notified on this device when a price alert triggers (app open).',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',btn_export:'Export',btn_import:'Import',btn_enable:'Enable',btn_reload:'Reload',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
  import_confirm:'Replace your current collection ({a} entries) with the backup ({b} entries)?',
@@ -1989,7 +1990,7 @@ function tourPlace(){
   if(s.v)tg=tourTarget(s.v);
   else if(s.try==='search')tg=document.querySelector('#sq')?.closest('.searchbox');
   else if(s.try==='add')tg=document.getElementById('ov')?null:document.querySelector('#sgrid .tile');
-  if(!tg){ring.style.display='none';b.style.cssText='';return}
+  if(!tg){ring.style.display='none';const bw=Math.min(320,innerWidth-24);b.style.cssText=`left:${(innerWidth-bw)/2}px;width:${bw}px;bottom:${matchMedia('(max-width:720px)').matches?96:24}px`;b.dataset.arrow='';return}
   const r=tg.getBoundingClientRect(),pad=6;
   ring.style.cssText=`display:block;left:${r.left-pad}px;top:${r.top-pad}px;width:${r.width+pad*2}px;height:${r.height+pad*2}px`;
   const bw=Math.min(320,innerWidth-24);b.style.cssText=`left:12px;top:0;width:${bw}px;visibility:hidden`;const bh=b.offsetHeight||160,below=r.bottom+16+bh<innerHeight;
@@ -2002,7 +2003,7 @@ route();
 // splash: fade out once the first screen is drawn (kept at least 700 ms so it doesn't flash)
 {const t0=performance.timing?.navigationStart||Date.now();setTimeout(()=>{const sp=document.getElementById('splash');if(sp){sp.classList.add('out');setTimeout(()=>sp.remove(),600)}},Math.max(0,700-(Date.now()-t0)))}
 // first launch: welcome + guided tour (only on a fresh device with an empty collection)
-setTimeout(()=>{if(!LS.get('pf_tour',0)&&!collection.length)tourStart();else LS.set('pf_tour',1)},900);
+setTimeout(()=>{if(!LS.get('pf_tour',0)&&!collection.length&&!user)tourStart();else LS.set('pf_tour',1)},1400);
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 loadIndex(settings.cardLang).then(()=>{if(syncEntrySetNames()&&!document.querySelector('.ov'))render()}).catch(()=>{});
 if(collection.length&&Date.now()-settings.lastRefresh>AUTO_REFRESH)refreshPrices(true);
