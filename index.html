@@ -131,6 +131,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .sh-imgw{position:relative;border-radius:14px;background:radial-gradient(70% 60% at 50% 45%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 72%)}
 .sh-img{width:100%;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.5);cursor:zoom-in;display:block}
 .sh-zoom{position:absolute;right:-8px;bottom:-8px;width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4)}
+.sh-thumb{display:none}
 .sh-name{margin:2px 40px 8px 0;font-size:24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .sh-flag svg{width:22px;height:15px;border-radius:2px;display:block}
 .sh-chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -379,6 +380,24 @@ canvas{max-width:100%}
   .sh-hero{position:relative;margin:0 -16px;padding:calc(58px + env(safe-area-inset-top)) 0 20px;display:flex;justify-content:center}
   .sh-imgw{width:min(62vw,250px)}
   .sh-name{font-size:22px}
+  .sh.compact{padding-top:calc(12px + env(safe-area-inset-top))}
+  .modal:has(.sheet-cta){display:flex;flex-direction:column;min-height:100dvh}
+  .modal:has(.sheet-cta) .sh{flex:1 0 auto}
+  .sh.compact .sh-hero{display:none}
+  .sh.compact .sh-head{display:flex;gap:14px;align-items:flex-start}
+  .sh.compact .sh-thumb{display:block;flex:none;width:104px;padding:0;border:0;background:none;border-radius:9px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.45);cursor:zoom-in}
+  .sh.compact .sh-thumb img{width:100%;display:block;aspect-ratio:63/88;object-fit:cover}
+  .sh.compact .sh-hinfo{flex:1;min-width:0;padding-right:40px}
+  .sh.compact .sh-name{font-size:19px;margin:0 0 6px}
+  .sh.compact .sh-chips{gap:4px}.sh.compact .sh-chip{font-size:11.5px;padding:3px 8px}
+  .sh.compact .sh-illu{margin-top:6px;font-size:11.5px}
+  .sh.compact .sh-price{margin-top:12px;padding:12px 12px 2px}
+  .sh.compact .sh-pval{font-size:26px}
+  .sh.compact .sh-prange{display:none}
+  .sh.compact .sh-pdet{margin-top:8px}.sh.compact .sh-pdet summary{padding:9px 0}
+  .sh.compact .sh-wish{margin-top:8px;padding:8px 12px}
+  .sh.compact .sh-sec{margin:14px 0 8px}
+  .sh.compact .sh-copy{padding:10px;margin-bottom:6px}
   .sheet-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-radius:0}
   .cta-own{flex-basis:100%;margin:0 0 2px}
   .cta-add{flex:1}.cta-wish{flex:none;min-width:48px;font-size:18px}.cta-wish .cta-lbl{display:none}
@@ -434,7 +453,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-37';
+const APP_VERSION = '2026.11.21-38';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1588,6 +1607,8 @@ async function openSheet(lang,id,opts={}){
   const variants=d?VARIANTS.filter(v=>d.variants?.[v]):[];if(!variants.length)variants.push(any?.variant||'normal');
   const copies=()=>collection.filter(x=>x.cardId===id&&x.lang===lang&&x.status!=='wish');
   const wishE=()=>collection.find(x=>x.cardId===id&&x.lang===lang&&x.status==='wish');
+  // opened from Collection / Wishlist: compact header on phones so the sheet fits on one screen
+  const compact=!!opts.focus;
   const st={variant:variants[0],editing:null,addOpen:!copies().length,focus:opts.focus||null};
   const priceFor=v=>d?pickPrice(d.pricing,v,d.variants?.normal):(collection.find(x=>x.cardId===id&&x.lang===lang&&x.variant===v)||any)?.price||null;
   const plainRarity=/^(commune|peu commune|common|uncommon|aucune|none)$/i;
@@ -1650,12 +1671,14 @@ async function openSheet(lang,id,opts={}){
     const tot=cs.reduce((a,x)=>{const v=entryValue(x);return v!=null?a+v*(x.qty||1):a},0);
     const scroller=document.getElementById('ov'),keep=scroller?scroller.scrollTop:0;
     m.innerHTML=`<button class="iconbtn mclose" id="mclose" aria-label="close">✕</button>
-    <div class="sh">
+    <div class="sh ${compact?'compact':''}">
       <div class="sh-hero"><div class="sh-imgw">${imgTag(card.image,card.setId,card.localId,card.name,'high','cimg sh-img',lang)}<button type="button" class="sh-zoom" aria-label="${esc(t('fs_open'))}" title="${esc(t('fs_open'))}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 4h5v5M9 20H4v-5M20 4l-6 6M4 20l6-6"/></svg></button></div></div>
       <div class="sh-main">
+        <div class="sh-head">${compact?`<button type="button" class="sh-thumb" aria-label="${esc(t('fs_open'))}">${imgTag(card.image,card.setId,card.localId,card.name,'low','',lang)}</button>`:''}<div class="sh-hinfo">
         <h1 class="sh-name">${esc(card.name)} <span class="sh-flag">${FLAGS[lang]}</span></h1>
         <div class="sh-chips"><span class="sh-chip">${esc(card.setName)}</span><span class="sh-chip">${esc(num)}</span>${card.rarity?`<span class="sh-chip ${plainRarity.test(card.rarity)?'':'r'}">${plainRarity.test(card.rarity)?'':'★ '}${esc(card.rarity)}</span>`:''}${isReprintSet(card.setId)?`<span class="sh-chip r">♻ ${t('reprint_short')}</span>`:''}</div>
         ${card.illu?`<div class="sh-illu">${t('illustrator')} : ${esc(card.illu)}</div>`:''}
+        </div></div>
         ${priceHero()}
         ${w?`<div class="sh-wish"><span>♥ ${t('in_wish')}</span><button type="button" class="linkbtn" id="shAlert">🔔 ${w.alert?`<span class="money">${w.alert.dir==='below'?'≤':'≥'} ${fmtEur(w.alert.price)}</span>`:t('al_set')}</button></div>`:''}
         ${cs.length?`<div class="sh-sec">${t('my_copies')} (${nOwn})</div>${cs.map(copyRow).join('')}${tot?`<div class="sh-tot money"><span>${t('copies_value')}</span><b>${fmtEur(tot)}</b></div>`:''}`:''}
@@ -1674,6 +1697,7 @@ async function openSheet(lang,id,opts={}){
     m.querySelector('#mclose').onclick=closeModal;
     const img=m.querySelector('.sh-img');const full=()=>openImageFull(imgTag(card.image,card.setId,card.localId,card.name,'high','fsimg',lang));
     m.querySelector('.sh-zoom').onclick=full;if(img)img.addEventListener('click',full);
+    const th=m.querySelector('.sh-thumb');if(th)th.onclick=full;
     bindPrice();
     const al=m.querySelector('#shAlert');if(al)al.onclick=()=>openAlertSheet(wishE().uid);
   }
