@@ -279,11 +279,13 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-14';
+const APP_VERSION = '2026.11.21-16';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
+const LANG_NAMES={fr:'Français',en:'English',ja:'日本語'};
 const FLAGS = {
   fr:'<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ed2939"/></svg>',
+  ja:'<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".6" fill="#bc002d"/></svg>',
   en:'<svg viewBox="0 0 60 30"><clipPath id="uk"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="uk2"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#uk)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#uk2)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>'
 };
 const CONDITIONS = ['MT','NM','EX','GD','LP','PL','PO'];
@@ -303,7 +305,7 @@ fr:{
  add_title:'Ajouter une carte',search_ph:'Nom (Dracaufeu, Super Bonbon…), extension ou numéro (199/165)',card_lang:'Langue des cartes',
  loading_index:'Chargement de la base de cartes {l}…',index_ready:'{n} cartes {l} disponibles · extensions jusqu’à « {s} »',
  no_results:'Aucune carte trouvée.',type_to_search:'Tape un nom de carte, une extension ou un numéro (ex. 199/165).',show_more:'Afficher plus',results:'{n} résultat(s)',
- lang_fr:'françaises',lang_en:'anglaises',
+ lang_fr:'françaises',lang_en:'anglaises',lang_ja:'japonaises',ja_hint:'Cartes japonaises : tape le nom en français (ex. Dracaufeu), le nom japonais (リザードン), le code de l’extension ou le numéro.',ja_searching:'Recherche des cartes japonaises correspondantes…',ja_note:'Les prix et les images des cartes japonaises sont moins complets que pour les cartes françaises et anglaises.',
  set:'Extension',number:'Numéro',rarity:'Rareté',illustrator:'Illustrateur',category:'Catégorie',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Tendance',low:'Plus bas',avg7:'Moy. 7 j',avg30:'Moy. 30 j',avg1:'Moy. 1 j',market:'Market',
  reverse_holo:'Reverse / Holo',range:'Fourchette de prix estimée',range_note:'Basée sur les moyennes de ventes Cardmarket (1, 7, 30 jours) et la tendance.',
@@ -361,7 +363,7 @@ en:{
  add_title:'Add a card',search_ph:'Name (Charizard, Rare Candy…), set or number (199/165)',card_lang:'Card language',
  loading_index:'Loading {l} card database…',index_ready:'{n} {l} cards available · sets up to “{s}”',
  no_results:'No card found.',type_to_search:'Type a card name, a set or a number (e.g. 199/165).',show_more:'Show more',results:'{n} result(s)',
- lang_fr:'French',lang_en:'English',
+ lang_fr:'French',lang_en:'English',lang_ja:'Japanese',ja_hint:'Japanese cards: type the English name (e.g. Charizard), the Japanese name (リザードン), the set code or the number.',ja_searching:'Looking up matching Japanese cards…',ja_note:'Prices and images for Japanese cards are less complete than for French and English cards.',
  set:'Set',number:'Number',rarity:'Rarity',illustrator:'Illustrator',category:'Category',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Trend',low:'Low',avg7:'7-day avg',avg30:'30-day avg',avg1:'1-day avg',market:'Market',
  reverse_holo:'Reverse / Holo',range:'Estimated price range',range_note:'Based on Cardmarket sales averages (1, 7, 30 days) and trend.',
@@ -651,7 +653,8 @@ function scrydexId(setId,localId){
   const l=/^\d+$/.test(localId)?String(parseInt(localId,10)):localId;
   return s+'-'+l;
 }
-function imgCandidates(base,setId,localId,q){
+function imgCandidates(base,setId,localId,q,lang=''){
+  if(lang==='ja'||(base&&base.includes('/ja/')))return base?[`${base}/${q==='high'?'high.webp':'low.webp'}`]:[];
   const out=[],ext=q==='high'?'high.webp':'low.webp';
   if(base){out.push(`${base}/${ext}`);if(base.includes('/fr/'))out.push(`${base.replace('/fr/','/en/')}/${ext}`)}
   const sid=scrydexId(setId,localId);if(sid)out.push(`https://images.scrydex.com/pokemon/${encodeURIComponent(sid)}/${q==='high'?'large':'medium'}`);
@@ -659,15 +662,15 @@ function imgCandidates(base,setId,localId,q){
 }
 window.pfImgLoad=el=>{const w=el.naturalWidth,h=el.naturalHeight;if(el.src.includes('scrydex')&&((w===367&&h===511)||(w===640&&h===892)||(w===245&&h===341)))pfImgErr(el)};
 window.pfImgErr=el=>{const c=(el.dataset.c||'').split('|').filter(Boolean);if(c.length){el.dataset.c=c.slice(1).join('|');el.src=c[0]}else{const d=document.createElement('div');d.className='noimg';d.textContent=el.alt;el.replaceWith(d)}};
-function imgTag(base,setId,localId,alt,q='low',cls=''){
-  const c=imgCandidates(base,setId,localId,q);
+function imgTag(base,setId,localId,alt,q='low',cls='',lang=''){
+  const c=imgCandidates(base,setId,localId,q,lang);
   if(!c.length)return `<div class="noimg">${esc(alt)}</div>`;
   return `<img ${cls?`class="${cls}"`:''} loading="lazy" src="${esc(c[0])}" data-c="${esc(c.slice(1).join('|'))}" alt="${esc(alt)}" onload="pfImgLoad(this)" onerror="pfImgErr(this)">`;
 }
 const gradeStr=e=>e?.grade?.co?`${e.grade.co} ${e.grade.g}`:'';
-function ebayUrl(name,num,setName,grade){
+function ebayUrl(name,num,setName,grade,lang,setId){
   const host=settings.lang==='fr'?'www.ebay.fr':'www.ebay.com';
-  const q=[name,num,grade||setName].filter(Boolean).join(' ');
+  const q=lang==='ja'?['pokemon japanese',setId,num,grade].filter(Boolean).join(' '):[name,num,grade||setName].filter(Boolean).join(' ');
   return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(q)}&_sacat=183454`;
 }
 function cmUrl(name,setName){
@@ -886,7 +889,7 @@ function viewCollection(m){
   <div class="toolbar">
     <input type="text" class="grow" id="cq" placeholder="${t('filter_collection')}" value="${esc(cfilter.q)}">
     <select id="cset" style="width:auto;max-width:240px"><option value="">${t('all_sets')}</option>${sets.sort((a,b)=>a.n.localeCompare(b.n)).map(s=>`<option value="${esc(s.k)}" ${cfilter.set===s.k?'selected':''}>${esc(s.n)}</option>`).join('')}</select>
-    <select id="clang" style="width:auto"><option value="">${t('all_langs')}</option><option value="fr" ${cfilter.lang==='fr'?'selected':''}>Français</option><option value="en" ${cfilter.lang==='en'?'selected':''}>English</option></select>
+    <select id="clang" style="width:auto"><option value="">${t('all_langs')}</option><option value="fr" ${cfilter.lang==='fr'?'selected':''}>Français</option><option value="en" ${cfilter.lang==='en'?'selected':''}>English</option><option value="ja" ${cfilter.lang==='ja'?'selected':''}>日本語</option></select>
     <select id="csort" style="width:auto">${['value','gain','added','name','set'].map(s=>`<option value="${s}" ${settings.sort===s?'selected':''}>${t('sort_'+s)}</option>`).join('')}</select>
   </div>
   <div class="grid" id="cgrid"></div>`:`<div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`}
@@ -918,7 +921,7 @@ function entryTile(e,opts={}){
   const v=entryValue(e);const ch=e.buy>0&&v!=null?(v-e.buy)/e.buy*100:null;
   return `<div class="tile ${opts.remove?'has-x':''}" data-uid="${e.uid}">
     ${(()=>{const n=copiesOf(e);return n>1?`<span class="badge" title="${esc(t('copies',{n}))}">${n}</span>`:''})()}<span class="lbadge">${FLAGS[e.lang]}</span>${opts.remove?`<button class="wbtn xbtn" data-x="${e.uid}" aria-label="${esc(t('wish_remove'))}" title="${esc(t('wish_remove'))}">${XICON}</button>`:''}
-    <div class="img">${imgTag(e.image,e.setId,e.localId,e.name)}${e.grade?.co?`<span class="gbadge">${esc(gradeStr(e))}</span>`:''}</div>
+    <div class="img">${imgTag(e.image,e.setId,e.localId,e.name,'low','',e.lang)}${e.grade?.co?`<span class="gbadge">${esc(gradeStr(e))}</span>`:''}</div>
     <div class="nm" title="${esc(e.name)}">${e.alert?`<span title="${t('alert')}">🔔 </span>`:''}${esc(e.name)}</div>
     <div class="meta">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}${e.variant&&e.variant!=='normal'?' · '+t('v_'+e.variant):''}</div>
     <div class="row"><span class="price">${v!=null?fmtEur(v):'<span class="muted small">'+t('price_unavailable')+'</span>'}</span><span class="small ${ch>=0?'pos':'neg'}">${ch!=null?fmtPct(ch):''}</span></div>
@@ -929,7 +932,7 @@ function dashboardPanels(owned){
   const bySet={};for(const e of owned){const k=e.setName;bySet[k]=(bySet[k]||0)+(entryValue(e)||0)*e.qty}
   const sets=Object.entries(bySet).sort((a,b)=>b[1]-a[1]).slice(0,6);const max=sets[0]?.[1]||1;
   const movers=owned.map(e=>({e,c:change7(e)})).filter(x=>x.c!=null&&Math.abs(x.c)>=0.5).sort((a,b)=>Math.abs(b.c)-Math.abs(a.c)).slice(0,5);
-  const li=(e,right)=>`<div class="li" data-open="${e.uid}"><span style="width:38px;flex:none">${imgTag(e.image,e.setId,e.localId,'')}</span><div class="grow"><div><b>${esc(e.name)}</b></div><div class="muted small">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}</div></div>${right}</div>`;
+  const li=(e,right)=>`<div class="li" data-open="${e.uid}"><span style="width:38px;flex:none">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><div class="grow"><div><b>${esc(e.name)}</b></div><div class="muted small">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}</div></div>${right}</div>`;
   const fold=(k,title,preview,body)=>`<details class="panel fold" data-k="${k}" ${settings.fold?.[k]?'open':''}><summary><b>${title}</b><span class="pv">${preview}</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="fbody">${body}</div></details>`;
   const topPv=top[0]?`${esc(top[0].name)} · ${fmtEur(entryValue(top[0]))}`:'';
   const sidePv=movers.length?`${esc(movers[0].e.name)} ${fmtPct(movers[0].c)}`:(sets[0]?`${esc(sets[0][0])} · ${fmtEur(sets[0][1])}`:'');
@@ -948,7 +951,7 @@ function viewAdd(m){
   <h1>${t('add_title')}</h1>
   <div class="toolbar">
     <span class="muted small">${t('card_lang')}</span>
-    <div class="seg" id="langSeg">${['fr','en'].map(l=>`<button data-l="${l}" class="${l===lang?'on':''}">${FLAGS[l]} ${l==='fr'?'Français':'English'}</button>`).join('')}</div>
+    <div class="seg" id="langSeg">${['fr','en','ja'].map(l=>`<button data-l="${l}" class="${l===lang?'on':''}">${FLAGS[l]} ${LANG_NAMES[l]}</button>`).join('')}</div>
     <span class="muted small" id="idxInfo"></span>
   </div>
   <div class="toolbar">
@@ -960,6 +963,7 @@ function viewAdd(m){
     <select id="ssort" aria-label="${t('sort_label')}">${['relevance','num_desc','num_asc','newest','oldest'].map(k=>`<option value="${k}" ${(settings.searchSort||'relevance')===k?'selected':''}>${t('ss_'+k)}</option>`).join('')}</select>
     <button type="button" class="chip ${settings.secretOnly?'on':''}" id="secretOnly" aria-pressed="${!!settings.secretOnly}" title="${esc(t('secret_hint'))}">★ ${t('secret_only')}</button>
   </div>
+  ${lang==='ja'?`<p class="muted small" style="margin:-4px 0 12px">${t('ja_hint')} ${t('ja_note')}</p>`:''}
   <div id="sres"></div>`;
   m.querySelectorAll('#langSeg button').forEach(b=>b.onclick=()=>{settings.cardLang=b.dataset.l;saveSettings();search.set='';search.page=1;render()});
   const info=m.querySelector('#idxInfo'),res=m.querySelector('#sres'),sq=m.querySelector('#sq'),sset=m.querySelector('#sset');
@@ -992,7 +996,7 @@ let ocrWorker=null,ocrLang=null;
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script'));document.head.appendChild(s)})}
 async function getOcr(lang){
   if(!window.Tesseract)await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
-  const l=lang==='fr'?'fra':'eng';
+  const l=lang==='fr'?'fra':lang==='ja'?'jpn':'eng';
   if(ocrWorker&&ocrLang===l)return ocrWorker;
   if(ocrWorker){try{await ocrWorker.terminate()}catch(_){}}
   ocrWorker=await Tesseract.createWorker(l);ocrLang=l;return ocrWorker;
@@ -1061,6 +1065,42 @@ function runSearch(data,res,lang){
   const raw=search.q.trim();
   if(!raw&&!search.set){res.innerHTML=`<div class="empty">${t('type_to_search')}</div>`;return}
   let out=findCards(data,raw,search.set);
+  if(lang==='ja'&&/[a-z]/i.test(raw)){
+    const req=++jaReq;
+    if(!out.length)res.innerHTML=`<div class="empty"><span class="spin"></span> ${t('ja_searching')}</div>`;
+    jaByLatinName(raw).then(ids=>{
+      if(req!==jaReq||view!=='add'||settings.cardLang!=='ja')return;
+      if(ids&&ids.size){
+        const rest=norm(raw).split(' ').filter(w=>/\d/.test(w)).join(' ');
+        const extra=findCards(data,rest,search.set).filter(o=>ids.has(o.c.id));
+        const seen=new Set(out.map(o=>o.c.id));extra.forEach(o=>{if(!seen.has(o.c.id))out.push(o)});
+      }
+      renderResults(finishResults(out),data,res,lang);
+    });
+    if(!out.length)return;
+  }
+  renderResults(finishResults(out),data,res,lang);
+}
+let jaReq=0;const dexCache={};
+async function jaByLatinName(q){
+  const key=norm(q);if(key in dexCache)return dexCache[key];
+  const srcLang=settings.lang==='en'?'en':'fr';let ids=null;
+  try{
+    const src=await loadIndex(srcLang);
+    const phrase=norm(q).split(' ').filter(w=>!/\d/.test(w)).join(' ');
+    let cand=src.cards.filter(c=>(c.k||(c.k=norm(c.n)))===phrase);
+    if(!cand.length)cand=src.cards.filter(c=>c.k.startsWith(phrase));
+    for(const c of cand.slice(0,3)){
+      const d=await getDetail(srcLang,c.id).catch(()=>null);
+      const dex=d?.dexId?.[0];if(!dex)continue;
+      let r=await getJSON(`${API}/ja/cards?dexId=${dex}`).catch(()=>[]);
+      if(!Array.isArray(r)||!r.length)r=await getJSON(`${API}/ja/cards?dexId=eq:${dex}`).catch(()=>[]);
+      if(Array.isArray(r)&&r.length){ids=new Set(r.map(x=>x.id));break}
+    }
+  }catch(_){}
+  dexCache[key]=ids;return ids;
+}
+function finishResults(out){
   if(settings.secretOnly)out=out.filter(o=>isSecret(o.c,o.st));
   const mode=settings.searchSort||'relevance';
   if(mode!=='relevance'){
@@ -1070,12 +1110,14 @@ function runSearch(data,res,lang){
       :mode==='newest'?(a,b)=>so(b)-so(a)||numKey(a.c.l)-numKey(b.c.l)
       :(a,b)=>so(a)-so(b)||numKey(a.c.l)-numKey(b.c.l));
   }
-  renderResults(out,data,res,lang);
+  return out;
 }
 // card number as a sortable value: plain numbers first, then lettered specials (TG05, GG10, SV049…) after the main numbering
 const numKey=l=>{const s=String(l||'');if(/^\d+$/.test(s))return parseInt(s,10);const n=parseInt(s.replace(/\D/g,''),10)||0;return 10000+n};
 // "secret" = beyond the set's official count (illustration rares, special illustration rares, gold…) or a lettered gallery/special number
-const isSecret=(c,st)=>{const s=String(c.l||'');if(/^\d+$/.test(s))return !!st?.off&&parseInt(s,10)>st.off;return /^(TG|GG|SV|RC|SH)\d/i.test(s)};
+// promo sets (svp, swshp, smp, mep…) use lettered numbers for ordinary promos: never "secret"
+const isPromoSet=id=>/^[a-z0-9.]*p$/i.test(id||'');
+const isSecret=(c,st)=>{const s=String(c.l||'');if(/^\d+$/.test(s))return !!st?.off&&parseInt(s,10)>st.off;return !isPromoSet(c.s)};
 const isReprintSet=s=>s==='30th-c'||/^cel25c/.test(s||'');
 function findCards(data,raw,setFilter){
   const tokens=norm(raw).split(' ').filter(Boolean);
@@ -1116,7 +1158,7 @@ function renderResults(out,data,res,lang){
     <div class="tile" data-id="${esc(c.id)}">
       ${(()=>{const n=ownedCount(c.id,lang);return n?`<span class="badge" title="${esc(t('owned_n',{n}))}">${n}</span>`:''})()}
       <button class="wbtn ${inWishlist(c.id,lang)?'on':''}" data-wish="${esc(c.id)}" aria-label="${esc(t('quick_wish'))}" title="${esc(t('quick_wish'))}">${HEART}</button>
-      <div class="img">${imgTag(c.i,c.s,c.l,c.n)}</div>
+      <div class="img">${imgTag(c.i,c.s,c.l,c.n,'low','',lang)}</div>
       <div class="nm" title="${esc(c.n)}">${esc(c.n)}</div>
       <div class="meta">${esc(st?.n||c.s)} · ${esc(numLabel(c.l,st?.off))}</div>
       ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:isSecret(c,st)?`<div class="meta" style="color:var(--accent)" title="${esc(t('secret_hint'))}">★ ${t('secret')}</div>`:''}
@@ -1187,7 +1229,7 @@ async function openCard(lang,id){
   const num=numLabel(d.localId,off);
   m.innerHTML=`<button class="iconbtn mclose" id="mclose">✕</button>
   <div class="mbody">
-    <div>${imgTag(d.image,d.set?.id,d.localId,d.name,'high','cimg')}</div>
+    <div>${imgTag(d.image,d.set?.id,d.localId,d.name,'high','cimg',lang)}</div>
     <div>
       <h1 style="margin:0 40px 4px 0">${esc(d.name)} <span class="lbadge" style="position:static;display:inline-block;vertical-align:middle">${FLAGS[lang]}</span></h1>
       <div class="kv">
@@ -1198,7 +1240,7 @@ async function openCard(lang,id){
       </div>
       <div id="pblock">${pricesBlock(d,variants[0])}</div>
       <div class="links">
-        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(d.name,num,d.set?.name))}">🔎 ${t('ebay_sold')}</a>
+        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(d.name,num,d.set?.name,'',lang,d.set?.id))}">🔎 ${t('ebay_sold')}</a>
         <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(d.name,d.set?.name))}">🛒 ${t('cm_search')}</a>
       </div>
       <form class="form" id="addForm">
@@ -1241,7 +1283,7 @@ function openEntry(id){
   const v=entryValue(e);const ch=e.buy>0&&v!=null?(v-e.buy)/e.buy*100:null;
   const num=numLabel(e.localId,e.official);
   const m=openModal(`<div class="mbody">
-    <div style="position:relative">${imgTag(e.image,e.setId,e.localId,e.name,'high','cimg')}</div>
+    <div style="position:relative">${imgTag(e.image,e.setId,e.localId,e.name,'high','cimg',e.lang)}</div>
     <div>
       <h1 style="margin:0 40px 4px 0">${esc(e.name)} <span class="lbadge" style="position:static;display:inline-block;vertical-align:middle">${FLAGS[e.lang]}</span></h1>
       <div class="kv"><span>${t('set')}</span><span>${esc(e.setName)}</span><span>${t('number')}</span><span>${esc(num)}</span>${e.rarity?`<span>${t('rarity')}</span><span>${esc(e.rarity)}</span>`:''}${e.grade?.co?`<span>${t('grade')}</span><span><b>${esc(gradeStr(e))}</b>${e.grade.cert?` · #${esc(e.grade.cert)}`:''}</span>`:''}${e.alert?`<span>${t('alert')}</span><span>🔔 ${e.alert.dir==='below'?'≤':'≥'} ${fmtEur(e.alert.price)}</span>`:''}</div>
@@ -1254,7 +1296,7 @@ function openEntry(id){
       </div>
       <div id="livePrices"><span class="spin"></span></div>
       <div class="links">
-        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(e.name,num,e.setName,gradeStr(e)))}">🔎 ${t('ebay_sold')}</a>
+        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(e.name,num,e.setName,gradeStr(e),e.lang,e.setId))}">🔎 ${t('ebay_sold')}</a>
         <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(e.name,e.setName))}">🛒 ${t('cm_search')}</a>
       </div>
       <b class="small">${t('history')}</b>
