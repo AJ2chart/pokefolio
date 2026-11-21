@@ -274,6 +274,38 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .ev-wl{display:flex;align-items:center;gap:12px;margin-top:22px;padding:14px;border-radius:14px;text-decoration:none;color:var(--text);background:color-mix(in srgb,var(--accent) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
 .ev-wl-ic svg{width:22px;height:22px;display:block}
 .ev-wl div{flex:1;min-width:0}.ev-wl div b{display:block;font-size:15px}.ev-wl div span{font-size:12.5px;color:var(--muted)}.ev-wl em{font-style:normal;color:var(--accent);font-weight:800;font-size:18px}
+.s-wrap{max-width:720px}
+.s-acc{display:block;width:100%;border-radius:18px;padding:16px;background:linear-gradient(135deg,#1d2d55,#14213D);border:1px solid #2a3b66;color:#fff;text-align:left;font:inherit}
+button.s-acc{display:flex;align-items:center;gap:12px;cursor:pointer}
+.s-acc-top{display:flex;gap:12px;align-items:center}
+.s-av{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;flex:none;color:#cfd5e2;font-weight:800;font-size:19px}
+.s-av svg{width:24px;height:24px}.s-av.on{background:var(--accent);color:#1a1d24}
+.s-acc-t{flex:1;min-width:0;display:flex;flex-direction:column}.s-acc-t b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.s-acc-t span{font-size:13px;color:#aab3c9;margin-top:2px}
+.s-acc-btn{width:100%;margin-top:14px;justify-content:center}
+.s-acc-link{display:block;margin:10px auto 0;color:#cfd5e2;font-size:13.5px}
+.s-gl{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin:24px 4px 8px}
+.s-grp{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.s-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.s-grp>.s-row:first-child{border-top:0}
+button.s-row:hover,label.s-row:hover{background:color-mix(in srgb,var(--card2) 60%,transparent)}
+.s-ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none}.s-ic svg{width:18px;height:18px}
+.s-blue{background:rgba(94,200,255,.15);color:#5ec8ff}.s-violet{background:rgba(139,123,255,.17);color:#a597ff}.s-gold{background:rgba(255,203,5,.15);color:var(--accent)}.s-green{background:rgba(62,207,142,.15);color:var(--ok)}.s-grey{background:rgba(139,147,167,.16);color:var(--muted)}
+.s-t{flex:1;min-width:0;display:flex;flex-direction:column}.s-t>span{font-size:15px}.s-t small{font-size:12px;color:var(--muted);margin-top:1px}
+.s-val{color:var(--muted);font-size:14px;white-space:nowrap}.s-chev{color:var(--muted);font-size:20px;line-height:1;margin-left:2px}
+.s-sw{width:46px;height:28px;border-radius:999px;background:var(--card2);border:1px solid var(--line);position:relative;flex:none;transition:background .2s}
+.s-sw::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#8b93a7;transition:left .2s,background .2s}
+.s-sw.on{background:var(--accent);border-color:transparent}.s-sw.on::after{left:20px;background:#1a1d24}
+.s-mseg{display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:2px}
+.s-mseg button{border:0;background:none;padding:6px 11px;border-radius:8px;font:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.s-mseg button.on{background:var(--card2);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+.s-note{font-size:12.5px;color:var(--muted);margin:8px 6px 0;line-height:1.45}
+.s-about{margin:28px 0 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.s-logo svg{width:52px;height:52px;border-radius:13px;margin-bottom:6px}
+.s-about>span{font-size:12.5px;color:var(--muted);max-width:460px}.s-ab-n svg{width:15px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:2px}
+.s-about p{font-size:11px;color:var(--muted);opacity:.8;margin:10px 10px 0;line-height:1.45;max-width:520px}
+.ch-list{display:flex;flex-direction:column}
+.ch-opt{display:flex;justify-content:space-between;align-items:center;padding:13px 4px;border:0;border-top:1px solid var(--line);background:none;color:var(--text);font:inherit;font-size:15px;cursor:pointer;text-align:left}
+.ch-opt:first-child{border-top:0}.ch-opt.on{color:var(--accent);font-weight:600}
 .nr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .nr-acts .btn{white-space:nowrap;gap:6px}.nr-acts svg{width:17px;height:12px;border-radius:2px;flex:none}
 .cf-toggle.on{border-color:var(--accent);color:var(--accent)}
@@ -536,7 +568,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-54';
+const APP_VERSION = '2026.11.21-55';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -570,7 +602,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',deal_rule:'baisse ≥ {p} %',deal_cfg:'Bonnes affaires',deal_cfg_d:'Une carte de ta wishlist devient une bonne affaire quand son prix baisse de ce pourcentage depuis son ajout.',deal_cfg_n:'Une carte qui passe sous ton seuil d’alerte 🔔 est toujours une bonne affaire.',deal_saved:'Bonnes affaires : baisse de {p} % ou plus',ev_value:'Valeur de ma collection',n_cards:'{n} cartes',ev_no_period:'Pas assez d’historique sur cette période.',p_7:'7 j',p_30:'30 j',p_365:'1 an',p_all:'Tout',pl_7:'7 jours',pl_30:'30 jours',pl_365:'1 an',pl_all:'toute la période',ev_over:'Sur {p} :',ev_best:'Mes plus belles cartes',see_all:'Tout voir',see_less:'Voir moins',ev_moves:'Mouvements',ev_7d:'7 jours',ev_vs_buy:'vs prix d’achat',ev_up:'Hausses',ev_down:'Baisses',ev_gains:'Plus-values',ev_no_gain:'Ajoute un prix d’achat à tes cartes pour voir tes plus-values.',ev_see_n:'Voir les {n}',ev_rep:'Répartition',ev_lang:'Langue',rar_none:'Sans rareté',others:'Autres ({n})',ev_deals:'{n} en bonne affaire',deals_title:'Bonnes affaires ({n})',deal_hit:'sous ton seuil',prio:'Priorité',prio_on:'« {n} » marquée prioritaire',prio_off:'« {n} » n’est plus prioritaire',since_added:'Évolution depuis l’ajout à la wishlist (vert = baisse de prix)',tour_hi:'Bienvenue sur Gleamvault',tour_hi_d:'Ta collection Pokémon TCG dans ta poche : retrouve tes cartes, suis leur valeur et ne rate aucune bonne affaire. Petit tour en 1 minute ?',tour_go:'C’est parti',tour_skip:'Passer',tour_next:'Suivant',tour_try:'Essayer',tour_coll:'<b>Collection</b> : toutes tes cartes, avec leur valeur. Touche une carte pour voir sa fiche et tes exemplaires.',tour_add:'<b>Ajouter</b> : cherche une carte par son nom, son extension ou son numéro, ou scanne-la avec l’appareil photo.',tour_wish:'<b>Wishlist</b> : les cartes que tu cherches, avec leur budget et des alertes de prix 🔔.',tour_value:'<b>Valeur</b> : l’évolution de ta collection, tes cartes les plus précieuses et les plus grosses variations.',tour_set:'<b>Réglages</b> : ton compte pour synchroniser tes appareils, le thème, la langue et le Mode Safe.',tour_trial:'À toi de jouer',tour_search:'Prends une carte que tu as sous la main et tape son nom (ou son numéro, ex. 199/165) dans la barre de recherche.',tour_addit:'Trouve ta carte et touche le bouton <b>＋</b> pour l’ajouter. Tu peux aussi toucher la carte pour choisir la version et l’état.',tour_bravo:'Bravo !',tour_bravo_d:'Ta première carte est dans ta collection. Crée un compte gratuit pour la sauvegarder et la retrouver sur ton téléphone et ton PC.',tour_bravo_u:'Ta première carte est dans ta collection, et elle est déjà synchronisée avec ton compte.',tour_acc:'Créer un compte gratuit',tour_local:'Continuer sans compte',tour_local_d:'Sans compte, ta collection reste sur cet appareil. Tu pourras créer un compte plus tard dans Réglages, sans rien perdre.',tour_end:'Voir ma collection',tour_again:'Présentation de l’app',tour_again_d:'Revoir la visite guidée et l’essai d’ajout d’une carte.',tour_again_btn:'Revoir',al_active:'Alerte active',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',pill_short:'Taille des pastilles',pill_d:'Pastilles et boutons posés sur les cartes.',guest:'Mode invité',guest_d:'Ta collection est enregistrée sur cet appareil uniquement.',have_account:'J’ai déjà un compte',safe_short:'Masque tous les prix',sec_wishalerts:'Wishlist et alertes',deal_short:'Baisse depuis l’ajout à la wishlist',notif_short:'Quand une alerte de prix se déclenche (app ouverte)',notif_blocked:'Notifications bloquées : autorise-les dans les réglages du navigateur.',sec_mydata:'Mes données',exp_json_d2:'Fichier avec toute ta collection ({n} cartes)',imp_d2:'Remplace la collection actuelle',data_note2:'Sans compte, pense à exporter une sauvegarde de temps en temps, et avant de changer de téléphone.',sec_help:'Aide',tour_again_t:'Revoir la présentation',ab_line:'Cartes TCGdex · Prix Cardmarket & TCGplayer · Images TCGdex & Scrydex · Scan Tesseract.js',deal_rule:'baisse ≥ {p} %',deal_cfg:'Bonnes affaires',deal_cfg_d:'Une carte de ta wishlist devient une bonne affaire quand son prix baisse de ce pourcentage depuis son ajout.',deal_cfg_n:'Une carte qui passe sous ton seuil d’alerte 🔔 est toujours une bonne affaire.',deal_saved:'Bonnes affaires : baisse de {p} % ou plus',ev_value:'Valeur de ma collection',n_cards:'{n} cartes',ev_no_period:'Pas assez d’historique sur cette période.',p_7:'7 j',p_30:'30 j',p_365:'1 an',p_all:'Tout',pl_7:'7 jours',pl_30:'30 jours',pl_365:'1 an',pl_all:'toute la période',ev_over:'Sur {p} :',ev_best:'Mes plus belles cartes',see_all:'Tout voir',see_less:'Voir moins',ev_moves:'Mouvements',ev_7d:'7 jours',ev_vs_buy:'vs prix d’achat',ev_up:'Hausses',ev_down:'Baisses',ev_gains:'Plus-values',ev_no_gain:'Ajoute un prix d’achat à tes cartes pour voir tes plus-values.',ev_see_n:'Voir les {n}',ev_rep:'Répartition',ev_lang:'Langue',rar_none:'Sans rareté',others:'Autres ({n})',ev_deals:'{n} en bonne affaire',deals_title:'Bonnes affaires ({n})',deal_hit:'sous ton seuil',prio:'Priorité',prio_on:'« {n} » marquée prioritaire',prio_off:'« {n} » n’est plus prioritaire',since_added:'Évolution depuis l’ajout à la wishlist (vert = baisse de prix)',tour_hi:'Bienvenue sur Gleamvault',tour_hi_d:'Ta collection Pokémon TCG dans ta poche : retrouve tes cartes, suis leur valeur et ne rate aucune bonne affaire. Petit tour en 1 minute ?',tour_go:'C’est parti',tour_skip:'Passer',tour_next:'Suivant',tour_try:'Essayer',tour_coll:'<b>Collection</b> : toutes tes cartes, avec leur valeur. Touche une carte pour voir sa fiche et tes exemplaires.',tour_add:'<b>Ajouter</b> : cherche une carte par son nom, son extension ou son numéro, ou scanne-la avec l’appareil photo.',tour_wish:'<b>Wishlist</b> : les cartes que tu cherches, avec leur budget et des alertes de prix 🔔.',tour_value:'<b>Valeur</b> : l’évolution de ta collection, tes cartes les plus précieuses et les plus grosses variations.',tour_set:'<b>Réglages</b> : ton compte pour synchroniser tes appareils, le thème, la langue et le Mode Safe.',tour_trial:'À toi de jouer',tour_search:'Prends une carte que tu as sous la main et tape son nom (ou son numéro, ex. 199/165) dans la barre de recherche.',tour_addit:'Trouve ta carte et touche le bouton <b>＋</b> pour l’ajouter. Tu peux aussi toucher la carte pour choisir la version et l’état.',tour_bravo:'Bravo !',tour_bravo_d:'Ta première carte est dans ta collection. Crée un compte gratuit pour la sauvegarder et la retrouver sur ton téléphone et ton PC.',tour_bravo_u:'Ta première carte est dans ta collection, et elle est déjà synchronisée avec ton compte.',tour_acc:'Créer un compte gratuit',tour_local:'Continuer sans compte',tour_local_d:'Sans compte, ta collection reste sur cet appareil. Tu pourras créer un compte plus tard dans Réglages, sans rien perdre.',tour_end:'Voir ma collection',tour_again:'Présentation de l’app',tour_again_d:'Revoir la visite guidée et l’essai d’ajout d’une carte.',tour_again_btn:'Revoir',al_active:'Alerte active',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -628,7 +660,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',deal_rule:'drop ≥ {p} %',deal_cfg:'Good deals',deal_cfg_d:'A wishlist card becomes a good deal when its price drops by this much since you added it.',deal_cfg_n:'A card below your 🔔 alert target is always a good deal.',deal_saved:'Good deals: drop of {p} % or more',ev_value:'My collection value',n_cards:'{n} cards',ev_no_period:'Not enough history for this period.',p_7:'7 d',p_30:'30 d',p_365:'1 y',p_all:'All',pl_7:'7 days',pl_30:'30 days',pl_365:'1 year',pl_all:'the whole period',ev_over:'Over {p}:',ev_best:'My best cards',see_all:'See all',see_less:'See less',ev_moves:'Movements',ev_7d:'7 days',ev_vs_buy:'vs purchase price',ev_up:'Gainers',ev_down:'Losers',ev_gains:'Profits',ev_no_gain:'Add a purchase price to your cards to see your profits.',ev_see_n:'See all {n}',ev_rep:'Breakdown',ev_lang:'Language',rar_none:'No rarity',others:'Others ({n})',ev_deals:'{n} good deal(s)',deals_title:'Good deals ({n})',deal_hit:'below your target',prio:'Priority',prio_on:'“{n}” marked as priority',prio_off:'“{n}” is no longer a priority',since_added:'Change since added to the wishlist (green = price drop)',tour_hi:'Welcome to Gleamvault',tour_hi_d:'Your Pokémon TCG collection in your pocket: find your cards, track their value and never miss a deal. Quick 1-minute tour?',tour_go:'Let’s go',tour_skip:'Skip',tour_next:'Next',tour_try:'Try it',tour_coll:'<b>Collection</b>: all your cards with their value. Tap a card to see its sheet and your copies.',tour_add:'<b>Add</b>: search a card by name, set or number, or scan it with the camera.',tour_wish:'<b>Wishlist</b>: the cards you’re after, with their budget and price alerts 🔔.',tour_value:'<b>Value</b>: how your collection evolves, your most valuable cards and the biggest moves.',tour_set:'<b>Settings</b>: your account to sync your devices, theme, language and Safe mode.',tour_trial:'Your turn',tour_search:'Grab a card you have at hand and type its name (or number, e.g. 199/165) in the search bar.',tour_addit:'Find your card and tap <b>＋</b> to add it. You can also tap the card to pick the version and condition.',tour_bravo:'Well done!',tour_bravo_d:'Your first card is in your collection. Create a free account to back it up and get it on your phone and computer.',tour_bravo_u:'Your first card is in your collection and already synced with your account.',tour_acc:'Create a free account',tour_local:'Continue without an account',tour_local_d:'Without an account, your collection stays on this device. You can create one later in Settings without losing anything.',tour_end:'See my collection',tour_again:'App tour',tour_again_d:'Replay the guided tour and the add-a-card trial.',tour_again_btn:'Replay',al_active:'Alert on',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',pill_short:'Badge size',pill_d:'Badges and buttons on the cards.',guest:'Guest mode',guest_d:'Your collection is saved on this device only.',have_account:'I already have an account',safe_short:'Hides every price',sec_wishalerts:'Wishlist & alerts',deal_short:'Drop since added to the wishlist',notif_short:'When a price alert fires (app open)',notif_blocked:'Notifications are blocked: allow them in your browser settings.',sec_mydata:'My data',exp_json_d2:'File with your whole collection ({n} cards)',imp_d2:'Replaces the current collection',data_note2:'Without an account, export a backup now and then, and before changing phone.',sec_help:'Help',tour_again_t:'Replay the tour',ab_line:'Cards TCGdex · Prices Cardmarket & TCGplayer · Images TCGdex & Scrydex · Scan Tesseract.js',deal_rule:'drop ≥ {p} %',deal_cfg:'Good deals',deal_cfg_d:'A wishlist card becomes a good deal when its price drops by this much since you added it.',deal_cfg_n:'A card below your 🔔 alert target is always a good deal.',deal_saved:'Good deals: drop of {p} % or more',ev_value:'My collection value',n_cards:'{n} cards',ev_no_period:'Not enough history for this period.',p_7:'7 d',p_30:'30 d',p_365:'1 y',p_all:'All',pl_7:'7 days',pl_30:'30 days',pl_365:'1 year',pl_all:'the whole period',ev_over:'Over {p}:',ev_best:'My best cards',see_all:'See all',see_less:'See less',ev_moves:'Movements',ev_7d:'7 days',ev_vs_buy:'vs purchase price',ev_up:'Gainers',ev_down:'Losers',ev_gains:'Profits',ev_no_gain:'Add a purchase price to your cards to see your profits.',ev_see_n:'See all {n}',ev_rep:'Breakdown',ev_lang:'Language',rar_none:'No rarity',others:'Others ({n})',ev_deals:'{n} good deal(s)',deals_title:'Good deals ({n})',deal_hit:'below your target',prio:'Priority',prio_on:'“{n}” marked as priority',prio_off:'“{n}” is no longer a priority',since_added:'Change since added to the wishlist (green = price drop)',tour_hi:'Welcome to Gleamvault',tour_hi_d:'Your Pokémon TCG collection in your pocket: find your cards, track their value and never miss a deal. Quick 1-minute tour?',tour_go:'Let’s go',tour_skip:'Skip',tour_next:'Next',tour_try:'Try it',tour_coll:'<b>Collection</b>: all your cards with their value. Tap a card to see its sheet and your copies.',tour_add:'<b>Add</b>: search a card by name, set or number, or scan it with the camera.',tour_wish:'<b>Wishlist</b>: the cards you’re after, with their budget and price alerts 🔔.',tour_value:'<b>Value</b>: how your collection evolves, your most valuable cards and the biggest moves.',tour_set:'<b>Settings</b>: your account to sync your devices, theme, language and Safe mode.',tour_trial:'Your turn',tour_search:'Grab a card you have at hand and type its name (or number, e.g. 199/165) in the search bar.',tour_addit:'Find your card and tap <b>＋</b> to add it. You can also tap the card to pick the version and condition.',tour_bravo:'Well done!',tour_bravo_d:'Your first card is in your collection. Create a free account to back it up and get it on your phone and computer.',tour_bravo_u:'Your first card is in your collection and already synced with your account.',tour_acc:'Create a free account',tour_local:'Continue without an account',tour_local_d:'Without an account, your collection stays on this device. You can create one later in Settings without losing anything.',tour_end:'See my collection',tour_again:'App tour',tour_again_d:'Replay the guided tour and the add-a-card trial.',tour_again_btn:'Replay',al_active:'Alert on',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -809,7 +841,7 @@ function checkAlerts(notify){
   LS.set('pf_collection',collection);
   if(hits.length&&notify){
     toast('🔔 '+t('alert_toast',{n:hits.length}));
-    try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}
+    try{if('Notification' in window&&Notification.permission==='granted'&&settings.notif!==false)hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}
   }
   return hits;
 }
@@ -885,7 +917,7 @@ async function refreshPrices(silent){
   settings.lastRefresh=Date.now();saveSettings();saveCollection();
   refreshing=false;
   const hits=checkAlerts(false);
-  if(hits.length){toast('🔔 '+t('alert_toast',{n:hits.length}));try{if('Notification' in window&&Notification.permission==='granted')hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}}
+  if(hits.length){toast('🔔 '+t('alert_toast',{n:hits.length}));try{if('Notification' in window&&Notification.permission==='granted'&&settings.notif!==false)hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}}
   else if(!silent||failed)toast(failed?t('err_net'):t('saved'));
   render();
 }
@@ -1989,56 +2021,97 @@ function download(name,content,type){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
 }
+// small bottom sheet with a list of choices (Settings rows with ›)
+function openChoice(title,desc,opts,cur,onPick){
+  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 4px 0">${title}</h2>${desc?`<p class="muted small" style="margin:0 0 8px">${desc}</p>`:''}
+    <div class="ch-list">${opts.map(([v,l])=>`<button type="button" class="ch-opt ${String(v)===String(cur)?'on':''}" data-v="${esc(String(v))}"><span>${l}</span>${String(v)===String(cur)?'<b>✓</b>':''}</button>`).join('')}</div></div>`,'sm');
+  m.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{closeModal();onPick(b.dataset.v)});
+}
+const SICON={
+  lang:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3C9.5 5.6 8.2 8.6 8.2 12s1.3 6.4 3.8 9"/>',
+  theme:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
+  pill:'<circle cx="12" cy="12" r="8"/><path d="M10 9.5c.6-1 3.5-1.2 3.5.8 0 1.6-2.6 1.4-2.6 1.4s2.9-.1 2.9 1.9c0 2-3.2 1.9-3.9.7"/>',
+  safe:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  deal:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+  notif:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  exp:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
+  imp:'<path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
+  csv:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16"/>',
+  tour:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+  reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>'
+};
 function viewData(m){
-  const ic={
-    account:'<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
-    display:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
-    backup:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
-    alerts:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
-    advanced:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>'
-  };
-  const sec=(k,title,body)=>`<section class="spanel"><h2 class="shead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ic[k]}</svg>${title}</h2>${body}</section>`;
-  const row=(title,desc,ctl)=>`<div class="srow"><div class="sinfo"><div class="stitle">${title}</div>${desc?`<div class="sdesc">${desc}</div>`:''}</div><div class="sctl">${ctl}</div></div>`;
-  const seg=(name,cur,opts)=>`<div class="seg">${opts.map(([v,l])=>`<button type="button" data-${name}="${v}" class="${cur===v?'on':''}">${l}</button>`).join('')}</div>`;
+  const ico=(k,c)=>`<span class="s-ic s-${c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${SICON[k]}</svg></span>`;
+  const line=(k,c,title,desc,right,id,tag='button')=>`<${tag} ${tag==='button'?'type="button"':''} class="s-row" ${id?`id="${id}"`:''}>${ico(k,c)}<span class="s-t"><span>${title}</span>${desc?`<small>${desc}</small>`:''}</span>${right}</${tag}>`;
+  const chev='<span class="s-chev">›</span>',val=v=>`<span class="s-val">${v}</span>`;
+  const sw=(on,id)=>`<span class="s-sw ${on?'on':''}" id="${id}" role="switch" aria-checked="${on}"></span>`;
   const nCards=collection.filter(e=>e.status!=='wish').reduce((a,e)=>a+(e.qty||1),0);
+  const notifOK='Notification' in window,notifOn=notifOK&&Notification.permission==='granted'&&settings.notif!==false;
+  const pillL={s:t('pill_s'),m:t('pill_m'),l:t('pill_l')};
   m.innerHTML=`<h1>${t('data_title')}</h1>
-  ${sec('account',t('account'),row(
-      user?`<span class="acc-av" style="display:inline-grid;margin-right:8px;vertical-align:middle">${esc((user.email||'?')[0].toUpperCase())}</span>${esc(user.email)}`:t('not_logged'),
-      user?`<span id="syncInfo">${syncLabel()}</span>`:t('account_why'),
-      `<button class="btn ${user?'':'primary'}" id="accOpen">${user?t('manage'):t('login')}</button>`))}
-  ${sec('display',t('display'),
-      row(t('lang_label'),'',seg('lang',settings.lang,[['fr',FLAGS.fr+' Français'],['en',FLAGS.en+' English']]))+
-      row(t('theme_label'),'',seg('theme',settings.theme,[['dark',t('theme_dark')],['light',t('theme_light')]]))+
-      row(t('pill_size'),'',pillControl(false))+
-      row(t('deal_cfg'),t('deal_cfg_d'),seg('dealp',String(settings.dealPct||5),[5,10,15,20,25].map(p=>[String(p),'−'+p+' %'])))+
-      row(t('priv_t'),t('priv_d'),seg('priv',settings.hidePrices?'1':'0',[['0',t('priv_shown')],['1',t('priv_hidden')]])))}
-  ${sec('backup',t('sec_backup'),`<p class="snote">${user?t('data_note_cloud'):t('data_note')}</p>`+
-      row(t('exp_json_t'),t('exp_json_d',{n:nCards}),`<button class="btn primary" id="exJson">${t('btn_export')}</button>`)+
-      row(t('imp_t'),t('imp_d'),`<label class="btn">${t('btn_import')}<input type="file" id="imp" accept=".json,application/json" hidden></label>`)+
-      row(t('exp_csv_t'),t('exp_csv_d'),`<button class="btn" id="exCsv">${t('btn_export')}</button>`))}
-  ${sec('alerts',t('sec_alerts'),row(t('notif_t'),t('notif_d')+' <span id="notifState"></span>',`<button class="btn" id="notif">${t('btn_enable')}</button>`))}
-  ${sec('advanced',t('sec_advanced'),row(t('tour_again'),t('tour_again_d'),`<button class="btn" id="tourAgain">${t('tour_again_btn')}</button>`)+row(t('reload_t'),t('reload_d'),`<button class="btn" id="clr">${t('btn_reload')}</button>`))}
-  <section class="spanel about">
-    <div class="ab-head"><span class="ab-logo">${document.querySelector('.logo svg')?.outerHTML||''}</span><div><div class="ab-name">Gleamvault</div><div class="sdesc">${t('about_tag')} · v${APP_VERSION}</div></div></div>
-    <dl class="ab-list">
-      <div><dt>${t('ab_cards')}</dt><dd><a href="https://tcgdex.dev" target="_blank" rel="noopener">TCGdex</a>${(()=>{const L=['fr','en','ja'].filter(l=>idx[l]);return L.length?`<div class="muted" style="font-size:11.5px">${L.map(l=>`${FLAGS[l]} ${t('ab_ncards',{n:idx[l].cards.length.toLocaleString()})}`).join(' · ')}</div>`:''})()}</dd></div>
-      <div><dt>${t('ab_prices')}</dt><dd>Cardmarket · TCGplayer<div class="muted" style="font-size:11.5px">${t('ab_daily')}</div></dd></div>
-      <div><dt>${t('ab_images')}</dt><dd>TCGdex · Scrydex</dd></div>
-      <div><dt>${t('ab_scan')}</dt><dd>Tesseract.js</dd></div>
-    </dl>
-    <p class="ab-legal">${t('ab_legal')}</p>
-  </section>`;
-  m.querySelectorAll('button[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+  <div class="s-wrap">
+  ${user?`<button type="button" class="s-acc" id="accOpen"><span class="s-av on">${esc((user.email||'?')[0].toUpperCase())}</span><span class="s-acc-t"><b>${esc(user.email)}</b><span id="syncInfo">${syncLabel()}</span></span><span class="s-chev">›</span></button>`
+    :`<div class="s-acc guest"><div class="s-acc-top"><span class="s-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span><span class="s-acc-t"><b>${t('guest')}</b><span>${t('guest_d')}</span></span></div>
+      <button type="button" class="btn primary s-acc-btn" id="accOpen">${t('tour_acc')}</button><button type="button" class="linkbtn s-acc-link" id="accLogin">${t('have_account')}</button></div>`}
+
+  <div class="s-gl">${t('display')}</div>
+  <div class="s-grp">
+    ${line('lang','blue',t('lang_label'),'',val(settings.lang==='en'?'English':'Français')+chev,'sLang')}
+    <div class="s-row">${ico('theme','violet')}<span class="s-t"><span>${t('theme_label')}</span></span><span class="s-mseg">${['dark','light'].map(v=>`<button type="button" data-theme="${v}" class="${settings.theme===v?'on':''}">${t('theme_'+v)}</button>`).join('')}</span></div>
+    ${line('pill','gold',t('pill_short'),'',val(pillL[settings.pill||'m'])+chev,'sPill')}
+    ${line('safe','green',t('priv_t'),t('safe_short'),sw(!!settings.hidePrices,'sSafeSw'),'sSafe')}
+  </div>
+
+  <div class="s-gl">${t('sec_wishalerts')}</div>
+  <div class="s-grp">
+    ${line('deal','green',t('deal_cfg'),t('deal_short'),val('≥ '+(settings.dealPct||5)+' %')+chev,'sDeal')}
+    ${line('notif','gold',t('notif_t'),notifOK?t('notif_short'):t('notif_off'),notifOK?sw(notifOn,'sNotifSw'):'','sNotif')}
+  </div>
+
+  <div class="s-gl">${t('sec_mydata')}</div>
+  <div class="s-grp">
+    ${line('exp','blue',t('exp_json_t'),t('exp_json_d2',{n:nCards}),chev,'exJson')}
+    <label class="s-row">${ico('imp','violet')}<span class="s-t"><span>${t('imp_t')}</span><small>${t('imp_d2')}</small></span>${chev}<input type="file" id="imp" accept=".json,application/json" hidden></label>
+    ${line('csv','green',t('exp_csv_t'),t('exp_csv_d'),chev,'exCsv')}
+  </div>
+  ${user?'':`<p class="s-note">${t('data_note2')}</p>`}
+
+  <div class="s-gl">${t('sec_help')}</div>
+  <div class="s-grp">
+    ${line('tour','gold',t('tour_again_t'),'',chev,'tourAgain')}
+    ${line('reload','grey',t('reload_t'),t('reload_d'),chev,'clr')}
+  </div>
+
+  <div class="s-about">
+    <span class="s-logo">${document.querySelector('.logo svg')?.outerHTML||''}</span>
+    <b>Gleamvault</b>
+    <span>v${APP_VERSION} · ${t('ab_line')}</span>
+    ${(()=>{const L=['fr','en','ja'].filter(l=>idx[l]);return L.length?`<span class="s-ab-n">${L.map(l=>`${FLAGS[l]} ${t('ab_ncards',{n:idx[l].cards.length.toLocaleString()})}`).join(' · ')}</span>`:''})()}
+    <p>${t('ab_legal')}</p>
+  </div>
+  </div>`;
+  const q=s=>m.querySelector(s);
+  q('#accOpen').onclick=()=>openAccount();
+  const al=q('#accLogin');if(al)al.onclick=()=>openAccount();
+  q('#sLang').onclick=()=>openChoice(t('lang_label'),'',[['fr','🇫🇷 Français'],['en','🇬🇧 English']],settings.lang,v=>setLang(v));
   m.querySelectorAll('button[data-theme]').forEach(b=>b.onclick=()=>{settings.theme=b.dataset.theme;saveSettings();render()});
-  m.querySelectorAll('button[data-priv]').forEach(b=>b.onclick=()=>setPriv(b.dataset.priv==='1'));
-  m.querySelectorAll('button[data-dealp]').forEach(b=>b.onclick=()=>{settings.dealPct=+b.dataset.dealp;saveSettings();render()});
-  m.querySelector('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
-  m.querySelector('#exCsv').onclick=()=>{
+  q('#sPill').onclick=()=>openChoice(t('pill_size'),t('pill_d'),[['s',pillL.s],['m',pillL.m],['l',pillL.l]],settings.pill||'m',v=>{settings.pill=v;saveSettings();document.documentElement.dataset.pill=v;render()});
+  q('#sSafe').onclick=()=>setPriv(!settings.hidePrices);
+  q('#sDeal').onclick=openDealSheet;
+  q('#sNotif').onclick=async()=>{
+    if(!notifOK)return;
+    if(notifOn){settings.notif=false;saveSettings();render();return}
+    try{if(Notification.permission!=='granted')await Notification.requestPermission()}catch(_){}
+    if(Notification.permission==='granted'){settings.notif=true;saveSettings()}else toast(t('notif_blocked'));
+    render();
+  };
+  q('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
+  q('#exCsv').onclick=()=>{
     const cols=['name','setName','localId','official','lang','variant','cond','grade','cert','qty','status','buy','date','value','manual','notes'];
     const rows=collection.map(e=>cols.map(c=>{const v=c==='value'?(entryValue(e)??''):c==='grade'?gradeStr(e):c==='cert'?(e.grade?.cert||''):e[c]??'';return '"'+String(v).replace(/"/g,'""')+'"'}).join(';'));
     download(`gleamvault-${today()}.csv`,'﻿'+cols.join(';')+'\n'+rows.join('\n'),'text/csv');
   };
-  m.querySelector('#imp').onchange=async ev=>{
+  q('#imp').onchange=async ev=>{
     const file=ev.target.files[0];if(!file)return;
     try{
       const data=JSON.parse(await file.text());
@@ -2051,13 +2124,8 @@ function viewData(m){
       LS.set('pf_snapshots',snapshots);saveCollection();toast(t('import_ok',{n:collection.length}));render();
     }catch(e){toast(t('import_bad'))}
   };
-  m.querySelector('#accOpen').onclick=()=>openAccount();
-  bindPill(m);
-  const ns=m.querySelector('#notifState');
-  const showN=()=>{ns.textContent='Notification' in window?(Notification.permission==='granted'?'· ✓ '+t('notif_on'):Notification.permission==='denied'?'· '+t('notif_off'):''):'· '+t('notif_off')};showN();
-  m.querySelector('#notif').onclick=async()=>{try{await Notification.requestPermission()}catch(_){}showN()};
-  m.querySelector('#tourAgain').onclick=()=>{location.hash='#collection';setTimeout(tourStart,250)};
-  m.querySelector('#clr').onclick=async()=>{idx.fr=idx.en=null;loading.fr=loading.en=null;await loadIndex(settings.cardLang,true).catch(()=>{});toast(t('cache_cleared'))};
+  q('#tourAgain').onclick=()=>{location.hash='#collection';setTimeout(tourStart,250)};
+  q('#clr').onclick=async()=>{idx.fr=idx.en=idx.ja=null;loading.fr=loading.en=loading.ja=null;await loadIndex(settings.cardLang,true).catch(()=>{});toast(t('cache_cleared'))};
 }
 
 /* ============ boot ============ */
