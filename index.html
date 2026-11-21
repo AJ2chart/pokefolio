@@ -108,7 +108,7 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .afilters .cf-panel{align-items:center}
 .more-sentinel{display:flex;justify-content:center;min-height:40px;padding:14px}
 .tile .img{position:relative}
-.qadd{position:absolute;z-index:2;right:8px;bottom:8px;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
+.qadd{position:absolute;z-index:2;right:4px;bottom:4px;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
 .qadd::before{content:'';position:absolute;inset:-8px;border-radius:50%}
 .qadd svg{width:var(--pillic);height:var(--pillic);display:block}
 .qadd .qa-ok{display:none}
@@ -280,7 +280,7 @@ canvas{max-width:100%}
   .ov{overflow-x:hidden}.modal{max-width:100vw;overflow-x:hidden}
   .kv span{overflow-wrap:anywhere}
   input[type=date]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
-  .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
+  .tile{padding:7px}.tile:hover{transform:none}.qadd{right:3px;bottom:3px}.tile .nm{font-size:14px}
   html[data-pill=m]{--pill:18px;--pillfs:10.5px}
   .badge{top:10px;left:10px}
   .wbtn{top:10px;right:10px}.lbadge{top:12px;right:11px}
@@ -351,7 +351,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-32';
+const APP_VERSION = '2026.11.21-33';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
