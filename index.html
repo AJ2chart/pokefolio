@@ -35,8 +35,8 @@ a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hwrap{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;text-decoration:none;white-space:nowrap}
-.logo svg{width:30px;height:30px}
+.logo{display:flex;align-items:center;gap:11px;font-weight:700;font-size:23px;letter-spacing:-.01em;text-decoration:none;white-space:nowrap}
+.logo svg{width:38px;height:38px;flex:none}
 nav{display:flex;gap:4px;flex:1;overflow-x:auto}
 nav a{padding:8px 14px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:500;white-space:nowrap}
 nav a:hover{color:var(--text);background:var(--card2)}
@@ -57,8 +57,18 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .sdesc{color:var(--muted);font-size:13px;margin-top:2px}
 .sctl{flex:none}
 .snote{margin:0;padding:12px 18px;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line)}
-.sabout{max-width:820px;color:var(--muted);font-size:12px;line-height:1.6;padding:6px 4px 10px}
-.sabout b{color:var(--text)}
+.credit{color:var(--muted);font-size:12px;margin:28px 0 4px;text-align:center}
+.credit a{color:var(--muted)}
+.about .ab-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.about .ab-logo svg{width:44px;height:44px;display:block}
+.about .ab-name{font-weight:700;font-size:17px}
+.ab-list{margin:0;padding:6px 18px}
+.ab-list>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.ab-list>div:last-child{border-bottom:0}
+.ab-list dt{color:var(--muted)}
+.ab-list dd{margin:0;text-align:right}
+.ab-list a{color:var(--text)}
+.ab-legal{margin:0;padding:12px 18px 16px;font-size:11.5px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line)}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -184,7 +194,7 @@ canvas{max-width:100%}
 @media (max-width:720px){
   header nav#nav{display:none}
   .hwrap{flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
-  .logo{font-size:18px;gap:8px}.logo svg{width:26px;height:26px}
+  .logo{font-size:21px;gap:9px}.logo svg{width:33px;height:33px}
   .hactions{margin-left:auto;gap:5px}
   .flag{width:25px;height:18px;border-width:1.5px;border-radius:4px}
   .iconbtn{width:36px;height:36px}
@@ -264,7 +274,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-12';
+const APP_VERSION = '2026.11.21-13';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -277,7 +287,7 @@ const VARIANTS = ['normal','reverse','holo','firstEdition'];
 /* ============ i18n ============ */
 const I18N = {
 fr:{
- nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Wishlist',nav_evo:'Évolution',nav_data:'Données',
+ nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Wishlist',nav_evo:'Évolution',nav_data:'Réglages',
  stat_value:'Valeur estimée',stat_cards:'Cartes',stat_cost:"Coût d'achat",stat_gain:'Plus-value',
  unique_cards:'{n} cartes différentes',gain_on:"sur {n} carte(s) avec prix d'achat",
  refresh:'Actualiser les prix',refreshing:'Actualisation… {p}/{t}',updated_at:'Prix mis à jour {d}',never:'jamais',
@@ -303,11 +313,11 @@ fr:{
  unit_value:'Valeur unitaire',total_value:'Valeur totale',gain:'Plus-value',history:'Historique du prix',no_history:"L'historique se construit à chaque actualisation des prix.",
  wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Depuis « Ajouter », choisis le statut « Dans ma wishlist ».',wish_total:'Budget total pour tout compléter : {v}',
  evo_title:'Évolution de la collection',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
- data_title:'Réglages et données',not_logged:'Non connecté',manage:'Gérer mon compte',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',sec_backup:'Sauvegarde',sec_alerts:'Alertes de prix',sec_advanced:'Avancé',exp_json_t:'Exporter une sauvegarde',exp_json_d:'Fichier JSON avec toute ta collection ({n} cartes), pour la restaurer plus tard.',imp_t:'Restaurer une sauvegarde',imp_d:'Remplace la collection actuelle par celle d’un fichier exporté.',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',notif_d:'Être prévenu sur cet appareil quand une alerte de prix se déclenche (app ouverte).',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',btn_export:'Exporter',btn_import:'Importer',btn_enable:'Activer',btn_reload:'Recharger',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
+ data_title:'Réglages',not_logged:'Non connecté',manage:'Gérer mon compte',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',sec_backup:'Sauvegarde',sec_alerts:'Alertes de prix',sec_advanced:'Avancé',exp_json_t:'Exporter une sauvegarde',exp_json_d:'Fichier JSON avec toute ta collection ({n} cartes), pour la restaurer plus tard.',imp_t:'Restaurer une sauvegarde',imp_d:'Remplace la collection actuelle par celle d’un fichier exporté.',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',notif_d:'Être prévenu sur cet appareil quand une alerte de prix se déclenche (app ouverte).',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',btn_export:'Exporter',btn_import:'Importer',btn_enable:'Activer',btn_reload:'Recharger',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
  data_note:"Ta collection est enregistrée dans ce navigateur, sur cet appareil. Exporte une sauvegarde régulièrement (et avant de changer de navigateur ou de vider les données de navigation).",
  clear_cache:'Recharger la base de cartes',cache_cleared:'Base de cartes rechargée',
- sources:'Sources : base de cartes et prix via l’API TCGdex (Cardmarket & TCGplayer, mis à jour quotidiennement). Images © The Pokémon Company / Nintendo.',
+ credit_short:'Prix Cardmarket & TCGplayer via TCGdex, mis à jour chaque jour',about_more:'À propos',about_tag:'Suivi de collection Pokémon TCG',ab_cards:'Base de cartes',ab_prices:'Prix',ab_daily:'mis à jour chaque jour',ab_images:'Images',ab_scan:'Lecture du scan',ab_legal:'Pokémon et les noms, images et marques associés sont la propriété de The Pokémon Company, Nintendo, Creatures et GAME FREAK. Gleamvault est un projet de fan non officiel, sans lien avec ces sociétés.',sources:'Sources : base de cartes et prix via l’API TCGdex (Cardmarket & TCGplayer, mis à jour quotidiennement). Images © The Pokémon Company / Nintendo.',
  price_unavailable:'prix indispo.',err_net:'Erreur réseau — vérifie ta connexion.',
  scan_btn:'Scanner une carte',scan_title:'Lecture de la carte',scan_loading:'Chargement du lecteur (la 1ʳᵉ fois, quelques secondes)…',scan_reading:'Lecture du nom et du numéro…',
  scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_read:'Texte lu :',scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
@@ -335,7 +345,7 @@ fr:{
  notif_note:"Les alertes sont vérifiées à chaque actualisation des prix (automatique toutes les 12 h, quand l'app est ouverte). Les notifications système ne marchent que si l'app est en ligne (https), pas en fichier local."
 },
 en:{
- nav_collection:'Collection',nav_add:'Add',nav_wish:'Wishlist',nav_evo:'Trends',nav_data:'Data',
+ nav_collection:'Collection',nav_add:'Add',nav_wish:'Wishlist',nav_evo:'Trends',nav_data:'Settings',
  stat_value:'Estimated value',stat_cards:'Cards',stat_cost:'Purchase cost',stat_gain:'Gain',
  unique_cards:'{n} unique cards',gain_on:'on {n} card(s) with a purchase price',
  refresh:'Refresh prices',refreshing:'Refreshing… {p}/{t}',updated_at:'Prices updated {d}',never:'never',
@@ -361,11 +371,11 @@ en:{
  unit_value:'Unit value',total_value:'Total value',gain:'Gain',history:'Price history',no_history:'History builds up with each price refresh.',
  wish_title:'Wishlist',wish_empty:'No wanted cards yet. From “Add”, pick the “Wanted” status.',wish_total:'Total budget to complete: {v}',
  evo_title:'Collection trends',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',cost:'Cost',
- data_title:'Settings & data',not_logged:'Not logged in',manage:'Manage my account',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',sec_backup:'Backup',sec_alerts:'Price alerts',sec_advanced:'Advanced',exp_json_t:'Export a backup',exp_json_d:'JSON file with your whole collection ({n} cards), to restore it later.',imp_t:'Restore a backup',imp_d:'Replaces the current collection with an exported file.',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',notif_d:'Get notified on this device when a price alert triggers (app open).',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',btn_export:'Export',btn_import:'Import',btn_enable:'Enable',btn_reload:'Reload',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
+ data_title:'Settings',not_logged:'Not logged in',manage:'Manage my account',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',sec_backup:'Backup',sec_alerts:'Price alerts',sec_advanced:'Advanced',exp_json_t:'Export a backup',exp_json_d:'JSON file with your whole collection ({n} cards), to restore it later.',imp_t:'Restore a backup',imp_d:'Replaces the current collection with an exported file.',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',notif_d:'Get notified on this device when a price alert triggers (app open).',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',btn_export:'Export',btn_import:'Import',btn_enable:'Enable',btn_reload:'Reload',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
  import_confirm:'Replace your current collection ({a} entries) with the backup ({b} entries)?',
  data_note:'Your collection is stored in this browser, on this device. Export a backup regularly (and before switching browsers or clearing browsing data).',
  clear_cache:'Reload card database',cache_cleared:'Card database reloaded',
- sources:'Sources: card database and prices via the TCGdex API (Cardmarket & TCGplayer, updated daily). Images © The Pokémon Company / Nintendo.',
+ credit_short:'Cardmarket & TCGplayer prices via TCGdex, updated daily',about_more:'About',about_tag:'Pokémon TCG collection tracker',ab_cards:'Card database',ab_prices:'Prices',ab_daily:'updated daily',ab_images:'Images',ab_scan:'Scan reading',ab_legal:'Pokémon and all related names, images and trademarks are the property of The Pokémon Company, Nintendo, Creatures and GAME FREAK. Gleamvault is an unofficial fan project, not affiliated with these companies.',sources:'Sources: card database and prices via the TCGdex API (Cardmarket & TCGplayer, updated daily). Images © The Pokémon Company / Nintendo.',
  price_unavailable:'no price',err_net:'Network error — check your connection.',
  scan_btn:'Scan a card',scan_title:'Reading the card',scan_loading:'Loading the reader (a few seconds the first time)…',scan_reading:'Reading name and number…',
  scan_fail:"I couldn't identify the card.",scan_read:'Text read:',scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
@@ -813,7 +823,7 @@ const TAB_ICONS={
   add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
   wishlist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
   evolution:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 6-7"/><path d="M15 7h3v3"/></svg>',
-  data:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="6" rx="7" ry="2.8"/><path d="M5 6v6c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6"/><path d="M5 12v6c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8v-6"/></svg>'
+  data:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
 let view='collection';
 function route(){const prev=view;view=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'collection';render();if(prev!==view){const mm=document.getElementById('main');if(mm)mm.scrollTop=0;window.scrollTo(0,0)}}
@@ -875,7 +885,7 @@ function viewCollection(m){
     <select id="csort" style="width:auto">${['value','gain','added','name','set'].map(s=>`<option value="${s}" ${settings.sort===s?'selected':''}>${t('sort_'+s)}</option>`).join('')}</select>
   </div>
   <div class="grid" id="cgrid"></div>`:`<div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`}
-  <p class="muted small" style="margin-top:30px">${t('sources')}</p>`;
+  <p class="credit">${t('credit_short')} · <a href="#data">${t('about_more')}</a></p>`;
   const rb=m.querySelector('#refreshBtn');if(rb)rb.onclick=()=>refreshPrices();
   bindAlerts(m,e=>e.status!=='wish');
   m.querySelectorAll('details.fold').forEach(d=>d.addEventListener('toggle',()=>{settings.fold={...(settings.fold||{}),[d.dataset.k]:d.open};saveSettings()}));
@@ -1328,7 +1338,16 @@ function viewData(m){
       row(t('exp_csv_t'),t('exp_csv_d'),`<button class="btn" id="exCsv">${t('btn_export')}</button>`))}
   ${sec('alerts',t('sec_alerts'),row(t('notif_t'),t('notif_d')+' <span id="notifState"></span>',`<button class="btn" id="notif">${t('btn_enable')}</button>`))}
   ${sec('advanced',t('sec_advanced'),row(t('reload_t'),t('reload_d'),`<button class="btn" id="clr">${t('btn_reload')}</button>`))}
-  <footer class="sabout"><div><b>Gleamvault</b> · version ${APP_VERSION}</div><div>${t('sources')}</div></footer>`;
+  <section class="spanel about">
+    <div class="ab-head"><span class="ab-logo">${document.querySelector('.logo svg')?.outerHTML||''}</span><div><div class="ab-name">Gleamvault</div><div class="sdesc">${t('about_tag')} · v${APP_VERSION}</div></div></div>
+    <dl class="ab-list">
+      <div><dt>${t('ab_cards')}</dt><dd><a href="https://tcgdex.dev" target="_blank" rel="noopener">TCGdex</a></dd></div>
+      <div><dt>${t('ab_prices')}</dt><dd>Cardmarket · TCGplayer<div class="muted" style="font-size:11.5px">${t('ab_daily')}</div></dd></div>
+      <div><dt>${t('ab_images')}</dt><dd>TCGdex · Scrydex</dd></div>
+      <div><dt>${t('ab_scan')}</dt><dd>Tesseract.js</dd></div>
+    </dl>
+    <p class="ab-legal">${t('ab_legal')}</p>
+  </section>`;
   m.querySelectorAll('button[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
   m.querySelectorAll('button[data-theme]').forEach(b=>b.onclick=()=>{settings.theme=b.dataset.theme;saveSettings();render()});
   m.querySelector('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
