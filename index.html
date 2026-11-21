@@ -44,6 +44,11 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .hactions{display:flex;gap:6px;align-items:center}
 #accBtn{position:relative}#accBtn .dot{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
 #accBtn .dot.ok{background:var(--ok)}#accBtn .dot.syncing{background:var(--accent)}#accBtn .dot.error{background:var(--ko)}
+.stat.wbudget{display:flex;flex-direction:column;margin:0 0 18px;border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+.stat.wbudget .val{color:var(--accent);font-size:30px}
+.stat.wbudget .lbl{color:var(--text);font-weight:500}
+.pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
+.pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
 .pwdeye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);cursor:pointer;padding:6px;display:grid;place-items:center}.pwdeye:hover{color:var(--text)}
 .acc-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#1a1d24;font-weight:700;font-size:12px;display:grid;place-items:center}
@@ -86,17 +91,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .tile .meta{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tile .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
 .tile .price{font-weight:700}
-.badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:11px;font-weight:700;line-height:1;min-width:19px;height:19px;padding:0 5px;display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
-.wbtn{position:absolute;top:14px;right:14px;z-index:2;width:19px;height:19px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 4px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent;transition:transform .12s}
-.wbtn svg{width:13px;height:13px;margin-top:1px}
+:root{--pill:19px;--pillfs:11px;--pillic:13px;--pillx:10px}
+html[data-pill=s]{--pill:15px;--pillfs:9px;--pillic:10px;--pillx:8px}
+html[data-pill=l]{--pill:25px;--pillfs:13.5px;--pillic:17px;--pillx:13px}
+.badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:var(--pillfs);font-weight:700;line-height:1;min-width:var(--pill);height:var(--pill);padding:0 calc(var(--pill)*.27);display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
+.wbtn{position:absolute;top:14px;right:14px;z-index:2;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 4px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.wbtn svg{width:var(--pillic);height:var(--pillic);margin-top:1px}
 .wbtn::before{content:'';position:absolute;inset:-10px;border-radius:50%}
 .wbtn:active{transform:scale(.9)}
 .wbtn.on{color:var(--accent2)}
 .wbtn.on svg path{fill:currentColor}
 .wbtn.busy{opacity:.6}
-.xbtn svg{width:10px;height:10px;margin:0}
+.xbtn svg{width:var(--pillx);height:var(--pillx);margin:0}
 .xbtn:hover{color:var(--ko)}
-.tile.has-x .lbadge{right:40px}
+.tile.has-x .lbadge{right:calc(21px + var(--pill))}
 .toast{display:flex;align-items:center;gap:14px;width:max-content;max-width:min(90vw,460px)}
 .toast-act{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:2px 0;white-space:nowrap}
 .lbadge{position:absolute;z-index:2;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -187,9 +195,10 @@ canvas{max-width:100%}
   .kv span{overflow-wrap:anywhere}
   input[type=date]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
   .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
-  .badge{top:10px;left:10px;min-width:18px;height:18px;font-size:10.5px}
-  .wbtn{top:10px;right:10px;width:18px;height:18px}.lbadge{top:11px;right:11px}
-  .tile.has-x .lbadge{right:36px}
+  html[data-pill=m]{--pill:18px;--pillfs:10.5px}
+  .badge{top:10px;left:10px}
+  .wbtn{top:10px;right:10px}.lbadge{top:11px;right:11px}
+  .tile.has-x .lbadge{right:calc(18px + var(--pill))}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
@@ -239,7 +248,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-9';
+const APP_VERSION = '2026.11.21-10';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -268,7 +277,7 @@ fr:{
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Tendance',low:'Plus bas',avg7:'Moy. 7 j',avg30:'Moy. 30 j',avg1:'Moy. 1 j',market:'Market',
  reverse_holo:'Reverse / Holo',range:'Fourchette de prix estimée',range_note:'Basée sur les moyennes de ventes Cardmarket (1, 7, 30 jours) et la tendance.',
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
- ebay_sold:'Ventes réussies eBay',cm_search:'Voir sur Cardmarket',
+ ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
  owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
@@ -298,7 +307,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',wish_remove:'Retirer de ma wishlist',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -326,7 +335,7 @@ en:{
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Trend',low:'Low',avg7:'7-day avg',avg30:'30-day avg',avg1:'1-day avg',market:'Market',
  reverse_holo:'Reverse / Holo',range:'Estimated price range',range_note:'Based on Cardmarket sales averages (1, 7, 30 days) and trend.',
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
- ebay_sold:'eBay sold listings',cm_search:'View on Cardmarket',
+ ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
  owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
@@ -356,7 +365,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',wish_remove:'Remove from my wishlist',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
+ copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -628,7 +637,7 @@ const gradeStr=e=>e?.grade?.co?`${e.grade.co} ${e.grade.g}`:'';
 function ebayUrl(name,num,setName,grade){
   const host=settings.lang==='fr'?'www.ebay.fr':'www.ebay.com';
   const q=[name,num,grade||setName].filter(Boolean).join(' ');
-  return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(q)}&LH_Sold=1&LH_Complete=1&_sacat=183454`;
+  return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(q)}&_sacat=183454`;
 }
 function cmUrl(name,setName){
   return `https://www.cardmarket.com/${settings.lang==='fr'?'fr':'en'}/Pokemon/Products/Search?searchString=${encodeURIComponent(name+(setName?' '+setName:''))}`;
@@ -707,12 +716,19 @@ function authErr(e){
   if(/password/i.test(m))return t('err_pwd')+' ('+m+')';
   return m||t('err_net');
 }
+function pillControl(){
+  const cur=settings.pill||'m';
+  return `<div class="pillset"><div class="small muted" style="margin-bottom:6px">${t('pill_size')}</div><div class="seg" role="radiogroup">${['s','m','l'].map(k=>`<button type="button" data-pill="${k}" class="${cur===k?'on':''}" role="radio" aria-checked="${cur===k}"><span class="pdemo pd-${k}">3</span>${t('pill_'+k)}</button>`).join('')}</div></div>`;
+}
+function bindPill(root){root.querySelectorAll('[data-pill]').forEach(b=>{if(b.tagName!=='BUTTON')return;b.onclick=()=>{settings.pill=b.dataset.pill;saveSettings();document.documentElement.dataset.pill=settings.pill;root.querySelectorAll('button[data-pill]').forEach(x=>{const on=x.dataset.pill===settings.pill;x.classList.toggle('on',on);x.setAttribute('aria-checked',on)})}})}
 function openAccount(){
   if(!sb){const m=openModal(`<div class="mpad"><h2 style="margin-top:0">${t('account')}</h2><p>${t('sb_unavailable')}</p></div>`,'sm');return}
   if(user){
     const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('account')}</h2>
       <p class="muted">${esc(user.email)}</p><p id="syncInfo">${syncLabel()}</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="aSync">↻ ${t('sync_now')}</button><button class="btn" id="aOut">${t('logout')}</button></div></div>`,'sm');
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="aSync">↻ ${t('sync_now')}</button><button class="btn" id="aOut">${t('logout')}</button></div>
+      <h3 style="margin:22px 0 10px;font-size:15px">${t('display')}</h3>${pillControl()}</div>`,'sm');
+    bindPill(m);
     m.querySelector('#aSync').onclick=()=>syncNow();
     m.querySelector('#aOut').onclick=()=>{
       const m2=openModal(`<div class="mpad"><p style="margin:10px 30px 18px 0">${t('logout_q')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
@@ -790,6 +806,7 @@ window.addEventListener('hashchange',route);
 function renderShell(){
   document.documentElement.lang=settings.lang;
   document.documentElement.dataset.theme=settings.theme;
+  document.documentElement.dataset.pill=settings.pill||'m';
   const labels={collection:'nav_collection',add:'nav_add',wishlist:'nav_wish',evolution:'nav_evo',data:'nav_data'};
   document.getElementById('nav').innerHTML=VIEWS.map(v=>`<a href="#${v}" class="${v===view?'active':''}">${t(labels[v])}</a>`).join('');
   document.getElementById('tabbar').innerHTML=VIEWS.map(v=>`<a href="#${v}" class="${v===view?'active':''}" ${v===view?'aria-current="page"':''}>${TAB_ICONS[v]}<span>${t(labels[v])}</span></a>`).join('');
@@ -1234,7 +1251,7 @@ function viewWish(m){
   const total=list.reduce((s,e)=>s+(entryValue(e)||0)*e.qty,0);
   m.innerHTML=`<h1>${t('wish_title')}</h1>
   ${alertsBanner(e=>e.status==='wish')}
-  ${list.length?`<p class="muted">${t('wish_total',{v:fmtEur(total)})}</p><div class="grid">${list.map(e=>entryTile(e,{remove:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
+  ${list.length?`<div class="stat wbudget"><div class="lbl">${t('wish_budget')}</div><div class="val">${fmtEur(total)}</div><div class="sub">${t('wish_count',{n:list.reduce((a,e)=>a+(e.qty||1),0)})}</div></div><div class="grid">${list.map(e=>entryTile(e,{remove:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
   m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
   m.querySelectorAll('[data-x]').forEach(b=>b.onclick=ev=>{
     ev.stopPropagation();
@@ -1267,6 +1284,7 @@ function viewData(m){
   <div class="panel" style="margin-bottom:14px"><b>☁ ${t('account')}</b>
     <p class="small ${user?'':'muted'}" style="margin:6px 0 10px">${user?esc(user.email)+' · <span id="syncInfo">'+syncLabel()+'</span>':t('account_why')}</p>
     <button class="btn ${user?'':'primary'}" id="accOpen">${user?t('account'):t('login')+' / '+t('signup')}</button></div>
+  <div class="panel" style="margin-bottom:14px"><b>🎨 ${t('display')}</b><div style="margin-top:10px">${pillControl()}</div></div>
   <div class="notice">${user?t('data_note_cloud'):t('data_note')}</div>
   <div class="toolbar">
     <button class="btn primary" id="exJson">⬇ ${t('export_json')}</button>
@@ -1297,6 +1315,7 @@ function viewData(m){
     }catch(e){toast(t('import_bad'))}
   };
   m.querySelector('#accOpen').onclick=()=>openAccount();
+  bindPill(m);
   const ns=m.querySelector('#notifState');
   const showN=()=>{ns.textContent='Notification' in window?(Notification.permission==='granted'?'✓ '+t('notif_on'):Notification.permission==='denied'?t('notif_off'):''):t('notif_off')};showN();
   m.querySelector('#notif').onclick=async()=>{try{await Notification.requestPermission()}catch(_){}showN()};
