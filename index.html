@@ -88,6 +88,19 @@ html[data-priv] .pos,html[data-priv] .neg{color:inherit}
 .touch-only{display:none}
 @media (hover:none) and (pointer:coarse){.ptr-hide{display:none!important}.touch-only{display:inline}}
 .sumbar .sb-up{flex-basis:100%;order:3;font-size:12px;color:var(--muted)}
+.coll-head{display:flex;align-items:center;gap:10px;margin:18px 0 10px}
+.coll-head .tbtitle{flex:1 1 auto}
+.btn-sm{padding:7px 12px;font-size:14px;gap:6px}
+.cfilters{display:flex;gap:10px;align-items:center;margin:0 0 14px}
+.cf-row{display:flex;gap:8px;flex:1 1 auto;min-width:0}
+.searchbox{position:relative;flex:1;min-width:0;display:block}
+.searchbox svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.searchbox input[type=text]{padding-left:38px}
+.btn.cf-toggle{display:none;position:relative}
+.cf-toggle.on{border-color:var(--accent);color:var(--accent)}
+.cf-count{min-width:18px;height:18px;border-radius:999px;background:var(--accent);color:#1a1d24;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+.cf-panel{display:flex;gap:10px;flex:none}
+.cf-panel select{width:auto;max-width:220px}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -251,7 +264,15 @@ canvas{max-width:100%}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
   .sortbar .chip{flex:none}
-  .tbtitle{flex:1 1 100%}
+  .coll-head .tbtitle{flex:1 1 auto!important}
+  .coll-head .btn-sm{min-height:36px;padding:6px 12px}
+  .cfilters{display:block}
+  .btn.cf-toggle{display:inline-flex;flex:none}
+  .cf-toggle .cf-lbl{display:none}
+  .cf-panel{display:none}
+  .cf-panel.open{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .cf-panel select{max-width:none;width:100%}
+  .cf-panel .cf-sort{grid-column:1/-1}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   #scanLbl{flex:1 1 100%}
@@ -303,7 +324,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-23';
+const APP_VERSION = '2026.11.21-24';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -365,7 +386,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',priv_hide:'Masquer les prix',priv_show:'Afficher les prix',priv_on:'Prix masqués 🙈',priv_off:'Prix affichés',priv_t:'Masquer les prix',priv_d:'Remplace tous les montants par ••• pour montrer ta collection sans dévoiler sa valeur. Aussi accessible par l’icône œil en haut.',priv_shown:'Affichés',priv_hidden:'Masqués',priv_chart:'Prix masqués : graphique caché.',ptr_hint:'tire vers le bas pour actualiser',ptr_pull:'Tire pour actualiser les prix',ptr_release:'Relâche pour actualiser',ptr_busy:'Actualisation des prix…',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',alert_cfg:'Alerte de prix',al_below:'Prix en dessous de…',al_above:'Prix au-dessus de…',al_on:'Activer l’alerte',al_off:'Désactiver',al_saved:'Alerte de prix enregistrée',al_removed:'Alerte de prix désactivée',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',add_short:'Ajouter',filters:'Filtres',priv_hide:'Masquer les prix',priv_show:'Afficher les prix',priv_on:'Prix masqués 🙈',priv_off:'Prix affichés',priv_t:'Masquer les prix',priv_d:'Remplace tous les montants par ••• pour montrer ta collection sans dévoiler sa valeur. Aussi accessible par l’icône œil en haut.',priv_shown:'Affichés',priv_hidden:'Masqués',priv_chart:'Prix masqués : graphique caché.',ptr_hint:'tire vers le bas pour actualiser',ptr_pull:'Tire pour actualiser les prix',ptr_release:'Relâche pour actualiser',ptr_busy:'Actualisation des prix…',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',alert_cfg:'Alerte de prix',al_below:'Prix en dessous de…',al_above:'Prix au-dessus de…',al_on:'Activer l’alerte',al_off:'Désactiver',al_saved:'Alerte de prix enregistrée',al_removed:'Alerte de prix désactivée',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -423,7 +444,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',priv_hide:'Hide prices',priv_show:'Show prices',priv_on:'Prices hidden 🙈',priv_off:'Prices shown',priv_t:'Hide prices',priv_d:'Replaces every amount with ••• so you can show your collection without revealing its value. Also available from the eye icon at the top.',priv_shown:'Shown',priv_hidden:'Hidden',priv_chart:'Prices hidden: chart hidden.',ptr_hint:'pull down to refresh',ptr_pull:'Pull to refresh prices',ptr_release:'Release to refresh',ptr_busy:'Refreshing prices…',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',alert_cfg:'Price alert',al_below:'Price below…',al_above:'Price above…',al_on:'Turn on alert',al_off:'Turn off',al_saved:'Price alert saved',al_removed:'Price alert turned off',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
+ copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',add_short:'Add',filters:'Filters',priv_hide:'Hide prices',priv_show:'Show prices',priv_on:'Prices hidden 🙈',priv_off:'Prices shown',priv_t:'Hide prices',priv_d:'Replaces every amount with ••• so you can show your collection without revealing its value. Also available from the eye icon at the top.',priv_shown:'Shown',priv_hidden:'Hidden',priv_chart:'Prices hidden: chart hidden.',ptr_hint:'pull down to refresh',ptr_pull:'Pull to refresh prices',ptr_release:'Release to refresh',ptr_busy:'Refreshing prices…',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',alert_cfg:'Price alert',al_below:'Price below…',al_above:'Price above…',al_on:'Turn on alert',al_off:'Turn off',al_saved:'Price alert saved',al_removed:'Price alert turned off',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -921,7 +942,7 @@ function render(){
 }
 
 /* ============ view: collection ============ */
-const cfilter={q:'',set:'',lang:''};
+const cfilter={q:'',set:'',lang:''};let cfOpen=false;
 function viewCollection(m){
   const owned=collection.filter(e=>e.status!=='wish');
   const tt=totals(owned);
@@ -935,17 +956,22 @@ function viewCollection(m){
     <span class="sb-go">${t('see_value')} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
   </a>`:''}
   ${alertsBanner(e=>e.status!=='wish')}
-  <div class="toolbar" style="margin-top:14px">
+  <div class="coll-head">
     <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
-    <button class="btn ptr-hide" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
-    <a class="btn primary" href="#add">＋ ${t('go_add')}</a>
+    <button class="btn btn-sm ptr-hide" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
+    <a class="btn primary btn-sm" href="#add"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>${t('add_short')}</a>
   </div>
   ${owned.length?`
-  <div class="toolbar">
-    <input type="text" class="grow" id="cq" placeholder="${t('filter_collection')}" value="${esc(cfilter.q)}">
-    <select id="cset" style="width:auto;max-width:240px"><option value="">${t('all_sets')}</option>${sets.sort((a,b)=>a.n.localeCompare(b.n)).map(s=>`<option value="${esc(s.k)}" ${cfilter.set===s.k?'selected':''}>${esc(s.n)}</option>`).join('')}</select>
-    <select id="clang" style="width:auto"><option value="">${t('all_langs')}</option><option value="fr" ${cfilter.lang==='fr'?'selected':''}>Français</option><option value="en" ${cfilter.lang==='en'?'selected':''}>English</option><option value="ja" ${cfilter.lang==='ja'?'selected':''}>日本語</option></select>
-    <select id="csort" style="width:auto">${['value','gain','added','name','set'].map(s=>`<option value="${s}" ${settings.sort===s?'selected':''}>${t('sort_'+s)}</option>`).join('')}</select>
+  <div class="cfilters">
+    <div class="cf-row">
+      <label class="searchbox"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" id="cq" placeholder="${t('filter_collection')}" value="${esc(cfilter.q)}"></label>
+      <button type="button" class="btn cf-toggle ${cfOpen?'on':''}" id="cfToggle" aria-expanded="${cfOpen}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span class="cf-lbl">${t('filters')}</span><span class="cf-count" id="cfCount"></span></button>
+    </div>
+    <div class="cf-panel ${cfOpen?'open':''}" id="cfPanel">
+      <select id="cset" aria-label="${t('set')}"><option value="">${t('all_sets')}</option>${sets.sort((a,b)=>a.n.localeCompare(b.n)).map(s=>`<option value="${esc(s.k)}" ${cfilter.set===s.k?'selected':''}>${esc(s.n)}</option>`).join('')}</select>
+      <select id="clang" aria-label="${t('card_lang')}"><option value="">${t('all_langs')}</option><option value="fr" ${cfilter.lang==='fr'?'selected':''}>Français</option><option value="en" ${cfilter.lang==='en'?'selected':''}>English</option><option value="ja" ${cfilter.lang==='ja'?'selected':''}>日本語</option></select>
+      <select id="csort" class="cf-sort" aria-label="${t('sort_label')}">${['value','gain','added','name','set'].map(s=>`<option value="${s}" ${settings.sort===s?'selected':''}>${t('sort_'+s)}</option>`).join('')}</select>
+    </div>
   </div>
   <div class="grid" id="cgrid"></div>`:`<div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`}
   <p class="credit">${t('credit_short')} · <a href="#data">${t('about_more')}</a></p>`;
@@ -962,10 +988,12 @@ function viewCollection(m){
     m.querySelector('#cgrid').innerHTML=list.map(entryTile).join('');
     m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
   };
+  const updCount=()=>{const n=(cfilter.set?1:0)+(cfilter.lang?1:0)+(settings.sort!=='value'?1:0);const c=m.querySelector('#cfCount');c.textContent=n||'';c.style.display=n?'':'none'};updCount();
+  m.querySelector('#cfToggle').onclick=e=>{cfOpen=!cfOpen;m.querySelector('#cfPanel').classList.toggle('open',cfOpen);e.currentTarget.classList.toggle('on',cfOpen);e.currentTarget.setAttribute('aria-expanded',cfOpen)};
   m.querySelector('#cq').oninput=e=>{cfilter.q=e.target.value;draw()};
-  m.querySelector('#cset').onchange=e=>{cfilter.set=e.target.value;draw()};
-  m.querySelector('#clang').onchange=e=>{cfilter.lang=e.target.value;draw()};
-  m.querySelector('#csort').onchange=e=>{settings.sort=e.target.value;saveSettings();draw()};
+  m.querySelector('#cset').onchange=e=>{cfilter.set=e.target.value;updCount();draw()};
+  m.querySelector('#clang').onchange=e=>{cfilter.lang=e.target.value;updCount();draw()};
+  m.querySelector('#csort').onchange=e=>{settings.sort=e.target.value;saveSettings();updCount();draw()};
   draw();
   m.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openEntry(el.dataset.open));
 }
