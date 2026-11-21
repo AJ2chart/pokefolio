@@ -225,6 +225,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 #splash.out{opacity:0;visibility:hidden}
 @keyframes splashIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 .deals{margin:0 0 16px}
+.demo-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--card2);color:var(--muted);vertical-align:2px;margin-left:4px}
 .deals-h{font-weight:700;font-size:15px;margin:0 0 8px}
 .deals-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.deals-row::-webkit-scrollbar{display:none}
 .deal{flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--ok) 45%,var(--line));background:color-mix(in srgb,var(--ok) 9%,var(--card));color:var(--text);font:inherit;text-align:left;cursor:pointer}
@@ -531,7 +532,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-48';
+const APP_VERSION = '2026.11.21-49';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1205,6 +1206,7 @@ function viewCollection(m){
 // total copies of the same card (same card, same language, same list: owned or wishlist), across all entries
 const copiesOf=e=>collection.reduce((n,x)=>x.cardId===e.cardId&&x.lang===e.lang&&(x.status==='wish')===(e.status==='wish')?n+(x.qty||1):n,0);
 const gainOf=e=>e.buy>0&&entryValue(e)!=null?(entryValue(e)-e.buy)*e.qty:-Infinity;
+const DEAL_DEMO=true;
 function wishDeal(e){
   const v=entryValue(e);if(v==null)return null;
   const h0=e.hist?.find(x=>x.v>0)?.v;const pct=h0&&e.hist.length>1?(v-h0)/h0*100:0;
@@ -1871,10 +1873,12 @@ function chartOpts(legend){
 function viewWish(m){
   // priority cards first, then the most expensive
   const list=collection.filter(e=>e.status==='wish').sort((a,b)=>(b.prio?1:0)-(a.prio?1:0)||(entryValue(b)||0)-(entryValue(a)||0));
-  const deals=list.map(e=>({e,d:wishDeal(e)})).filter(x=>x.d).sort((a,b)=>(b.e.prio?1:0)-(a.e.prio?1:0)||a.d.pct-b.d.pct);
+  let deals=list.map(e=>({e,d:wishDeal(e)})).filter(x=>x.d).sort((a,b)=>(b.e.prio?1:0)-(a.e.prio?1:0)||a.d.pct-b.d.pct);
+  // TEMP preview requested by the user: the first 3 wishlist cards shown as fake deals (display only, nothing is saved). Remove DEAL_DEMO once checked.
+  if(DEAL_DEMO&&!deals.length)deals=list.slice(0,3).map((e,i)=>({e,d:[{pct:-12.4},{pct:-7.8},{hit:true,pct:0}][i]}));
   const total=list.reduce((s,e)=>s+(entryValue(e)||0)*e.qty,0);
   m.innerHTML=`<h1>${t('wish_title')}</h1>
-  ${deals.length&&!settings.hidePrices?`<div class="deals"><div class="deals-h">🏷 ${t('deals_title',{n:deals.length})}</div><div class="deals-row">${deals.map(({e,d})=>`<button class="deal" data-open="${e.uid}"><span class="deal-im">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><span class="deal-t"><b>${e.prio?'★ ':''}${esc(e.name)}</b><span>${fmtEur(entryValue(e))} · <em class="pos">${d.hit?t('deal_hit'):fmtPct(d.pct)}</em></span></span></button>`).join('')}</div></div>`:''}
+  ${deals.length&&!settings.hidePrices?`<div class="deals"><div class="deals-h">🏷 ${t('deals_title',{n:deals.length})}${DEAL_DEMO&&!list.some(wishDeal)?' <span class="demo-tag">aperçu test</span>':''}</div><div class="deals-row">${deals.map(({e,d})=>`<button class="deal" data-open="${e.uid}"><span class="deal-im">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><span class="deal-t"><b>${e.prio?'★ ':''}${esc(e.name)}</b><span>${fmtEur(entryValue(e))} · <em class="pos">${d.hit?t('deal_hit'):fmtPct(d.pct)}</em></span></span></button>`).join('')}</div></div>`:''}
   ${list.length?`<div class="stat wbudget money"><div class="lbl">${t('wish_budget')}</div><div class="val">${fmtEur(total)}</div><div class="sub">${t('wish_count',{n:list.reduce((a,e)=>a+(e.qty||1),0)})}</div></div><div class="grid">${list.map(e=>entryTile(e,{remove:true,bell:true,wish:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
   m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
   m.querySelectorAll('[data-bell]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openAlertSheet(b.dataset.bell)});
