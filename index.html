@@ -94,7 +94,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .wbtn.on{color:var(--accent2)}
 .wbtn.on svg path{fill:currentColor}
 .wbtn.busy{opacity:.6}
-.lbadge{position:absolute;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.xbtn svg{width:10px;height:10px;margin:0}
+.xbtn:hover{color:var(--ko)}
+.tile.has-x .lbadge{right:40px}
+.toast{display:flex;align-items:center;gap:14px;width:max-content;max-width:min(90vw,460px)}
+.toast-act{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:2px 0;white-space:nowrap}
+.lbadge{position:absolute;z-index:2;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .lbadge svg{width:100%;height:100%;display:block}
 .tile .img{position:relative}
 .gbadge{position:absolute;bottom:8px;left:8px;background:#1a1d24;color:#fff;border:1px solid var(--accent);border-radius:6px;font-size:12px;font-weight:700;padding:2px 7px}
@@ -184,6 +189,7 @@ canvas{max-width:100%}
   .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
   .badge{top:10px;left:10px;min-width:18px;height:18px;font-size:10.5px}
   .wbtn{top:10px;right:10px;width:18px;height:18px}.lbadge{top:11px;right:11px}
+  .tile.has-x .lbadge{right:36px}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
@@ -233,7 +239,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-8';
+const APP_VERSION = '2026.11.21-9';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -292,7 +298,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',wish_remove:'Retirer de ma wishlist',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -350,7 +356,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
+ copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',wish_remove:'Remove from my wishlist',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -563,7 +569,12 @@ async function refreshPrices(silent){
 }
 
 /* ============ UI helpers ============ */
-function toast(msg){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
+function toast(msg,action){
+  document.querySelectorAll('.toast').forEach(x=>x.remove());
+  const d=document.createElement('div');d.className='toast';d.textContent=msg;
+  if(action){const b=document.createElement('button');b.className='toast-act';b.textContent=action.label;b.onclick=()=>{d.remove();action.fn()};d.appendChild(b)}
+  document.body.appendChild(d);setTimeout(()=>d.remove(),action?5000:2600);
+}
 // Modals get their own history entry so the phone's back button / back gesture closes them
 let modalHist=false,ignorePop=false;
 function closeModal(fromPop){
@@ -855,10 +866,10 @@ function viewCollection(m){
 // total copies of the same card (same card, same language, same list: owned or wishlist), across all entries
 const copiesOf=e=>collection.reduce((n,x)=>x.cardId===e.cardId&&x.lang===e.lang&&(x.status==='wish')===(e.status==='wish')?n+(x.qty||1):n,0);
 const gainOf=e=>e.buy>0&&entryValue(e)!=null?(entryValue(e)-e.buy)*e.qty:-Infinity;
-function entryTile(e){
+function entryTile(e,opts={}){
   const v=entryValue(e);const ch=e.buy>0&&v!=null?(v-e.buy)/e.buy*100:null;
-  return `<div class="tile" data-uid="${e.uid}">
-    ${(()=>{const n=copiesOf(e);return n>1?`<span class="badge" title="${esc(t('copies',{n}))}">${n}</span>`:''})()}<span class="lbadge">${FLAGS[e.lang]}</span>
+  return `<div class="tile ${opts.remove?'has-x':''}" data-uid="${e.uid}">
+    ${(()=>{const n=copiesOf(e);return n>1?`<span class="badge" title="${esc(t('copies',{n}))}">${n}</span>`:''})()}<span class="lbadge">${FLAGS[e.lang]}</span>${opts.remove?`<button class="wbtn xbtn" data-x="${e.uid}" aria-label="${esc(t('wish_remove'))}" title="${esc(t('wish_remove'))}">${XICON}</button>`:''}
     <div class="img">${imgTag(e.image,e.setId,e.localId,e.name)}${e.grade?.co?`<span class="gbadge">${esc(gradeStr(e))}</span>`:''}</div>
     <div class="nm" title="${esc(e.name)}">${e.alert?`<span title="${t('alert')}">🔔 </span>`:''}${esc(e.name)}</div>
     <div class="meta">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}${e.variant&&e.variant!=='normal'?' · '+t('v_'+e.variant):''}</div>
@@ -1043,6 +1054,7 @@ function renderResults(out,data,res,lang){
   const more=res.querySelector('#more');if(more)more.onclick=()=>{search.page++;runSearch(data,res,lang)};
 }
 
+const XICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>';
 const HEART='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
 const ownedCount=(id,lang)=>collection.reduce((n,x)=>x.cardId===id&&x.lang===lang&&x.status!=='wish'?n+(x.qty||1):n,0);
 const inWishlist=(id,lang)=>collection.some(x=>x.cardId===id&&x.lang===lang&&x.status==='wish');
@@ -1222,8 +1234,15 @@ function viewWish(m){
   const total=list.reduce((s,e)=>s+(entryValue(e)||0)*e.qty,0);
   m.innerHTML=`<h1>${t('wish_title')}</h1>
   ${alertsBanner(e=>e.status==='wish')}
-  ${list.length?`<p class="muted">${t('wish_total',{v:fmtEur(total)})}</p><div class="grid">${list.map(entryTile).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
+  ${list.length?`<p class="muted">${t('wish_total',{v:fmtEur(total)})}</p><div class="grid">${list.map(e=>entryTile(e,{remove:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
   m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
+  m.querySelectorAll('[data-x]').forEach(b=>b.onclick=ev=>{
+    ev.stopPropagation();
+    const e=collection.find(x=>x.uid===b.dataset.x);if(!e)return;
+    deleted[e.uid]=Date.now();LS.set('pf_deleted',deleted);
+    collection=collection.filter(x=>x!==e);saveCollection();render();
+    toast(t('wish_removed',{n:e.name}),{label:t('undo'),fn:()=>{delete deleted[e.uid];LS.set('pf_deleted',deleted);e.upd=Date.now();collection.push(e);saveCollection();render()}});
+  });
   m.querySelectorAll('.alerts [data-open]').forEach(el=>el.onclick=()=>openEntry(el.dataset.open));
   bindAlerts(m,e=>e.status==='wish');
 }
