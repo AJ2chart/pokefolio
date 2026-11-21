@@ -126,6 +126,74 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .cta-own{margin-right:auto;font-size:13px;color:var(--muted)}
 .cta-wish.on{color:var(--accent2);opacity:1}
 body:has(#ov .sheet-cta) .toast{bottom:90px}
+.sh{display:grid;grid-template-columns:320px 1fr;gap:28px;padding:26px 26px 8px}
+.sh-hero{position:relative;align-self:start;position:sticky;top:0;padding-top:4px}
+.sh-imgw{position:relative;border-radius:14px;background:radial-gradient(70% 60% at 50% 45%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 72%)}
+.sh-img{width:100%;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.5);cursor:zoom-in;display:block}
+.sh-zoom{position:absolute;right:-8px;bottom:-8px;width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4)}
+.sh-name{margin:2px 40px 8px 0;font-size:24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sh-flag svg{width:22px;height:15px;border-radius:2px;display:block}
+.sh-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sh-chip{font-size:12.5px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line)}
+.sh-chip.r{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.sh-illu{font-size:12.5px;color:var(--muted);margin-top:8px}
+.sh-price{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 4px;margin-top:14px}
+.sh-price.safe{padding:14px;color:var(--muted);font-size:14px}
+.sh-plab{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.sh-prow{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.sh-pval{font-size:30px;font-weight:700;line-height:1.15;margin-top:2px}
+.sh-pchg{font-size:13px;font-weight:600}
+.sh-prange{font-size:12.5px;color:var(--muted);margin-top:4px}
+.spark{flex:none;margin-bottom:4px}
+.sh-pdet{margin-top:10px;border-top:1px solid var(--line)}
+.sh-pdet summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-size:14px}
+.sh-pdet summary::-webkit-details-marker{display:none}
+.sh-pdet summary>span::after{content:' ▾';color:var(--muted)}
+.sh-pdet[open] summary>span::after{content:' ▴'}
+.sh-pdet-in{padding-bottom:10px}
+.sh-links{display:flex;gap:14px}
+.sh-links a{color:var(--muted);text-decoration:none;font-size:13.5px}
+.sh-links a:hover{color:var(--text)}
+.sh-wish{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent2) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent2) 30%,var(--line));font-size:14px}
+.sh-wish>span{color:var(--accent2);font-weight:600}
+.sh-wish .linkbtn{text-decoration:none;color:var(--text);font-size:13.5px}
+.sh-sec{margin:22px 0 10px;font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.sh-lbl{font-size:13px;color:var(--muted);margin:14px 0 7px}
+.sh-seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.sh-seg button{flex:1;padding:9px 6px;border-radius:9px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.sh-seg button.on{background:var(--card2);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+.sh-pills{display:flex;gap:6px}
+.sh-pills button{flex:1;min-width:0;padding:9px 0;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--muted);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.sh-pills button.on{background:color-mix(in srgb,var(--accent) 14%,transparent);border-color:var(--accent);color:var(--accent)}
+.sh-cdesc{font-size:12.5px;color:var(--muted);margin-top:7px}
+.sh-step{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.sh-step button{width:46px;height:42px;border:0;background:none;color:var(--text);font-size:20px;cursor:pointer}
+.sh-step input[type=number]{width:52px;text-align:center;border:0;background:none;font-weight:700;font-size:16px;padding:0;-moz-appearance:textfield;box-shadow:none}
+.sh-step input::-webkit-inner-spin-button,.sh-step input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.sh-form details.extra{margin-top:10px;padding:11px 14px;border-radius:12px;background:var(--card)}
+.sh-form details.extra summary{font-size:14px}
+.sh-copy{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.sh-copy.focus,.sh-copy.open{border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
+.sh-copy .q{min-width:36px;height:34px;border-radius:10px;background:var(--card2);display:grid;place-items:center;font-weight:700;font-size:14px}
+.sh-copy .t{flex:1;min-width:0}
+.sh-copy .t>div:first-child{font-weight:600;font-size:14.5px}
+.sh-copy .t>div+div{font-size:12.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.sh-copy .v{text-align:right;font-weight:700;font-size:14.5px;white-space:nowrap}
+.sh-copy .v small{display:block;font-weight:600;font-size:12px;color:var(--muted)}
+.sh-copy .v small.pos{color:var(--ok)}.sh-copy .v small.neg{color:var(--ko)}
+.gbadge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);margin-left:4px;vertical-align:1px}
+.sh-edit{flex:none;width:32px;height:32px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.sh-editor{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:14px;padding:4px 14px 14px;margin:-2px 0 10px;background:color-mix(in srgb,var(--card) 60%,transparent)}
+.sh-edbtns{display:flex;gap:8px;margin-top:14px;align-items:center}.sh-edbtns span{flex:1}
+.sh-tot{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin:4px 2px 0}.sh-tot b{color:var(--text)}
+.imgfs{position:fixed;inset:0;z-index:90;background:rgba(5,7,11,.97);display:flex;flex-direction:column}
+.imgfs-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:2}
+.imgfs-sc{flex:1;overflow:hidden;display:grid;place-items:center;padding:60px 16px 70px;transition:transform .15s}
+.imgfs-sc img{max-width:min(100%,520px);max-height:100%;border-radius:16px;cursor:zoom-in;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.imgfs.zoomed .imgfs-sc{overflow:auto;place-items:start;padding:0}
+.imgfs.zoomed .imgfs-sc img{max-width:none;max-height:none;width:240%;border-radius:0;cursor:zoom-out}
+.imgfs-hint{position:absolute;bottom:calc(24px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#8b93a7;font-size:13px;margin:0;pointer-events:none}
+.imgfs.zoomed .imgfs-hint{display:none}
 .nr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .nr-acts .btn{white-space:nowrap;gap:6px}.nr-acts svg{width:17px;height:12px;border-radius:2px;flex:none}
 .cf-toggle.on{border-color:var(--accent);color:var(--accent)}
@@ -307,6 +375,10 @@ canvas{max-width:100%}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   .hide-m{display:none}
+  .sh{display:block;padding:0 16px 6px}
+  .sh-hero{position:relative;margin:0 -16px;padding:calc(58px + env(safe-area-inset-top)) 0 20px;display:flex;justify-content:center}
+  .sh-imgw{width:min(62vw,250px)}
+  .sh-name{font-size:22px}
   .sheet-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-radius:0}
   .cta-own{flex-basis:100%;margin:0 0 2px}
   .cta-add{flex:1}.cta-wish{flex:none;min-width:48px;font-size:18px}.cta-wish .cta-lbl{display:none}
@@ -362,7 +434,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-36';
+const APP_VERSION = '2026.11.21-37';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -396,7 +468,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -454,7 +526,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -1454,124 +1526,220 @@ function pricesBlock(d,variant){
 }
 async function openCard(lang,id){
   {try{const r=(LS.get('pf_recent',[])).filter(x=>!(x.l===lang&&x.id===id));r.unshift({l:lang,id});LS.set('pf_recent',r.slice(0,24))}catch(_){}}
-  const m=openModal(`<div class="mpad" style="text-align:center"><span class="spin"></span></div>`);
-  let d;try{d=await getDetail(lang,id)}catch(e){m.querySelector('.mpad').textContent=t('err_net');return}
-  const set=idx[lang]?.sets[d.set?.id]||{};
-  const off=d.set?.cardCount?.official||set.off;
-  const variants=VARIANTS.filter(v=>d.variants?.[v]);if(!variants.length)variants.push('normal');
-  const num=numLabel(d.localId,off);
-  m.innerHTML=`<button class="iconbtn mclose" id="mclose">✕</button>
-  <div class="mbody">
-    <div>${imgTag(d.image,d.set?.id,d.localId,d.name,'high','cimg',lang)}</div>
-    <div>
-      <h1 style="margin:0 40px 4px 0">${esc(d.name)} <span class="lbadge" style="position:static;display:inline-block;vertical-align:middle">${FLAGS[lang]}</span></h1>
-      <div class="kv">
-        <span>${t('set')}</span><span>${esc(setNameFor(lang,d.set))}</span>
-        <span>${t('number')}</span><span>${esc(num)}</span>
-        ${d.rarity?`<span>${t('rarity')}</span><span>${esc(d.rarity)}</span>`:''}
-        ${d.illustrator?`<span>${t('illustrator')}</span><span>${esc(d.illustrator)}</span>`:''}
-      </div>
-      <div id="pblock">${pricesBlock(d,variants[0])}</div>
-      <div class="links">
-        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(d.name,num,setNameFor(lang,d.set),'',lang,d.set?.id))}">🔎 ${t('ebay_sold')}</a>
-        <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(d.name,setNameFor(lang,d.set)))}">🛒 ${t('cm_search')}</a>
-      </div>
-      <form class="form" id="addForm">
-        <label>${t('variant')}<select name="variant">${variants.map(v=>`<option value="${v}">${t('v_'+v)}</option>`).join('')}</select></label>
-        <label>${t('condition')}<select name="cond">${CONDITIONS.map(c=>`<option value="${c}" ${c==='NM'?'selected':''}>${c} · ${t('c_'+c)}</option>`).join('')}</select></label>
-        <label>${t('qty')}<input type="number" name="qty" min="1" value="1"></label>
-        <details class="full extra"><summary>📝 ${t('buy_notes')}</summary><div class="form" style="margin-top:4px">
-          <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></label>
-          <label>${t('buy_date')}<input type="date" name="date" value="${today()}"></label>
-          <label class="full">${t('notes')}<input type="text" name="notes"></label>
-        </div></details>
-        ${extraFields()}
-      </form>
-    </div>
-  </div>
-  <div class="sheet-cta">
-    ${(()=>{const n=ownedCount(d.id,lang);return n?`<span class="cta-own">${t('owned_already',{n})}</span>`:''})()}
-    ${inWishlist(d.id,lang)?`<button type="button" class="btn cta-wish on" disabled aria-label="${esc(t('in_wish'))}">♥<span class="cta-lbl"> ${t('in_wish')}</span></button>`:`<button type="submit" form="addForm" value="wish" class="btn cta-wish" aria-label="${esc(t('add_wish_btn'))}" title="${esc(t('add_wish_btn'))}">♡<span class="cta-lbl"> ${t('cta_wish')}</span></button>`}
-    <button type="submit" form="addForm" value="owned" class="btn primary cta-add" id="addBtn">＋ ${t('add_btn')}</button>
-  </div>`;
-  m.querySelector('#mclose').onclick=closeModal;
-  const f=m.querySelector('#addForm');
-  f.variant.onchange=()=>{m.querySelector('#pblock').innerHTML=pricesBlock(d,f.variant.value)};
-  f.onsubmit=ev=>{
-    ev.preventDefault();
-    const status=ev.submitter?.value==='wish'?'wish':'owned';
-    const variant=f.variant.value;
-    const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:setNameFor(lang,d.set),localId:String(d.localId),official:off||null,
-      rarity:d.rarity||'',image:d.image||'',variant,cond:f.cond.value,qty:Math.max(1,parseInt(f.qty.value)||1),
-      buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status,notes:f.notes.value.trim(),added:Date.now(),
-      price:pickPrice(d.pricing,variant,d.variants?.normal),tcp:d.pricing?.tcgplayer||null,hist:[],upd:Date.now(),...readExtra(f)};
-    pushHistory(e);
-    // merge identical plain entries
-    const plain=x=>!x.buy&&!x.grade&&!x.manual&&!x.alert;
-    const same=plain(e)&&collection.find(x=>x.cardId===e.cardId&&x.lang===e.lang&&x.variant===e.variant&&x.cond===e.cond&&x.status===e.status&&plain(x));
-    if(same){same.qty+=e.qty;same.price=e.price;same.upd=Date.now();pushHistory(same)}else collection.push(e);
-    saveCollection();closeModal();toast(t(status==='wish'?'wish_added':'added',{n:d.name}));
-    if(checkAlerts(false).length)toast('🔔 '+t('alert_toast',{n:1}));
-  };
+  openSheet(lang,id);
+}
+function openEntry(uid){
+  const e=collection.find(x=>x.uid===uid);if(!e)return;
+  openSheet(e.lang,e.cardId,{focus:uid});
 }
 
-/* ============ entry modal (owned / wish) ============ */
-function openEntry(id){
-  const e=collection.find(x=>x.uid===id);if(!e)return;
-  const v=entryValue(e);const ch=e.buy>0&&v!=null?(v-e.buy)/e.buy*100:null;
-  const num=numLabel(e.localId,e.official);
-  const m=openModal(`<div class="mbody">
-    <div style="position:relative">${imgTag(e.image,e.setId,e.localId,e.name,'high','cimg',e.lang)}</div>
-    <div>
-      <h1 style="margin:0 40px 4px 0">${esc(e.name)} <span class="lbadge" style="position:static;display:inline-block;vertical-align:middle">${FLAGS[e.lang]}</span></h1>
-      <div class="kv"><span>${t('set')}</span><span>${esc(e.setName)}</span><span>${t('number')}</span><span>${esc(num)}</span>${e.rarity?`<span>${t('rarity')}</span><span>${esc(e.rarity)}</span>`:''}${e.grade?.co?`<span>${t('grade')}</span><span><b>${esc(gradeStr(e))}</b>${e.grade.cert?` · #${esc(e.grade.cert)}`:''}</span>`:''}${e.alert?`<span>${t('alert')}</span><span>🔔 ${e.alert.dir==='below'?'≤':'≥'} ${fmtEur(e.alert.price)}</span>`:''}</div>
-      ${e.grade?.co&&!e.manual?`<div class="notice small">${t('graded_hint')}</div>`:''}${e.manual>0?`<div class="notice small">${t('manual_hint')}</div>`:''}
-      <div class="prices money">
-        <div class="pbox"><div class="l">${t('unit_value')}</div><div class="v">${fmtEur(v)}</div></div>
-        <div class="pbox"><div class="l">${t('total_value')}</div><div class="v">${v!=null?fmtEur(v*e.qty):'—'}</div></div>
-        <div class="pbox"><div class="l">${t('stat_cost')}</div><div class="v">${e.buy?fmtEur(e.buy*e.qty):'—'}</div></div>
-        <div class="pbox"><div class="l">${t('gain')}</div><div class="v ${ch>=0?'pos':'neg'}">${ch!=null?fmtPct(ch):'—'}</div></div>
-      </div>
-      <div id="livePrices"><span class="spin"></span></div>
-      <div class="links">
-        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(e.name,num,e.setName,gradeStr(e),e.lang,e.setId))}">🔎 ${t('ebay_sold')}</a>
-        <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(e.name,e.setName))}">🛒 ${t('cm_search')}</a>
-      </div>
-      <b class="small">${t('history')}</b>
-      ${settings.hidePrices?`<p class="muted small">🙈 ${t('priv_chart')}</p>`:e.hist?.length>1?`<div style="height:150px;position:relative"><canvas id="hchart"></canvas></div>`:`<p class="muted small">${t('no_history')}</p>`}
-      <form class="form" id="edForm">
-        <label>${t('variant')}<select name="variant">${VARIANTS.map(x=>`<option value="${x}" ${e.variant===x?'selected':''}>${t('v_'+x)}</option>`).join('')}</select></label>
-        <label>${t('condition')}<select name="cond">${CONDITIONS.map(c=>`<option value="${c}" ${e.cond===c?'selected':''}>${c} · ${t('c_'+c)}</option>`).join('')}</select></label>
-        <label>${t('qty')}<input type="number" name="qty" min="1" value="${e.qty}"></label>
-        <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" value="${e.buy||''}"></label>
-        <label>${t('buy_date')}<input type="date" name="date" value="${esc(e.date||'')}"></label>
-        <label>${t('status')}<select name="status"><option value="owned" ${e.status!=='wish'?'selected':''}>${t('owned')}</option><option value="wish" ${e.status==='wish'?'selected':''}>${t('wish')}</option></select></label>
-        <label class="full">${t('notes')}<input type="text" name="notes" value="${esc(e.notes||'')}"></label>
-        ${extraFields(e)}
-        <div class="full" style="display:flex;justify-content:space-between;gap:8px;margin-top:6px">
-          <button type="button" class="btn danger" id="delBtn">🗑 ${t('delete')}</button>
-          <span style="display:flex;gap:8px">${e.status==='wish'?`<button type="button" class="btn" id="gotBtn">✓ ${t('mark_owned')}</button>`:''}<button type="submit" class="btn primary">${t('save')}</button></span>
-        </div>
-      </form>
-    </div></div>`);
-  if(!settings.hidePrices&&e.hist?.length>1&&window.Chart){
-    charts.push(new Chart(m.querySelector('#hchart'),{type:'line',data:{labels:e.hist.map(h=>fmtDate(h.d)),datasets:[{data:e.hist.map(h=>h.v),borderColor:getCss('--accent'),backgroundColor:'transparent',tension:.3,pointRadius:2}]},options:chartOpts(false)}));
+/* ============ card sheet: one sheet for every card (search result, owned or wishlist) ============ */
+const COND_D={
+  fr:{MT:'parfaite, comme sortie du booster',NM:'quasi neuve, aucun défaut visible',EX:'très légères traces, à peine visibles',GD:'petites traces d’usure sur les bords ou les coins',LP:'usure légère mais nette',PL:'bien jouée, défauts visibles',PO:'abîmée : pli, déchirure ou tache'},
+  en:{MT:'perfect, straight out of the pack',NM:'almost new, no visible flaw',EX:'very light marks, barely visible',GD:'minor wear on edges or corners',LP:'light but clear wear',PL:'well played, visible flaws',PO:'damaged: crease, tear or stain'}};
+const condDesc=c=>`${c} · ${t('c_'+c)} : ${(COND_D[settings.lang]||COND_D.fr)[c]||''}`;
+function sparkSvg(vals){
+  vals=vals.filter(v=>v>0);if(vals.length<2)return '';
+  const W=120,H=44,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const pts=vals.map((v,i)=>[2+i*(W-4)/(vals.length-1),H-6-(v-mn)/r*(H-14)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const up=vals[vals.length-1]>=vals[0],c=up?'var(--ok)':'var(--ko)',gid='sg'+Math.random().toString(36).slice(2,7);
+  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${up?'#3ecf8e':'#ff5d5d'}" stop-opacity=".32"/><stop offset="1" stop-color="${up?'#3ecf8e':'#ff5d5d'}" stop-opacity="0"/></linearGradient></defs><path d="${line} L${pts[pts.length-1][0].toFixed(1)} ${H} L2 ${H}Z" fill="url(#${gid})"/><path d="${line}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+const pickSeg=(name,opts,val)=>`<input type="hidden" name="${name}" value="${esc(val)}"><div class="sh-seg" role="radiogroup">${opts.map(([v,l])=>`<button type="button" data-pick="${name}" data-val="${esc(v)}" class="${v===val?'on':''}" role="radio" aria-checked="${v===val}">${l}</button>`).join('')}</div>`;
+const pickPills=(name,val)=>`<input type="hidden" name="${name}" value="${esc(val)}"><div class="sh-pills" role="radiogroup">${CONDITIONS.map(c=>`<button type="button" data-pick="${name}" data-val="${c}" class="${c===val?'on':''}" role="radio" aria-checked="${c===val}" title="${esc(t('c_'+c))}">${c}</button>`).join('')}</div><div class="sh-cdesc">${esc(condDesc(val))}</div>`;
+const pickQty=(val)=>`<div class="sh-step"><button type="button" data-step="-1" aria-label="−">−</button><input type="number" name="qty" min="1" value="${val}" inputmode="numeric"><button type="button" data-step="1" aria-label="+">+</button></div>`;
+function bindPickers(f){
+  f.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{
+    const n=b.dataset.pick;f.querySelector(`input[name="${n}"]`).value=b.dataset.val;
+    b.parentElement.querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-checked',on)});
+    if(n==='cond'){const d=f.querySelector('.sh-cdesc');if(d)d.textContent=condDesc(b.dataset.val)}
+    f.dispatchEvent(new CustomEvent('pick',{detail:{name:n,val:b.dataset.val}}));
+  });
+  f.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const q=f.querySelector('input[name="qty"]');q.value=Math.max(1,(parseInt(q.value)||1)+parseInt(b.dataset.step))});
+}
+function openImageFull(html){
+  document.querySelector('.imgfs')?.remove();
+  const o=document.createElement('div');o.className='imgfs';
+  o.innerHTML=`<button class="iconbtn imgfs-x" aria-label="close">✕</button><div class="imgfs-sc">${html}</div><p class="imgfs-hint">${t('fs_hint')}</p>`;
+  document.body.appendChild(o);
+  const sc=o.querySelector('.imgfs-sc'),close=()=>o.remove();
+  o.querySelector('.imgfs-x').onclick=close;
+  sc.onclick=ev=>{
+    const z=!o.classList.contains('zoomed');const r=sc.getBoundingClientRect();const fx=(ev.clientX-r.left)/r.width,fy=(ev.clientY-r.top)/r.height;
+    o.classList.toggle('zoomed',z);
+    if(z)requestAnimationFrame(()=>{sc.scrollLeft=fx*sc.scrollWidth-sc.clientWidth/2;sc.scrollTop=fy*sc.scrollHeight-sc.clientHeight/2});
+  };
+  let y0=null,dy=0;
+  o.addEventListener('touchstart',e=>{if(o.classList.contains('zoomed')||e.touches.length>1){y0=null;return}y0=e.touches[0].clientY;dy=0},{passive:true});
+  o.addEventListener('touchmove',e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);sc.style.transform=`translateY(${dy}px)`;o.style.background=`rgba(5,7,11,${Math.max(.35,.97-dy/400)})`},{passive:true});
+  o.addEventListener('touchend',()=>{if(y0==null)return;if(dy>90)close();else{sc.style.transform='';o.style.background=''}y0=null});
+  const esc_=e=>{if(e.key==='Escape'){close();document.removeEventListener('keydown',esc_)}};document.addEventListener('keydown',esc_);
+}
+async function openSheet(lang,id,opts={}){
+  const m=openModal(`<div class="mpad" style="text-align:center;padding:60px 0"><span class="spin"></span></div>`);
+  let d=null;try{d=await getDetail(lang,id)}catch(_){}
+  if(!m.isConnected)return;
+  const any=collection.find(x=>x.cardId===id&&x.lang===lang);
+  if(!d&&!any){m.querySelector('.mpad').textContent=t('err_net');return}
+  const card=d?{name:d.name,setId:d.set?.id,setName:setNameFor(lang,d.set),localId:String(d.localId),off:d.set?.cardCount?.official||idx[lang]?.sets[d.set?.id]?.off||null,rarity:d.rarity||'',illu:d.illustrator||'',image:d.image||''}
+    :{name:any.name,setId:any.setId,setName:any.setName,localId:any.localId,off:any.official,rarity:any.rarity||'',illu:'',image:any.image};
+  const num=numLabel(card.localId,card.off);
+  const variants=d?VARIANTS.filter(v=>d.variants?.[v]):[];if(!variants.length)variants.push(any?.variant||'normal');
+  const copies=()=>collection.filter(x=>x.cardId===id&&x.lang===lang&&x.status!=='wish');
+  const wishE=()=>collection.find(x=>x.cardId===id&&x.lang===lang&&x.status==='wish');
+  const st={variant:variants[0],editing:null,addOpen:!copies().length,focus:opts.focus||null};
+  const priceFor=v=>d?pickPrice(d.pricing,v,d.variants?.normal):(collection.find(x=>x.cardId===id&&x.lang===lang&&x.variant===v)||any)?.price||null;
+  const plainRarity=/^(commune|peu commune|common|uncommon|aucune|none)$/i;
+
+  function priceHero(){
+    if(settings.hidePrices)return `<div class="sh-price safe">🛡 ${t('safe_prices')}</div>`;
+    const p=priceFor(st.variant);
+    const links=`<div class="sh-links"><a target="_blank" rel="noopener" href="${esc(ebayUrl(card.name,num,card.setName,'',lang,card.setId))}">eBay ↗</a><a target="_blank" rel="noopener" href="${esc(cmUrl(card.name,card.setName))}">Cardmarket ↗</a></div>`;
+    if(!p)return `<div class="sh-price"><div class="sh-plab">${t('est_price')}</div><div class="muted" style="margin:6px 0 2px">${t('no_price')}</div><div class="sh-pfoot"><span></span>${links}</div></div>`;
+    const own=copies().find(x=>x.variant===st.variant)||wishE();
+    const hist=own?.hist?.length>=3?own.hist.map(h=>h.v):null;
+    const series=hist||[p.avg30,p.avg7,p.avg1,p.trend];
+    const sv=series.filter(v=>v>0);const chg=sv.length>=2?(sv[sv.length-1]-sv[0])/sv[0]*100:null;
+    const r=priceRange(p);
+    return `<div class="sh-price">
+      <div class="sh-plab">${t('est_price')} · ${t('v_'+st.variant)}</div>
+      <div class="sh-prow"><div><div class="sh-pval">${fmtEur(p.value)}</div>${chg!=null&&isFinite(chg)?`<div class="sh-pchg ${chg>=0?'pos':'neg'}">${chg>=0?'▲':'▼'} ${fmtPct(chg)} ${hist?t('since_track'):t('over_30d')}</div>`:''}</div>${sparkSvg(series)}</div>
+      ${r&&r.min!==r.max?`<div class="sh-prange">${t('range_short')} ${fmtEur(r.min)} – ${fmtEur(r.max)} · Cardmarket</div>`:''}
+      <details class="sh-pdet"${st.detOpen?' open':''}><summary><span>${t('price_detail')}</span>${links}</summary><div class="sh-pdet-in">${d?pricesBlock(d,st.variant):''}${own?.hist?.length>1?`<b class="small">${t('history')}</b><div style="height:140px;position:relative;margin-top:6px"><canvas class="shchart"></canvas></div>`:''}</div></details>
+    </div>`;
   }
-  getDetail(e.lang,e.cardId).then(d=>{const el=m.querySelector('#livePrices');if(el)el.innerHTML=pricesBlock(d,e.variant)}).catch(()=>{const el=m.querySelector('#livePrices');if(el)el.innerHTML=''});
-  const f=m.querySelector('#edForm');
-  f.onsubmit=async ev=>{
-    ev.preventDefault();
-    const variantChanged=f.variant.value!==e.variant;
-    Object.assign(e,{variant:f.variant.value,cond:f.cond.value,qty:Math.max(1,parseInt(f.qty.value)||1),buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status:f.status.value,notes:f.notes.value.trim(),upd:Date.now(),...readExtra(f,e)});
-    if(variantChanged){try{const d=await getDetail(e.lang,e.cardId);e.price=pickPrice(d.pricing,e.variant,d.variants?.normal);pushHistory(e)}catch(_){}}
-    saveCollection();closeModal();
-    const hits=checkAlerts(false);toast(hits.length?'🔔 '+t('alert_toast',{n:hits.length}):t('saved'));render();
-  };
-  m.querySelector('#delBtn').onclick=async()=>{
-    if(await confirmBox(t('del_confirm',{n:e.name}))){deleted[e.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x.uid!==e.uid);saveCollection();toast(t('deleted'));render()}
-    else openEntry(id);
-  };
-  const got=m.querySelector('#gotBtn');if(got)got.onclick=()=>{e.status='owned';e.date=today();e.upd=Date.now();saveCollection();closeModal();render();openEntry(id)};
+  function copyRow(c){
+    const v=entryValue(c),ch=c.buy>0&&v!=null?(v-c.buy)/c.buy*100:null;
+    const sub=[c.buy?`<span class="money">${t('bought')} ${fmtEur(c.buy)}</span>`:'',c.date&&c.buy?t('on_date',{d:fmtDate(c.date)}):'',c.manual>0?`<span class="money">${t('manual_short')}</span>`:'',c.grade?.cert?`cert. ${esc(c.grade.cert)}`:'',c.alert?`🔔 <span class="money">${c.alert.dir==='below'?'≤':'≥'} ${fmtEur(c.alert.price)}</span>`:'',c.notes?esc(c.notes):''].filter(Boolean).join(' · ');
+    return `<div class="sh-copy ${st.focus===c.uid?'focus':''} ${st.editing===c.uid?'open':''}" data-copy="${c.uid}">
+      <div class="q">×${c.qty||1}</div>
+      <div class="t"><div>${t('v_'+c.variant)} · ${esc(c.cond||'NM')}${c.grade?.co?` <span class="gbadge">${esc(gradeStr(c))}</span>`:''}</div>${sub?`<div>${sub}</div>`:''}</div>
+      <div class="v money">${v!=null?fmtEur(v*(c.qty||1)):'—'}${ch!=null?`<small class="${ch>=0?'pos':'neg'}">${fmtPct(ch)}</small>`:c.manual>0?`<small>${t('manual_tag')}</small>`:''}</div>
+      <button type="button" class="sh-edit" data-edit="${c.uid}" aria-label="${esc(t('edit'))}" title="${esc(t('edit'))}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg></button>
+    </div>${st.editing===c.uid?editor(c):''}`;
+  }
+  function editor(c){
+    const vs=[...new Set([...variants,c.variant])];
+    return `<form class="sh-form sh-editor" data-ed="${c.uid}">
+      <div class="sh-lbl">${t('variant')}</div>${pickSeg('variant',vs.map(v=>[v,t('v_'+v)]),c.variant)}
+      <div class="sh-lbl">${t('condition')}</div>${pickPills('cond',c.cond||'NM')}
+      <div class="sh-lbl">${t('qty')}</div>${pickQty(c.qty||1)}
+      <details class="extra"${c.buy||c.notes?' open':''}><summary>📝 ${t('buy_notes')}</summary><div class="form" style="margin-top:6px">
+        <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" inputmode="decimal" value="${c.buy||''}"></label>
+        <label>${t('buy_date')}<input type="date" name="date" value="${esc(c.date||'')}"></label>
+        <label class="full">${t('notes')}<input type="text" name="notes" value="${esc(c.notes||'')}"></label></div></details>
+      ${extraFields(c)}
+      <div class="sh-edbtns"><button type="button" class="btn danger" data-del="${c.uid}">🗑 ${t('delete')}</button><span></span><button type="button" class="btn" data-cancel>${t('cancel')}</button><button type="submit" class="btn primary">${t('save')}</button></div>
+    </form>`;
+  }
+  function addForm(){
+    return `<form class="sh-form" id="shAdd">
+      <div class="sh-lbl" style="margin-top:0">${t('variant')}</div>${pickSeg('variant',variants.map(v=>[v,t('v_'+v)]),st.variant)}
+      <div class="sh-lbl">${t('condition')}</div>${pickPills('cond','NM')}
+      <div class="sh-lbl">${t('qty')}</div>${pickQty(1)}
+      <details class="extra"><summary>📝 ${t('buy_notes')}</summary><div class="form" style="margin-top:6px">
+        <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></label>
+        <label>${t('buy_date')}<input type="date" name="date" value="${today()}"></label>
+        <label class="full">${t('notes')}<input type="text" name="notes"></label></div></details>
+      ${extraFields()}
+    </form>`;
+  }
+  function draw(){
+    const cs=copies(),w=wishE(),nOwn=cs.reduce((a,x)=>a+(x.qty||1),0);
+    const tot=cs.reduce((a,x)=>{const v=entryValue(x);return v!=null?a+v*(x.qty||1):a},0);
+    const scroller=document.getElementById('ov'),keep=scroller?scroller.scrollTop:0;
+    m.innerHTML=`<button class="iconbtn mclose" id="mclose" aria-label="close">✕</button>
+    <div class="sh">
+      <div class="sh-hero"><div class="sh-imgw">${imgTag(card.image,card.setId,card.localId,card.name,'high','cimg sh-img',lang)}<button type="button" class="sh-zoom" aria-label="${esc(t('fs_open'))}" title="${esc(t('fs_open'))}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 4h5v5M9 20H4v-5M20 4l-6 6M4 20l6-6"/></svg></button></div></div>
+      <div class="sh-main">
+        <h1 class="sh-name">${esc(card.name)} <span class="sh-flag">${FLAGS[lang]}</span></h1>
+        <div class="sh-chips"><span class="sh-chip">${esc(card.setName)}</span><span class="sh-chip">${esc(num)}</span>${card.rarity?`<span class="sh-chip ${plainRarity.test(card.rarity)?'':'r'}">${plainRarity.test(card.rarity)?'':'★ '}${esc(card.rarity)}</span>`:''}${isReprintSet(card.setId)?`<span class="sh-chip r">♻ ${t('reprint_short')}</span>`:''}</div>
+        ${card.illu?`<div class="sh-illu">${t('illustrator')} : ${esc(card.illu)}</div>`:''}
+        ${priceHero()}
+        ${w?`<div class="sh-wish"><span>♥ ${t('in_wish')}</span><button type="button" class="linkbtn" id="shAlert">🔔 ${w.alert?`<span class="money">${w.alert.dir==='below'?'≤':'≥'} ${fmtEur(w.alert.price)}</span>`:t('al_set')}</button></div>`:''}
+        ${cs.length?`<div class="sh-sec">${t('my_copies')} (${nOwn})</div>${cs.map(copyRow).join('')}${tot?`<div class="sh-tot money"><span>${t('copies_value')}</span><b>${fmtEur(tot)}</b></div>`:''}`:''}
+        ${st.addOpen?`<div class="sh-sec" id="shAddSec">${cs.length?t('add_copy'):t('add_btn')}</div>${addForm()}`:''}
+      </div>
+    </div>
+    <div class="sheet-cta" ${st.editing?'hidden':''}>
+      <button type="button" class="btn cta-wish ${w?'on':''}" id="shWish" ${!d&&!w?'disabled':''} aria-label="${esc(t(w?'wish_remove':'add_wish_btn'))}" title="${esc(t(w?'wish_remove':'add_wish_btn'))}">${w?'♥':'♡'}<span class="cta-lbl"> ${t(w?'in_wish':'cta_wish')}</span></button>
+      <button type="button" class="btn primary cta-add" id="shCta">＋ ${t(st.addOpen?'add_btn':'add_copy')}</button>
+    </div>`;
+    if(scroller)scroller.scrollTop=keep;
+    bind();
+  }
+  function bind(){bindTop();bindRest()}
+  function bindTop(){
+    m.querySelector('#mclose').onclick=closeModal;
+    const img=m.querySelector('.sh-img');const full=()=>openImageFull(imgTag(card.image,card.setId,card.localId,card.name,'high','fsimg',lang));
+    m.querySelector('.sh-zoom').onclick=full;if(img)img.addEventListener('click',full);
+    bindPrice();
+    const al=m.querySelector('#shAlert');if(al)al.onclick=()=>openAlertSheet(wishE().uid);
+  }
+  function bindPrice(){
+    const det=m.querySelector('.sh-pdet');
+    det?.querySelectorAll('.sh-links a').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));
+    if(det)det.addEventListener('toggle',()=>{st.detOpen=det.open;const cv=det.querySelector('.shchart');const own=copies().find(x=>x.variant===st.variant)||wishE();
+      if(det.open&&cv&&!cv.dataset.on&&window.Chart&&own?.hist?.length>1){cv.dataset.on=1;charts.push(new Chart(cv,{type:'line',data:{labels:own.hist.map(h=>fmtDate(h.d)),datasets:[{data:own.hist.map(h=>h.v),borderColor:getCss('--accent'),backgroundColor:'transparent',tension:.3,pointRadius:2}]},options:chartOpts(false)}))}});
+  }
+  function bindRest(){
+    // copies: edit inline
+    m.querySelectorAll('[data-edit]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();st.editing=st.editing===b.dataset.edit?null:b.dataset.edit;st.focus=null;draw();m.querySelector('.sh-editor')?.scrollIntoView({block:'nearest',behavior:'smooth'})});
+    m.querySelectorAll('[data-copy]').forEach(r=>r.onclick=()=>r.querySelector('[data-edit]').click());
+    const ed=m.querySelector('.sh-editor');
+    if(ed){
+      bindPickers(ed);
+      ed.querySelector('[data-cancel]').onclick=()=>{st.editing=null;draw()};
+      ed.querySelector('[data-del]').onclick=()=>{
+        const c=collection.find(x=>x.uid===ed.dataset.ed);if(!c)return;
+        deleted[c.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==c);saveCollection();render();
+        st.editing=null;if(!copies().length)st.addOpen=true;draw();
+        toast(t('deleted'),{label:t('undo'),fn:()=>{delete deleted[c.uid];LS.set('pf_deleted',deleted);c.upd=Date.now();collection.push(c);saveCollection();render();if(document.getElementById('ov')&&m.isConnected){st.addOpen=false;draw()}}});
+      };
+      ed.onsubmit=async ev=>{
+        ev.preventDefault();
+        const c=collection.find(x=>x.uid===ed.dataset.ed);if(!c)return;
+        const variantChanged=ed.variant.value!==c.variant;
+        Object.assign(c,{variant:ed.variant.value,cond:ed.cond.value,qty:Math.max(1,parseInt(ed.qty.value)||1),buy:parseFloat(String(ed.buy.value).replace(',','.'))||0,date:ed.date.value,notes:ed.notes.value.trim(),upd:Date.now(),...readExtra(ed,c)});
+        if(variantChanged){const p=priceFor(c.variant);if(p){c.price=p;pushHistory(c)}}
+        saveCollection();render();st.editing=null;draw();
+        const hits=checkAlerts(false);toast(hits.length?'🔔 '+t('alert_toast',{n:hits.length}):t('saved'));
+      };
+    }
+    // add form
+    const f=m.querySelector('#shAdd');
+    if(f){bindPickers(f);f.addEventListener('pick',e=>{if(e.detail.name==='variant'){st.variant=e.detail.val;const ph=m.querySelector('.sh-price');if(ph){ph.outerHTML=priceHero();bindPrice()}}});f.onsubmit=ev=>{ev.preventDefault();addNow()}}
+    m.querySelector('#shCta').onclick=()=>{
+      if(!st.addOpen){st.addOpen=true;st.editing=null;draw();const sec=m.querySelector('#shAddSec');sec?.scrollIntoView({block:'start',behavior:'smooth'});return}
+      addNow();
+    };
+    m.querySelector('#shWish').onclick=()=>{
+      const w=wishE();
+      if(w){deleted[w.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==w);saveCollection();render();draw();
+        toast(t('wish_removed',{n:card.name}),{label:t('undo'),fn:()=>{delete deleted[w.uid];LS.set('pf_deleted',deleted);w.upd=Date.now();collection.push(w);saveCollection();render();if(m.isConnected)draw()}});return}
+      if(!d)return;
+      collection.push(entryFromDetail(d,lang,{status:'wish',variant:st.variant}));saveCollection();render();draw();toast(t('wish_added',{n:card.name}));
+    };
+  }
+  function addNow(){
+    const f=m.querySelector('#shAdd');if(!f)return;
+    const variant=f.variant.value;
+    const e={uid:uid(),cardId:id,lang,name:card.name,setId:card.setId,setName:card.setName,localId:card.localId,official:card.off||null,
+      rarity:card.rarity,image:card.image,variant,cond:f.cond.value,qty:Math.max(1,parseInt(f.qty.value)||1),
+      buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status:'owned',notes:f.notes.value.trim(),added:Date.now(),
+      price:priceFor(variant),tcp:d?.pricing?.tcgplayer||null,hist:[],upd:Date.now(),...readExtra(f)};
+    pushHistory(e);
+    const plain=x=>!x.buy&&!x.grade&&!x.manual&&!x.alert&&!x.notes;
+    const same=plain(e)&&collection.find(x=>x.cardId===e.cardId&&x.lang===e.lang&&x.variant===e.variant&&x.cond===e.cond&&x.status==='owned'&&plain(x));
+    if(same){same.qty+=e.qty;same.price=e.price;same.upd=Date.now();pushHistory(same)}else collection.push(e);
+    // got it: the card leaves the wishlist
+    const w=wishE();let msg=t('added',{n:card.name});
+    if(w){deleted[w.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==w);msg=t('added_from_wish',{n:card.name})}
+    saveCollection();closeModal();render();toast(msg);
+    if(checkAlerts(false).length)toast('🔔 '+t('alert_toast',{n:1}));
+  }
+  draw();
 }
 const getCss=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 function chartOpts(legend){
