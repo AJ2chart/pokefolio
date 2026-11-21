@@ -279,8 +279,9 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-16';
+const APP_VERSION = '2026.11.21-17';
 const INDEX_TTL = 24*3600*1000;
+const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
 const LANG_NAMES={fr:'Français',en:'English',ja:'日本語'};
 const FLAGS = {
@@ -446,28 +447,49 @@ const idb = {
 
 async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error(r.status);return r.json()}
 
+/* Japanese sets are shown with a French name: the French equivalent of the main international release when there is a clear one,
+   otherwise « Extension japonaise », always followed by the Japanese set code (e.g. « 151 · SV2a »). */
+const JA_SET_FR={SV1S:'Écarlate et Violet',SV1V:'Écarlate et Violet',SV2P:'Évolutions à Paldea',SV2D:'Évolutions à Paldea',SV3:'Flammes Obsidiennes',SV2A:'151',
+  SV4K:'Faille Paradoxe',SV4M:'Faille Paradoxe',SV4A:'Destinées de Paldea',SV5K:'Forces Temporelles',SV5M:'Forces Temporelles',SV6:'Mascarade Crépusculaire',
+  SV6A:'Fable Nébuleuse',SV7:'Couronne Stellaire',SV8:'Étincelles Déferlantes',SV8A:'Évolutions Prismatiques',SV9:'Aventures Ensemble',SV10:'Rivalités Destinées',
+  SV11B:'Foudre Noire',SV11W:'Flamme Blanche',M1L:'Méga-Évolution',M1S:'Méga-Évolution'};
+function setLabel(lang,id,name){
+  if(lang!=='ja')return name;
+  const fr=JA_SET_FR[String(id||'').toUpperCase()];
+  return `${fr||(settings.lang==='en'?'Japanese set':'Extension japonaise')} · ${id}`;
+}
 async function loadIndex(lang,force){
   if(idx[lang]&&!force)return idx[lang];
   if(loading[lang]&&!force)return loading[lang];
   loading[lang]=(async()=>{
     const cached=!force&&await idb.get('index_'+lang);
-    if(cached&&Date.now()-cached.ts<INDEX_TTL){idx[lang]=cached;return cached}
+    if(cached&&cached.v===INDEX_VER&&Date.now()-cached.ts<INDEX_TTL){applySetNames(lang,cached);idx[lang]=cached;return cached}
     try{
-      const [cards,sets,pocket]=await Promise.all([getJSON(`${API}/${lang}/cards`),getJSON(`${API}/${lang}/sets`),getJSON(`${API}/${lang}/series/tcgp`).catch(()=>({sets:[]}))]);
+      const [cards,sets,pocket,frSets]=await Promise.all([getJSON(`${API}/${lang}/cards`),getJSON(`${API}/${lang}/sets`),getJSON(`${API}/${lang}/series/tcgp`).catch(()=>({sets:[]})),lang==='en'?getJSON(`${API}/fr/sets`).catch(()=>[]):Promise.resolve([])]);
+      const frName={};(frSets||[]).forEach(x=>{frName[x.id]=x.name});
       const excl=new Set((pocket.sets||[]).map(s=>s.id));
-      const setMap={};sets.forEach((s,i)=>{if(!excl.has(s.id))setMap[s.id]={id:s.id,n:s.name,o:i,off:s.cardCount?.official,tot:s.cardCount?.total,sym:s.symbol||''}});
+      const setMap={};sets.forEach((s,i)=>{if(!excl.has(s.id))setMap[s.id]={id:s.id,src:s.name,fr:frName[s.id],o:i,off:s.cardCount?.official,tot:s.cardCount?.total,sym:s.symbol||''}});
       const list=[];
       for(const c of cards){
         const sid=c.id.slice(0,c.id.length-String(c.localId).length-1);
         if(excl.has(sid)||!setMap[sid])continue;
         list.push({id:c.id,n:c.name,l:String(c.localId),s:sid,i:c.image||''});
       }
-      const data={ts:Date.now(),cards:list,sets:setMap};
-      await idb.set('index_'+lang,data);idx[lang]=data;return data;
-    }catch(e){if(cached){idx[lang]=cached;return cached}loading[lang]=null;throw e}
+      const data={v:INDEX_VER,ts:Date.now(),cards:list,sets:setMap};
+      await idb.set('index_'+lang,data);applySetNames(lang,data);idx[lang]=data;return data;
+    }catch(e){if(cached&&cached.v===INDEX_VER){applySetNames(lang,cached);idx[lang]=cached;return cached}loading[lang]=null;throw e}
   })();
   return loading[lang];
 }
+// Display names of sets: French for English and Japanese cards when the app is in French (the original name stays searchable)
+function applySetNames(lang,data){
+  for(const st of Object.values(data.sets)){
+    st.n=lang==='ja'?setLabel(lang,st.id,st.src):(lang==='en'&&settings.lang==='fr'&&st.fr)?st.fr:st.src;
+    st.alt=st.n===st.src?'':st.src;
+  }
+  for(const c of data.cards)c.h=undefined;
+}
+const setNameFor=(lang,set)=>idx[lang]?.sets[set?.id]?.n||(lang==='ja'?setLabel(lang,set?.id,set?.name):set?.name)||'';
 async function getDetail(lang,id){
   const k=lang+':'+id;
   if(detailCache[k])return detailCache[k];
@@ -582,6 +604,7 @@ let refreshing=false;
 async function refreshPrices(silent){
   if(refreshing||!collection.length)return;
   refreshing=true;
+  await Promise.all([...new Set(collection.map(e=>e.lang))].map(l=>loadIndex(l).catch(()=>{})));syncEntrySetNames();
   const keys=[...new Set(collection.map(e=>e.lang+':'+e.cardId))];
   let done=0;const btn=document.getElementById('refreshBtn');
   const upd=()=>{if(btn){btn.disabled=true;btn.innerHTML=`<span class="spin"></span> ${t('refreshing',{p:done,t:keys.length})}`}};
@@ -854,7 +877,9 @@ document.getElementById('accBtn').onclick=()=>openAccount();
 document.getElementById('flag-fr').onclick=()=>setLang('fr');
 document.getElementById('flag-en').onclick=()=>setLang('en');
 document.getElementById('themeBtn').onclick=()=>{settings.theme=settings.theme==='dark'?'light':'dark';saveSettings();render()};
-function setLang(l){settings.lang=l;settings.cardLang=l;saveSettings();search.page=1;render()}
+function setLang(l){settings.lang=l;settings.cardLang=l;saveSettings();for(const L of ['fr','en','ja'])if(idx[L])applySetNames(L,idx[L]);syncEntrySetNames();search.page=1;render()}
+// keep the set names stored in the collection in line with the display names (French for English/Japanese cards)
+function syncEntrySetNames(){let ch=false;for(const e of collection){const nm=idx[e.lang]?.sets[e.setId]?.n;if(nm&&nm!==e.setName){e.setName=nm;ch=true}}if(ch)LS.set('pf_collection',collection);return ch}
 
 let charts=[];
 function render(){
@@ -1130,7 +1155,7 @@ function findCards(data,raw,setFilter){
     if(setFilter&&c.s!==setFilter)continue;
     const st=data.sets[c.s];
     if(!c.k)c.k=norm(c.n);
-    if(!c.h)c.h=c.k+' '+norm(st?.n)+' '+norm(c.s)+' '+norm(c.l);
+    if(!c.h)c.h=c.k+' '+norm(st?.n)+' '+norm(st?.alt)+' '+norm(c.s)+' '+norm(c.l);
     if(words.length&&!words.every(w=>c.h.includes(w)))continue;
     const ln=parseInt(c.l,10);
     if(nums.length&&!nums.every(n=>ln===+n||c.h.split(' ').includes(n)))continue;
@@ -1176,7 +1201,7 @@ const inWishlist=(id,lang)=>collection.some(x=>x.cardId===id&&x.lang===lang&&x.s
 function entryFromDetail(d,lang,o={}){
   const variants=VARIANTS.filter(v=>d.variants?.[v]);const variant=o.variant||variants[0]||'normal';
   const off=d.set?.cardCount?.official||idx[lang]?.sets[d.set?.id]?.off||null;
-  const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:d.set?.name||'',localId:String(d.localId),official:off,
+  const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:setNameFor(lang,d.set),localId:String(d.localId),official:off,
     rarity:d.rarity||'',image:d.image||'',variant,cond:'NM',qty:1,buy:0,date:today(),status:'owned',notes:'',added:Date.now(),
     price:pickPrice(d.pricing,variant,d.variants?.normal),tcp:d.pricing?.tcgplayer||null,hist:[],upd:Date.now(),...o};
   pushHistory(e);return e;
@@ -1233,15 +1258,15 @@ async function openCard(lang,id){
     <div>
       <h1 style="margin:0 40px 4px 0">${esc(d.name)} <span class="lbadge" style="position:static;display:inline-block;vertical-align:middle">${FLAGS[lang]}</span></h1>
       <div class="kv">
-        <span>${t('set')}</span><span>${esc(d.set?.name)}</span>
+        <span>${t('set')}</span><span>${esc(setNameFor(lang,d.set))}</span>
         <span>${t('number')}</span><span>${esc(num)}</span>
         ${d.rarity?`<span>${t('rarity')}</span><span>${esc(d.rarity)}</span>`:''}
         ${d.illustrator?`<span>${t('illustrator')}</span><span>${esc(d.illustrator)}</span>`:''}
       </div>
       <div id="pblock">${pricesBlock(d,variants[0])}</div>
       <div class="links">
-        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(d.name,num,d.set?.name,'',lang,d.set?.id))}">🔎 ${t('ebay_sold')}</a>
-        <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(d.name,d.set?.name))}">🛒 ${t('cm_search')}</a>
+        <a class="btn" target="_blank" rel="noopener" href="${esc(ebayUrl(d.name,num,setNameFor(lang,d.set),'',lang,d.set?.id))}">🔎 ${t('ebay_sold')}</a>
+        <a class="btn" target="_blank" rel="noopener" href="${esc(cmUrl(d.name,setNameFor(lang,d.set)))}">🛒 ${t('cm_search')}</a>
       </div>
       <form class="form" id="addForm">
         <label>${t('variant')}<select name="variant">${variants.map(v=>`<option value="${v}">${t('v_'+v)}</option>`).join('')}</select></label>
@@ -1263,7 +1288,7 @@ async function openCard(lang,id){
   f.onsubmit=ev=>{
     ev.preventDefault();
     const variant=f.variant.value;
-    const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:d.set?.name||'',localId:String(d.localId),official:off||null,
+    const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:setNameFor(lang,d.set),localId:String(d.localId),official:off||null,
       rarity:d.rarity||'',image:d.image||'',variant,cond:f.cond.value,qty:Math.max(1,parseInt(f.qty.value)||1),
       buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status:f.status.value,notes:f.notes.value.trim(),added:Date.now(),
       price:pickPrice(d.pricing,variant,d.variants?.normal),tcp:d.pricing?.tcgplayer||null,hist:[],upd:Date.now(),...readExtra(f)};
@@ -1447,7 +1472,7 @@ function viewData(m){
 initSupabase();
 route();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
-loadIndex(settings.cardLang).catch(()=>{});
+loadIndex(settings.cardLang).then(()=>{if(syncEntrySetNames()&&!document.querySelector('.ov'))render()}).catch(()=>{});
 if(collection.length&&Date.now()-settings.lastRefresh>AUTO_REFRESH)refreshPrices(true);
 </script>
 </body>
