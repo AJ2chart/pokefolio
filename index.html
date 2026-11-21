@@ -69,6 +69,7 @@ h2{font-size:18px;margin:26px 0 12px}
 .btn:disabled{opacity:.5;cursor:default}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
 .toolbar .grow{flex:1;min-width:220px}
+.tbtitle{margin:0;flex:1 1 auto;min-width:max-content;white-space:nowrap}
 input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .bigsearch{font-size:17px;padding:13px 16px}
@@ -178,7 +179,7 @@ canvas{max-width:100%}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
-  .toolbar h2{flex:1 1 100%!important}
+  .tbtitle{flex:1 1 100%}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   #scanLbl{flex:1 1 100%}
@@ -224,6 +225,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
+const APP_VERSION = '2026.11.21-4';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -236,7 +238,7 @@ const VARIANTS = ['normal','reverse','holo','firstEdition'];
 /* ============ i18n ============ */
 const I18N = {
 fr:{
- nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Souhaits',nav_evo:'Évolution',nav_data:'Données',
+ nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Wishlist',nav_evo:'Évolution',nav_data:'Données',
  stat_value:'Valeur estimée',stat_cards:'Cartes',stat_cost:"Coût d'achat",stat_gain:'Plus-value',
  unique_cards:'{n} cartes différentes',gain_on:"sur {n} carte(s) avec prix d'achat",
  refresh:'Actualiser les prix',refreshing:'Actualisation… {p}/{t}',updated_at:'Prix mis à jour {d}',never:'jamais',
@@ -254,13 +256,13 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Ventes réussies eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Souhaitée',add_btn:'Ajouter à ma collection',add_wish_btn:'Ajouter aux souhaits',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
  del_confirm:'Supprimer « {n} » de ta collection ?',mark_owned:'Je l’ai eue !',
  unit_value:'Valeur unitaire',total_value:'Valeur totale',gain:'Plus-value',history:'Historique du prix',no_history:"L'historique se construit à chaque actualisation des prix.",
- wish_title:'Liste de souhaits',wish_empty:'Aucune carte souhaitée. Depuis « Ajouter », choisis le statut « Souhaitée ».',wish_total:'Budget total pour tout compléter : {v}',
+ wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Depuis « Ajouter », choisis le statut « Dans ma wishlist ».',wish_total:'Budget total pour tout compléter : {v}',
  evo_title:'Évolution de la collection',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
  data_title:'Sauvegarde & données',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
@@ -284,7 +286,7 @@ fr:{
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
  copies:'{n} exemplaires de cette carte dans ta collection',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
- more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta liste de souhaits.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
+ more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
  extra_hint:"Cardmarket ne donne que le prix des cartes non gradées : pour une carte gradée, indique une valeur manuelle (le lien eBay cherche les ventes avec la note).",
  graded_hint:"Valeur affichée = prix de la carte non gradée. Ajoute une valeur manuelle (en t'aidant des ventes eBay) pour refléter la note.",
@@ -800,7 +802,7 @@ function viewCollection(m){
   ${alertsBanner(e=>e.status!=='wish')}
   ${owned.length?dashboardPanels(owned):''}
   <div class="toolbar" style="margin-top:26px">
-    <h2 style="margin:0;flex:1">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
+    <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
     <button class="btn" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
     <a class="btn primary" href="#add">＋ ${t('go_add')}</a>
   </div>
@@ -1206,7 +1208,8 @@ function viewData(m){
   </div>
   <div class="toolbar"><button class="btn" id="clr">↻ ${t('clear_cache')}</button><button class="btn" id="notif">🔔 ${t('notif_btn')}</button><span class="muted small" id="notifState"></span></div>
   <p class="muted small">${t('notif_note')}</p>
-  <p class="muted small" style="margin-top:30px">${t('sources')}</p>`;
+  <p class="muted small" style="margin-top:30px">${t('sources')}</p>
+  <p class="muted small">Gleamvault · version ${APP_VERSION}</p>`;
   m.querySelector('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
   m.querySelector('#exCsv').onclick=()=>{
     const cols=['name','setName','localId','official','lang','variant','cond','grade','cert','qty','status','buy','date','value','manual','notes'];
