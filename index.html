@@ -121,6 +121,10 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .ah-set{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font:inherit;font-size:14px}
 .ah-set img{height:18px;width:auto}
 .ah-set:hover{border-color:var(--accent)}
+.sheet-cta{position:sticky;bottom:0;z-index:3;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 24px;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);border-radius:0 0 18px 18px}
+.cta-own{margin-right:auto;font-size:13px;color:var(--muted)}
+.cta-wish.on{color:var(--accent2);opacity:1}
+body:has(#ov .sheet-cta) .toast{bottom:90px}
 .nr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .nr-acts .btn{white-space:nowrap;gap:6px}.nr-acts svg{width:17px;height:12px;border-radius:2px;flex:none}
 .cf-toggle.on{border-color:var(--accent);color:var(--accent)}
@@ -277,7 +281,7 @@ canvas{max-width:100%}
   .panel{padding:14px;box-shadow:none}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .grid>*,.stats>*,.two>*,.form>*,.prices>*,.toolbar>*{min-width:0}
-  .ov{overflow-x:hidden}.modal{max-width:100vw;overflow-x:hidden}
+  .ov{overflow-x:hidden}.modal{max-width:100vw;overflow-x:clip}
   .kv span{overflow-wrap:anywhere}
   input[type=date]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
   .tile{padding:7px}.tile:hover{transform:none}.qadd{right:3px;bottom:3px}.tile .nm{font-size:14px}
@@ -302,6 +306,10 @@ canvas{max-width:100%}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   .hide-m{display:none}
+  .sheet-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-radius:0}
+  .cta-own{flex-basis:100%;margin:0 0 2px}
+  .cta-add{flex:1}.cta-wish{flex:none;min-width:48px;font-size:18px}.cta-wish .cta-lbl{display:none}
+  body:has(#ov .sheet-cta) .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   .ah-sets{grid-template-columns:1fr 1fr}
   .langseg{display:flex}.langseg button{flex:1;justify-content:center}
   .afilters .cf-panel #sset{grid-column:1/-1}
@@ -352,7 +360,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-34';
+const APP_VERSION = '2026.11.21-35';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -386,7 +394,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -444,7 +452,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -1075,7 +1083,6 @@ function viewAdd(m){
     </div>
   </div>
   <p class="muted small" id="idxInfo" style="margin:0 0 10px"></p>
-  ${lang==='ja'?`<p class="muted small" style="margin:-4px 0 12px">${t('ja_hint')} ${t('ja_note')}</p>`:''}
   <div id="sres"></div>`;
   const updCount=()=>{const n=(search.set?1:0)+((settings.searchSort||'relevance')!=='relevance'?1:0)+(settings.secretOnly?1:0);const c=m.querySelector('#afCount');c.textContent=n||'';c.style.display=n?'':'none'};updCount();
   m.querySelector('#afToggle').onclick=e=>{afOpen=!afOpen;m.querySelector('#afPanel').classList.toggle('open',afOpen);e.currentTarget.classList.toggle('on',afOpen);e.currentTarget.setAttribute('aria-expanded',afOpen)};
@@ -1327,7 +1334,7 @@ function renderAddHome(data,res,lang){
   const byId=new Map();const rec=LS.get('pf_recent',[]).filter(x=>x.l===lang);
   if(rec.length){const want=new Set(rec.map(x=>x.id));for(const c of data.cards)if(want.has(c.id))byId.set(c.id,c)}
   const recent=rec.map(x=>byId.get(x.id)).filter(Boolean).slice(0,12);
-  res.innerHTML=`<p class="muted small" style="margin:2px 0 14px">${t('type_to_search')}</p>
+  res.innerHTML=`<p class="muted small" style="margin:2px 0 14px">${lang==='ja'?`${t('ja_hint')} ${t('ja_note')}`:t('type_to_search')}</p>
     ${sets.length?`<h3 class="ah-t">${t('ah_sets')}</h3>`:''}
     <div class="ah-sets">${sets.map(st=>`<button class="ah-set" data-set="${esc(st.id)}">${st.sym?`<img src="${esc(st.sym)}.webp" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(st.n)}</span>${st.off?`<small class="muted">${st.tot||st.off} ${t('ah_cards')}</small>`:''}</button>`).join('')}</div>
     ${recent.length?`<h3 class="ah-t">${t('ah_recent')} <button class="linkbtn" id="ahClear">${t('ah_clear')}</button></h3><div class="grid">${recent.map(c=>resultTile({c,st:data.sets[c.s]},lang)).join('')}</div>`:''}`;
@@ -1469,32 +1476,37 @@ async function openCard(lang,id){
         <label>${t('variant')}<select name="variant">${variants.map(v=>`<option value="${v}">${t('v_'+v)}</option>`).join('')}</select></label>
         <label>${t('condition')}<select name="cond">${CONDITIONS.map(c=>`<option value="${c}" ${c==='NM'?'selected':''}>${c} · ${t('c_'+c)}</option>`).join('')}</select></label>
         <label>${t('qty')}<input type="number" name="qty" min="1" value="1"></label>
-        <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" placeholder="0,00"></label>
-        <label>${t('buy_date')}<input type="date" name="date" value="${today()}"></label>
-        <label>${t('status')}<select name="status"><option value="owned">${t('owned')}</option><option value="wish">${t('wish')}</option></select></label>
-        <label class="full">${t('notes')}<input type="text" name="notes"></label>
+        <details class="full extra"><summary>📝 ${t('buy_notes')}</summary><div class="form" style="margin-top:4px">
+          <label class="money">${t('buy_price')}<input type="number" name="buy" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></label>
+          <label>${t('buy_date')}<input type="date" name="date" value="${today()}"></label>
+          <label class="full">${t('notes')}<input type="text" name="notes"></label>
+        </div></details>
         ${extraFields()}
-        <div class="full" style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><button type="submit" class="btn primary" id="addBtn">＋ ${t('add_btn')}</button></div>
       </form>
     </div>
+  </div>
+  <div class="sheet-cta">
+    ${(()=>{const n=ownedCount(d.id,lang);return n?`<span class="cta-own">${t('owned_already',{n})}</span>`:''})()}
+    ${inWishlist(d.id,lang)?`<button type="button" class="btn cta-wish on" disabled aria-label="${esc(t('in_wish'))}">♥<span class="cta-lbl"> ${t('in_wish')}</span></button>`:`<button type="submit" form="addForm" value="wish" class="btn cta-wish" aria-label="${esc(t('add_wish_btn'))}" title="${esc(t('add_wish_btn'))}">♡<span class="cta-lbl"> ${t('cta_wish')}</span></button>`}
+    <button type="submit" form="addForm" value="owned" class="btn primary cta-add" id="addBtn">＋ ${t('add_btn')}</button>
   </div>`;
   m.querySelector('#mclose').onclick=closeModal;
   const f=m.querySelector('#addForm');
   f.variant.onchange=()=>{m.querySelector('#pblock').innerHTML=pricesBlock(d,f.variant.value)};
-  f.status.onchange=()=>{m.querySelector('#addBtn').innerHTML='＋ '+t(f.status.value==='wish'?'add_wish_btn':'add_btn')};
   f.onsubmit=ev=>{
     ev.preventDefault();
+    const status=ev.submitter?.value==='wish'?'wish':'owned';
     const variant=f.variant.value;
     const e={uid:uid(),cardId:d.id,lang,name:d.name,setId:d.set?.id,setName:setNameFor(lang,d.set),localId:String(d.localId),official:off||null,
       rarity:d.rarity||'',image:d.image||'',variant,cond:f.cond.value,qty:Math.max(1,parseInt(f.qty.value)||1),
-      buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status:f.status.value,notes:f.notes.value.trim(),added:Date.now(),
+      buy:parseFloat(String(f.buy.value).replace(',','.'))||0,date:f.date.value,status,notes:f.notes.value.trim(),added:Date.now(),
       price:pickPrice(d.pricing,variant,d.variants?.normal),tcp:d.pricing?.tcgplayer||null,hist:[],upd:Date.now(),...readExtra(f)};
     pushHistory(e);
     // merge identical plain entries
     const plain=x=>!x.buy&&!x.grade&&!x.manual&&!x.alert;
     const same=plain(e)&&collection.find(x=>x.cardId===e.cardId&&x.lang===e.lang&&x.variant===e.variant&&x.cond===e.cond&&x.status===e.status&&plain(x));
     if(same){same.qty+=e.qty;same.price=e.price;same.upd=Date.now();pushHistory(same)}else collection.push(e);
-    saveCollection();closeModal();toast(t('added',{n:d.name}));
+    saveCollection();closeModal();toast(t(status==='wish'?'wish_added':'added',{n:d.name}));
     if(checkAlerts(false).length)toast('🔔 '+t('alert_toast',{n:1}));
   };
 }
