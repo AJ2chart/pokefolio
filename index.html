@@ -124,7 +124,9 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .ah-set:hover{border-color:var(--accent)}
 .sheet-cta{position:sticky;bottom:0;z-index:3;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 24px;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);border-radius:0 0 18px 18px}
 .cta-own{margin-right:auto;font-size:13px;color:var(--muted)}
-.cta-wish.on{color:var(--accent2);opacity:1}
+.cta-wish{gap:7px}.cta-wish svg{width:20px;height:20px;flex:none}
+.cta-wish.on{color:var(--accent2);opacity:1}.cta-wish.on svg path{fill:currentColor}
+.sh-wish>span{display:inline-flex;align-items:center;gap:7px}.sh-wish>span svg{width:17px;height:17px}.sh-wish>span svg path{fill:currentColor}
 body:has(#ov .sheet-cta) .toast{bottom:90px}
 .sh{display:grid;grid-template-columns:320px 1fr;gap:28px;padding:26px 26px 8px}
 .sh-hero{position:relative;align-self:start;position:sticky;top:0;padding-top:4px}
@@ -397,7 +399,7 @@ canvas{max-width:100%}
   .sh.compact .sh-copy{padding:10px;margin-bottom:6px}
   .sheet-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-radius:0}
   .cta-own{flex-basis:100%;margin:0 0 2px}
-  .cta-add{flex:1}.cta-wish{flex:none;min-width:48px;font-size:18px}.cta-wish .cta-lbl{display:none}
+  .cta-add{flex:1}.cta-wish{flex:none;min-width:52px}.cta-wish .cta-lbl{display:none}
   body:has(#ov .sheet-cta) .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   .ah-sets{grid-template-columns:1fr 1fr}
   .langseg{display:flex}.langseg button{flex:1;justify-content:center}
@@ -450,7 +452,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-41';
+const APP_VERSION = '2026.11.21-42';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -484,7 +486,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',al_active:'Alerte active',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -542,7 +544,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',al_active:'Alert on',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -814,6 +816,7 @@ function toast(msg,action){
 // Modals get their own history entry so the phone's back button / back gesture closes them
 let modalHist=false,ignorePop=false;
 function closeModal(fromPop){
+  document.querySelector('.imgfs')?.remove();
   const root=document.getElementById('modalRoot');const had=!!root.innerHTML;
   root.innerHTML='';document.body.style.overflow='';
   if(modalHist&&fromPop!==true){modalHist=false;if(had){ignorePop=true;history.back()}}
@@ -1624,7 +1627,7 @@ async function openSheet(lang,id,opts={}){
       <div class="sh-plab">${t('est_price')} · ${t('v_'+st.variant)}</div>
       <div class="sh-prow"><div><div class="sh-pval">${fmtEur(p.value)}</div>${chg!=null&&isFinite(chg)?`<div class="sh-pchg ${chg>=0?'pos':'neg'}">${chg>=0?'▲':'▼'} ${fmtPct(chg)} ${hist?t('since_track'):t('over_30d')}</div>`:''}</div>${sparkSvg(series)}</div>
       ${r&&r.min!==r.max?`<div class="sh-prange">${t('range_short')} ${fmtEur(r.min)} – ${fmtEur(r.max)} · Cardmarket</div>`:''}
-      <details class="sh-pdet"${st.detOpen?' open':''}><summary><span>${t('price_detail')}</span>${links}</summary><div class="sh-pdet-in">${d?pricesBlock(d,st.variant):''}${own?.hist?.length>1?`<b class="small">${t('history')}</b><div style="height:140px;position:relative;margin-top:6px"><canvas class="shchart"></canvas></div>`:''}</div></details>
+      <details class="sh-pdet"${st.detOpen?' open':''}><summary><span>${t('price_detail')}</span>${links}</summary><div class="sh-pdet-in">${d?pricesBlock(d,st.variant):''}${own?.hist?.length>1&&window.Chart?`<b class="small">${t('history')}</b><div style="height:140px;position:relative;margin-top:6px"><canvas class="shchart"></canvas></div>`:''}</div></details>
     </div>`;
   }
   function copyRow(c){
@@ -1678,13 +1681,13 @@ async function openSheet(lang,id,opts={}){
         ${card.illu?`<div class="sh-illu">${t('illustrator')} : ${esc(card.illu)}</div>`:''}
         </div></div>
         ${priceHero()}
-        ${w?`<div class="sh-wish"><span>♥ ${t('in_wish')}</span><button type="button" class="linkbtn" id="shAlert">🔔 ${w.alert?`<span class="money">${w.alert.dir==='below'?'≤':'≥'} ${fmtEur(w.alert.price)}</span>`:t('al_set')}</button></div>`:''}
+        ${w?`<div class="sh-wish"><span>${HEART}${t('in_wish')}</span><button type="button" class="linkbtn" id="shAlert">🔔 ${w.alert?(settings.hidePrices?t('al_active'):`${w.alert.dir==='below'?'≤':'≥'} ${fmtEur(w.alert.price)}`):t('al_set')}</button></div>`:''}
         ${cs.length?`<div class="sh-sec">${t('my_copies')} (${nOwn})</div>${cs.map(copyRow).join('')}${tot?`<div class="sh-tot money"><span>${t('copies_value')}</span><b>${fmtEur(tot)}</b></div>`:''}`:''}
         ${st.addOpen?`<div class="sh-sec" id="shAddSec">${cs.length?t('add_copy'):t('add_btn')}</div>${addForm()}`:''}
       </div>
     </div>
     <div class="sheet-cta" ${st.editing?'hidden':''}>
-      <button type="button" class="btn cta-wish ${w?'on':''}" id="shWish" ${!d&&!w?'disabled':''} aria-label="${esc(t(w?'wish_remove':'add_wish_btn'))}" title="${esc(t(w?'wish_remove':'add_wish_btn'))}">${w?'♥':'♡'}<span class="cta-lbl"> ${t(w?'in_wish':'cta_wish')}</span></button>
+      <button type="button" class="btn cta-wish ${w?'on':''}" id="shWish" ${!d&&!w?'disabled':''} aria-label="${esc(t(w?'wish_remove':'add_wish_btn'))}" title="${esc(t(w?'wish_remove':'add_wish_btn'))}">${HEART}<span class="cta-lbl">${t(w?'in_wish':'cta_wish')}</span></button>
       <button type="button" class="btn primary cta-add" id="shCta">＋ ${t(st.addOpen?'add_btn':'add_copy')}</button>
     </div>`;
     if(scroller)scroller.scrollTop=keep;
