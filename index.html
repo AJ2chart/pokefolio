@@ -605,7 +605,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-67';
+const APP_VERSION = '2026.11.21-68';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1286,7 +1286,6 @@ function viewCollection(m){
   ${alertsBanner(e=>e.status!=='wish')}${manualBanner()}
   <div class="coll-head">
     <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
-    <button class="btn btn-sm ptr-hide" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
     <a class="btn primary btn-sm" href="#add"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>${t('add_short')}</a>
   </div>
   ${owned.length?`
@@ -1303,7 +1302,6 @@ function viewCollection(m){
   </div>
   <div class="grid" id="cgrid"></div>`:`<div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`}
   <p class="credit">${t('credit_short')} · <a href="#data">${t('about_more')}</a></p>`;
-  const rb=m.querySelector('#refreshBtn');if(rb)rb.onclick=()=>refreshPrices();
   const so=m.querySelector('#safeOff');if(so)so.onclick=()=>setPriv(false);
   bindAlerts(m,e=>e.status!=='wish');bindManualBanner(m);
   m.querySelectorAll('details.fold').forEach(d=>d.addEventListener('toggle',()=>{settings.fold={...(settings.fold||{}),[d.dataset.k]:d.open};saveSettings()}));
@@ -1354,7 +1352,7 @@ function entryTile(e,opts={}){
     <div class="img">${imgTag(e.image,e.setId,e.localId,e.name,'low','',e.lang)}${e.grade?.co?`<span class="gbadge">${esc(gradeStr(e))}</span>`:''}</div>
     <div class="nm" title="${esc(e.name)}">${opts.wish?`<button class="prio ${e.prio?'on':''}" data-prio="${e.uid}" aria-pressed="${!!e.prio}" aria-label="${esc(t('prio'))}" title="${esc(t('prio'))}">${e.prio?'★':'☆'}</button>`:''}${e.alert&&!opts.bell?`<span title="${t('alert')}">🔔 </span>`:''}${esc(e.name)}</div>
     <div class="meta">${e.manualCard?`<span class="man-tag">${t('man_tag')}</span> `:''}${esc(e.setName||'')}${e.setName?' · ':''}${esc(numLabel(e.localId,e.official))}${e.variant&&e.variant!=='normal'?' · '+t('v_'+e.variant):''}</div>
-    <div class="row"><span class="price">${(()=>{const ck=!(e.manual>0)&&!(e.myPrice?.v>0)&&priceCheck(e);return ck&&!ck.alt?`<span class="pchk" title="${esc(t('chk_tip'))}">⚠ ${t('chk_short')}</span>`:v!=null?fmtEur(v)+(ck?` <span class="pchk-src" title="${esc(t('chk_tcp_tip'))}">TCGP</span>`:''):'<span class="muted small">'+t('price_unavailable')+'</span>'})()}${opts.wish&&(e.qty||1)>1?` <span class="muted small">×${e.qty}</span>`:''}</span><span class="small ${good?'pos':'neg'}" ${opts.wish&&ch!=null?`title="${esc(t('since_added'))}"`:''}>${ch!=null&&Math.abs(ch)>=0.05?fmtPct(ch):''}</span></div>
+    <div class="row"><span class="price">${(()=>{const ck=!(e.manual>0)&&!(e.myPrice?.v>0)&&priceCheck(e);return ck&&!ck.alt?`<span class="pchk" title="${esc(t('chk_tip'))}">⚠ ${t('chk_short')}</span>`:v!=null?fmtEur(!opts.wish&&(e.qty||1)>1?v*e.qty:v)+(!opts.wish&&(e.qty||1)>1&&!settings.hidePrices?` <span class="muted small">· ×${e.qty}</span>`:'')+(ck?` <span class="pchk-src" title="${esc(t('chk_tcp_tip'))}">TCGP</span>`:''):'<span class="muted small">'+t('price_unavailable')+'</span>'})()}${opts.wish&&(e.qty||1)>1?` <span class="muted small">×${e.qty}</span>`:''}</span><span class="small ${good?'pos':'neg'}" ${opts.wish&&ch!=null?`title="${esc(t('since_added'))}"`:''}>${ch!=null&&Math.abs(ch)>=0.05?fmtPct(ch):''}</span></div>
   </div>`;
 }
 /* ============ view: add / search ============ */
