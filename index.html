@@ -86,6 +86,16 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .sumbar .sb-chk:hover{background:rgba(255,176,32,.24)}
 .sumbar .sb-chk+.sb-go{margin-left:0}
 @media (max-width:379px){.sumbar .sb-chk-l{display:none}}
+@media (max-width:719px){
+.sumbar.sb-b{display:grid;grid-template-columns:1fr auto;grid-template-areas:"v go" "g chk";column-gap:10px;row-gap:4px}
+.sumbar.sb-b .sb-v{grid-area:v;display:flex;flex-direction:column;gap:2px}
+.sumbar.sb-b .sb-lab{font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.sumbar.sb-b .sb-v b{font-size:24px;line-height:1.15}
+.sumbar.sb-b .sb-g{grid-area:g}
+.sumbar.sb-b .sb-chk{grid-area:chk;margin:0;justify-self:end}
+.sumbar.sb-b .sb-go{grid-area:go;margin:0;align-self:start;justify-self:end}
+.sumbar.sb-b .sb-chk-l{display:inline!important}
+}
 .sumbar .sb-go{margin-left:auto;display:inline-flex;align-items:center;gap:2px;color:var(--muted);font-size:13px;white-space:nowrap}
 
 .lflag{display:inline-block;width:16px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:2px;overflow:hidden}.lflag svg{width:100%;height:100%;display:block}
@@ -609,7 +619,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-70';
+const APP_VERSION = '2026.11.21-71';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1286,8 +1296,8 @@ function viewCollection(m){
   const sets=[...new Map(owned.map(e=>[e.lang+':'+e.setId,{k:e.setId,n:e.setName}])).values()];
   m.innerHTML=`
   ${owned.length&&settings.hidePrices?`<div class="sumbar safe"><span class="safe-tx">🛡 ${t('safe_banner')}</span><button class="btn btn-sm" id="safeOff">${t('safe_off_short')}</button></div>`:''}
-  ${owned.length&&!settings.hidePrices?`<a class="sumbar" href="#evolution">
-    <span class="sb-v"><span class="muted">${t('stat_value')}</span> <b>${fmtEur(tt.value)}</b></span>
+  ${owned.length&&!settings.hidePrices?`<a class="sumbar ${PREVIEW_CHK?'sb-b':''}" href="#evolution">
+    <span class="sb-v"><span class="muted sb-lab">${t('stat_value')}</span> <b>${fmtEur(tt.value)}</b></span>
     ${tt.withCost?`<span class="sb-g ${gainCls}">${(settings.hidePrices?'':tt.gain>=0?'+':'')+fmtEur(tt.gain)} <span class="small">(${fmtPct(tt.gainPct)})</span></span>`:''}
     ${(()=>{const n=priceSuspects(owned).length;return n?`<span class="sb-chk" id="sbChk" role="button" tabindex="0" title="${esc(t('chk_pill_tip',{n}))}">⚠ ${n}<span class="sb-chk-l"> ${t('chk_pill_l')}</span></span>`:''})()}
     <span class="sb-go">${t('see_value')} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
