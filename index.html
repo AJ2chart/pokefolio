@@ -47,6 +47,18 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .stat.wbudget{display:flex;flex-direction:column;margin:0 0 18px;border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--card))}
 .stat.wbudget .val{color:var(--accent);font-size:30px}
 .stat.wbudget .lbl{color:var(--text);font-weight:500}
+.spanel{max-width:820px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin:0 0 14px;overflow:hidden}
+.shead{display:flex;align-items:center;gap:10px;font-size:15px;margin:0;padding:13px 18px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--card2) 55%,var(--card))}
+.shead svg{width:18px;height:18px;color:var(--accent);flex:none}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 18px;border-bottom:1px solid var(--line)}
+.srow:last-child{border-bottom:0}
+.sinfo{min-width:0}
+.stitle{font-weight:500;overflow-wrap:anywhere}
+.sdesc{color:var(--muted);font-size:13px;margin-top:2px}
+.sctl{flex:none}
+.snote{margin:0;padding:12px 18px;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line)}
+.sabout{max-width:820px;color:var(--muted);font-size:12px;line-height:1.6;padding:6px 4px 10px}
+.sabout b{color:var(--text)}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -221,6 +233,10 @@ canvas{max-width:100%}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   .chartbox{height:260px}
   .kv{font-size:13px}
+  .srow{flex-direction:column;align-items:stretch;gap:10px;padding:12px 14px}
+  .sctl .btn,.sctl label.btn{width:100%}
+  .sctl .seg{display:flex}.sctl .seg button{flex:1;justify-content:center}
+  .shead{padding:12px 14px}.snote{padding:10px 14px}
 }
 </style>
 </head>
@@ -248,7 +264,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-11';
+const APP_VERSION = '2026.11.21-12';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -287,7 +303,7 @@ fr:{
  unit_value:'Valeur unitaire',total_value:'Valeur totale',gain:'Plus-value',history:'Historique du prix',no_history:"L'historique se construit à chaque actualisation des prix.",
  wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Depuis « Ajouter », choisis le statut « Dans ma wishlist ».',wish_total:'Budget total pour tout compléter : {v}',
  evo_title:'Évolution de la collection',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
- data_title:'Sauvegarde & données',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
+ data_title:'Réglages et données',not_logged:'Non connecté',manage:'Gérer mon compte',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',sec_backup:'Sauvegarde',sec_alerts:'Alertes de prix',sec_advanced:'Avancé',exp_json_t:'Exporter une sauvegarde',exp_json_d:'Fichier JSON avec toute ta collection ({n} cartes), pour la restaurer plus tard.',imp_t:'Restaurer une sauvegarde',imp_d:'Remplace la collection actuelle par celle d’un fichier exporté.',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',notif_d:'Être prévenu sur cet appareil quand une alerte de prix se déclenche (app ouverte).',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',btn_export:'Exporter',btn_import:'Importer',btn_enable:'Activer',btn_reload:'Recharger',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
  data_note:"Ta collection est enregistrée dans ce navigateur, sur cet appareil. Exporte une sauvegarde régulièrement (et avant de changer de navigateur ou de vider les données de navigation).",
  clear_cache:'Recharger la base de cartes',cache_cleared:'Base de cartes rechargée',
@@ -345,7 +361,7 @@ en:{
  unit_value:'Unit value',total_value:'Total value',gain:'Gain',history:'Price history',no_history:'History builds up with each price refresh.',
  wish_title:'Wishlist',wish_empty:'No wanted cards yet. From “Add”, pick the “Wanted” status.',wish_total:'Total budget to complete: {v}',
  evo_title:'Collection trends',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',cost:'Cost',
- data_title:'Backup & data',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
+ data_title:'Settings & data',not_logged:'Not logged in',manage:'Manage my account',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',sec_backup:'Backup',sec_alerts:'Price alerts',sec_advanced:'Advanced',exp_json_t:'Export a backup',exp_json_d:'JSON file with your whole collection ({n} cards), to restore it later.',imp_t:'Restore a backup',imp_d:'Replaces the current collection with an exported file.',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',notif_d:'Get notified on this device when a price alert triggers (app open).',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',btn_export:'Export',btn_import:'Import',btn_enable:'Enable',btn_reload:'Reload',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
  import_confirm:'Replace your current collection ({a} entries) with the backup ({b} entries)?',
  data_note:'Your collection is stored in this browser, on this device. Export a backup regularly (and before switching browsers or clearing browsing data).',
  clear_cache:'Reload card database',cache_cleared:'Card database reloaded',
@@ -716,9 +732,9 @@ function authErr(e){
   if(/password/i.test(m))return t('err_pwd')+' ('+m+')';
   return m||t('err_net');
 }
-function pillControl(){
+function pillControl(label=true){
   const cur=settings.pill||'m';
-  return `<div class="pillset"><div class="small muted" style="margin-bottom:6px">${t('pill_size')}</div><div class="seg" role="radiogroup">${['s','m','l'].map(k=>`<button type="button" data-pill="${k}" class="${cur===k?'on':''}" role="radio" aria-checked="${cur===k}"><span class="pdemo pd-${k}">3</span>${t('pill_'+k)}</button>`).join('')}</div></div>`;
+  return `<div class="pillset">${label?`<div class="small muted" style="margin-bottom:6px">${t('pill_size')}</div>`:''}<div class="seg" role="radiogroup">${['s','m','l'].map(k=>`<button type="button" data-pill="${k}" class="${cur===k?'on':''}" role="radio" aria-checked="${cur===k}"><span class="pdemo pd-${k}">3</span>${t('pill_'+k)}</button>`).join('')}</div></div>`;
 }
 function bindPill(root){root.querySelectorAll('[data-pill]').forEach(b=>{if(b.tagName!=='BUTTON')return;b.onclick=()=>{settings.pill=b.dataset.pill;saveSettings();document.documentElement.dataset.pill=settings.pill;root.querySelectorAll('button[data-pill]').forEach(x=>{const on=x.dataset.pill===settings.pill;x.classList.toggle('on',on);x.setAttribute('aria-checked',on)})}})}
 function openAccount(){
@@ -1286,21 +1302,35 @@ function download(name,content,type){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
 }
 function viewData(m){
+  const ic={
+    account:'<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+    display:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',
+    backup:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
+    alerts:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+    advanced:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>'
+  };
+  const sec=(k,title,body)=>`<section class="spanel"><h2 class="shead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ic[k]}</svg>${title}</h2>${body}</section>`;
+  const row=(title,desc,ctl)=>`<div class="srow"><div class="sinfo"><div class="stitle">${title}</div>${desc?`<div class="sdesc">${desc}</div>`:''}</div><div class="sctl">${ctl}</div></div>`;
+  const seg=(name,cur,opts)=>`<div class="seg">${opts.map(([v,l])=>`<button type="button" data-${name}="${v}" class="${cur===v?'on':''}">${l}</button>`).join('')}</div>`;
+  const nCards=collection.filter(e=>e.status!=='wish').reduce((a,e)=>a+(e.qty||1),0);
   m.innerHTML=`<h1>${t('data_title')}</h1>
-  <div class="panel" style="margin-bottom:14px"><b>☁ ${t('account')}</b>
-    <p class="small ${user?'':'muted'}" style="margin:6px 0 10px">${user?esc(user.email)+' · <span id="syncInfo">'+syncLabel()+'</span>':t('account_why')}</p>
-    <button class="btn ${user?'':'primary'}" id="accOpen">${user?t('account'):t('login')+' / '+t('signup')}</button></div>
-  <div class="panel" style="margin-bottom:14px"><b>🎨 ${t('display')}</b><div style="margin-top:10px">${pillControl()}</div></div>
-  <div class="notice">${user?t('data_note_cloud'):t('data_note')}</div>
-  <div class="toolbar">
-    <button class="btn primary" id="exJson">⬇ ${t('export_json')}</button>
-    <button class="btn" id="exCsv">⬇ ${t('export_csv')}</button>
-    <label class="btn">⬆ ${t('import_json')}<input type="file" id="imp" accept=".json,application/json" hidden></label>
-  </div>
-  <div class="toolbar"><button class="btn" id="clr">↻ ${t('clear_cache')}</button><button class="btn" id="notif">🔔 ${t('notif_btn')}</button><span class="muted small" id="notifState"></span></div>
-  <p class="muted small">${t('notif_note')}</p>
-  <p class="muted small" style="margin-top:30px">${t('sources')}</p>
-  <p class="muted small">Gleamvault · version ${APP_VERSION}</p>`;
+  ${sec('account',t('account'),row(
+      user?`<span class="acc-av" style="display:inline-grid;margin-right:8px;vertical-align:middle">${esc((user.email||'?')[0].toUpperCase())}</span>${esc(user.email)}`:t('not_logged'),
+      user?`<span id="syncInfo">${syncLabel()}</span>`:t('account_why'),
+      `<button class="btn ${user?'':'primary'}" id="accOpen">${user?t('manage'):t('login')}</button>`))}
+  ${sec('display',t('display'),
+      row(t('lang_label'),'',seg('lang',settings.lang,[['fr',FLAGS.fr+' Français'],['en',FLAGS.en+' English']]))+
+      row(t('theme_label'),'',seg('theme',settings.theme,[['dark',t('theme_dark')],['light',t('theme_light')]]))+
+      row(t('pill_size'),'',pillControl(false)))}
+  ${sec('backup',t('sec_backup'),`<p class="snote">${user?t('data_note_cloud'):t('data_note')}</p>`+
+      row(t('exp_json_t'),t('exp_json_d',{n:nCards}),`<button class="btn primary" id="exJson">${t('btn_export')}</button>`)+
+      row(t('imp_t'),t('imp_d'),`<label class="btn">${t('btn_import')}<input type="file" id="imp" accept=".json,application/json" hidden></label>`)+
+      row(t('exp_csv_t'),t('exp_csv_d'),`<button class="btn" id="exCsv">${t('btn_export')}</button>`))}
+  ${sec('alerts',t('sec_alerts'),row(t('notif_t'),t('notif_d')+' <span id="notifState"></span>',`<button class="btn" id="notif">${t('btn_enable')}</button>`))}
+  ${sec('advanced',t('sec_advanced'),row(t('reload_t'),t('reload_d'),`<button class="btn" id="clr">${t('btn_reload')}</button>`))}
+  <footer class="sabout"><div><b>Gleamvault</b> · version ${APP_VERSION}</div><div>${t('sources')}</div></footer>`;
+  m.querySelectorAll('button[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+  m.querySelectorAll('button[data-theme]').forEach(b=>b.onclick=()=>{settings.theme=b.dataset.theme;saveSettings();render()});
   m.querySelector('#exJson').onclick=()=>download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');
   m.querySelector('#exCsv').onclick=()=>{
     const cols=['name','setName','localId','official','lang','variant','cond','grade','cert','qty','status','buy','date','value','manual','notes'];
@@ -1323,7 +1353,7 @@ function viewData(m){
   m.querySelector('#accOpen').onclick=()=>openAccount();
   bindPill(m);
   const ns=m.querySelector('#notifState');
-  const showN=()=>{ns.textContent='Notification' in window?(Notification.permission==='granted'?'✓ '+t('notif_on'):Notification.permission==='denied'?t('notif_off'):''):t('notif_off')};showN();
+  const showN=()=>{ns.textContent='Notification' in window?(Notification.permission==='granted'?'· ✓ '+t('notif_on'):Notification.permission==='denied'?'· '+t('notif_off'):''):'· '+t('notif_off')};showN();
   m.querySelector('#notif').onclick=async()=>{try{await Notification.requestPermission()}catch(_){}showN()};
   m.querySelector('#clr').onclick=async()=>{idx.fr=idx.en=null;loading.fr=loading.en=null;await loadIndex(settings.cardLang,true).catch(()=>{});toast(t('cache_cleared'))};
 }
