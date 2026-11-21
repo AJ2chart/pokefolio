@@ -678,7 +678,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-78';
+const APP_VERSION = '2026.11.21-79';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1303,7 +1303,6 @@ function openRecovery(){
 /* ============ routing & shell ============ */
 const VIEWS=['collection','add','wishlist','evolution','data'];
 // a shared wishlist link (?w=token) opens a read-only page instead of the app
-const PREVIEW_SHARE=/[?&]apercu-partage/.test(location.search);
 const SHARED_TOKEN=(new URLSearchParams(location.search).get('w')||'').replace(/[^a-f0-9]/gi,'').slice(0,64)||null;
 const TAB_ICONS={
   collection:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
@@ -1529,7 +1528,7 @@ async function openShareSheet(tab='img'){
     };
     drawImg();return;
   }
-  if(PREVIEW_SHARE)body.insertAdjacentHTML('afterend',`<button class="linkbtn" id="shPrev" style="margin-top:14px">👁 ${t('share_prev')}</button>`);
+  body.insertAdjacentHTML('afterend',`<button class="linkbtn" id="shPrev" style="margin-top:14px">👁 ${t('share_prev')}</button>`);
   const pv=m.querySelector('#shPrev');if(pv)pv.onclick=()=>{closeModal();const snap=wishSnapshot();setTimeout(()=>viewShared(document.getElementById('main'),{cards:settings.shareLinkPrices===false?snap.map(c=>({...c,v:null})):snap,prices:settings.shareLinkPrices!==false,updated:new Date().toISOString()}),250)};
   if(!user||!sb){body.innerHTML=`<p class="muted">${t('share_need_acc')}</p><button class="btn primary" id="shAcc">${t('tour_acc')}</button>`;m.querySelector('#shAcc').onclick=()=>{closeModal();openAccount()};return}
   let row=null;
@@ -2257,7 +2256,7 @@ function viewWish(m){
   const list=collection.filter(e=>e.status==='wish').sort((a,b)=>(b.prio?1:0)-(a.prio?1:0)||(entryValue(b)||0)-(entryValue(a)||0));
   const deals=list.map(e=>({e,d:wishDeal(e)})).filter(x=>x.d).sort((a,b)=>(b.e.prio?1:0)-(a.e.prio?1:0)||a.d.pct-b.d.pct);
   const total=list.reduce((s,e)=>s+(entryValue(e)||0)*e.qty,0);
-  m.innerHTML=`<div class="wish-head"><h1>${t('wish_title')}</h1>${list.length&&PREVIEW_SHARE?`<button type="button" class="btn btn-sm" id="wShare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>${t('share')}</button>`:''}</div>
+  m.innerHTML=`<div class="wish-head"><h1>${t('wish_title')}</h1>${list.length?`<button type="button" class="btn btn-sm" id="wShare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>${t('share')}</button>`:''}</div>
   ${list.length?`<div class="stat wbudget money"><div class="lbl">${t('wish_budget')}</div><div class="val">${fmtEur(total)}</div><div class="sub">${t('wish_count',{n:list.reduce((a,e)=>a+(e.qty||1),0)})}</div></div>${deals.length&&!settings.hidePrices?`<div class="deals"><div class="deals-h"><span>🏷 ${t('deals_title',{n:deals.length})}<button class="deals-cfg" id="dealCfg" aria-label="${esc(t('deal_cfg')+' · '+t('deal_rule',{p:settings.dealPct||5}))}" title="${esc(t('deal_rule',{p:settings.dealPct||5}))}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></span></div><div class="deals-row">${deals.map(({e,d})=>`<button class="deal" data-open="${e.uid}"><span class="deal-im">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><span class="deal-t"><b>${e.prio?'★ ':''}${esc(e.name)}</b><span>${fmtEur(entryValue(e))} · <em class="pos">${d.hit?t('deal_hit'):fmtPct(d.pct)}</em></span></span></button>`).join('')}</div></div>`:''}<div class="grid">${list.map(e=>entryTile(e,{remove:true,bell:true,wish:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
   m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
   m.querySelectorAll('[data-bell]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openAlertSheet(b.dataset.bell)});
