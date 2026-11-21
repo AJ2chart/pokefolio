@@ -619,7 +619,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-71';
+const APP_VERSION = '2026.11.21-72';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -878,11 +878,7 @@ function openSuspectList(){
     ${list.map(e=>{const c=priceCheck(e);return `<button class="chk-row" data-open="${e.uid}"><span class="ev-th">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><span class="t"><b>${esc(e.name)}</b><span>${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))} · ${esc(e.rarity||'')}</span></span><span class="r">${c.alt?`${fmtEur(c.alt)}<small>TCGplayer</small>`:`<s>${fmtEur(c.cm)}</s><small>${t('chk_excluded')}</small>`}</span></button>`}).join('')}</div>`,'sm');
   m.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{closeModal();setTimeout(()=>openEntry(b.dataset.open),50)});
 }
-// temporary preview (?apercu-prix): shows one card as "price to check" on screen only; values, totals and saved data are untouched
-const PREVIEW_CHK=/[?&]apercu-prix/.test(location.search);
-const previewEntry=()=>PREVIEW_CHK?collection.filter(e=>e.status!=='wish'&&!(e.manual>0)&&!(e.myPrice?.v>0)&&e.price?.value>0&&!priceCheck0(e)).sort((a,b)=>b.price.value-a.price.value)[0]:null;
-function priceCheck(e){const pe=PREVIEW_CHK&&previewEntry();if(pe&&pe.uid===e.uid)return {cm:e.price.value,floor:rarityFloor(e.rarity)||3,alt:null};return priceCheck0(e)}
-function priceCheck0(e){
+function priceCheck(e){
   const cm=e.price?.value;if(!(cm>0))return null;
   const floor=rarityFloor(e.rarity),usd=tcpMarket(e.tcp,e.variant),tp=usd?Math.round(usd*USD_EUR*100)/100:null;
   const low=floor&&cm<floor, far=tp&&tp>=2&&cm<tp/5;
@@ -893,7 +889,7 @@ function priceCheck0(e){
 const entryValue=e=>{
   if(e.manual>0)return e.manual;
   if(e.myPrice?.v>0)return myValue(e.myPrice,e.price?.value);
-  const chk=priceCheck0(e);if(chk)return chk.alt;   // suspicious Cardmarket price: TCGplayer if plausible, otherwise left out of totals
+  const chk=priceCheck(e);if(chk)return chk.alt;   // suspicious Cardmarket price: TCGplayer if plausible, otherwise left out of totals
   return e.price?.value??null;
 };
 const priceSuspects=(list=collection.filter(e=>e.status!=='wish'))=>list.filter(e=>!(e.manual>0)&&!(e.myPrice?.v>0)&&priceCheck(e));
@@ -1296,13 +1292,13 @@ function viewCollection(m){
   const sets=[...new Map(owned.map(e=>[e.lang+':'+e.setId,{k:e.setId,n:e.setName}])).values()];
   m.innerHTML=`
   ${owned.length&&settings.hidePrices?`<div class="sumbar safe"><span class="safe-tx">🛡 ${t('safe_banner')}</span><button class="btn btn-sm" id="safeOff">${t('safe_off_short')}</button></div>`:''}
-  ${owned.length&&!settings.hidePrices?`<a class="sumbar ${PREVIEW_CHK?'sb-b':''}" href="#evolution">
+  ${owned.length&&!settings.hidePrices?`<a class="sumbar sb-b" href="#evolution">
     <span class="sb-v"><span class="muted sb-lab">${t('stat_value')}</span> <b>${fmtEur(tt.value)}</b></span>
     ${tt.withCost?`<span class="sb-g ${gainCls}">${(settings.hidePrices?'':tt.gain>=0?'+':'')+fmtEur(tt.gain)} <span class="small">(${fmtPct(tt.gainPct)})</span></span>`:''}
     ${(()=>{const n=priceSuspects(owned).length;return n?`<span class="sb-chk" id="sbChk" role="button" tabindex="0" title="${esc(t('chk_pill_tip',{n}))}">⚠ ${n}<span class="sb-chk-l"> ${t('chk_pill_l')}</span></span>`:''})()}
     <span class="sb-go">${t('see_value')} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
   </a>`:''}
-  ${PREVIEW_CHK&&previewEntry()?`<div class="man-ban"><span>👁 Aperçu : « ${esc(previewEntry().name)} » simulée en prix à vérifier. Rien n'est modifié.</span><a class="btn btn-sm" href="./">Quitter</a></div>`:''}${alertsBanner(e=>e.status!=='wish')}${manualBanner()}
+  ${alertsBanner(e=>e.status!=='wish')}${manualBanner()}
   <div class="coll-head">
     <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
     <a class="btn primary btn-sm" href="#add"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>${t('add_short')}</a>
