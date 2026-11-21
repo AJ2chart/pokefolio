@@ -678,7 +678,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-79';
+const APP_VERSION = '2026.11.21-80';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1208,7 +1208,8 @@ async function syncNow(first){
     const{error:e2}=await sb.from('user_data').upsert({user_id:user.id,data:{v:1,collection,snapshots,del:deleted},updated_at:new Date().toISOString()});
     if(e2)throw e2;
     settings.lastSync=Date.now();saveSettings();setSync('ok');
-    if(settings.shareOn)sharePush().catch(()=>{});
+    if(settings.shareOn&&settings.shareOn===user.id)sharePush().catch(()=>{});
+    else if(settings.shareOn===true)shareGet().then(r=>{settings.shareOn=r?user.id:false;saveSettings();if(r)sharePush()}).catch(()=>{}); // links made before the per-account flag
     if(JSON.stringify(collection)!==before&&!document.querySelector('.ov'))render();
     if(first)toast(t('sync_first',{n:collection.length}));
   }catch(err){console.warn('sync',err);setSync('error')}
@@ -1500,14 +1501,14 @@ async function openShareSheet(tab='img'){
   m.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(b.dataset.tab!==tab)openShareSheet(b.dataset.tab)});
   const body=m.querySelector('#shBody');
   if(tab==='img'){
-    let prices=!!settings.shareImgPrices,blob=null,url='';
+    let prices=!!settings.shareImgPrices&&!settings.hidePrices,blob=null,url='';
     const drawImg=async()=>{
       const nSel=settings.shareSel?.length?shareList().length:0;
       body.innerHTML=`<div class="sh-imgbox"><span class="spin"></span></div>
         <div class="s-line"><span>${nSel?t('share_sel_n',{n:nSel}):t('share_sel_all')}</span><button type="button" class="btn btn-sm" id="shPick">${t('share_pick')}</button></div>
-        <label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shIP" ${prices?'checked':''}></label>
+        ${settings.hidePrices?'':`<label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shIP" ${prices?'checked':''}></label>`}
         <button class="btn primary" id="shImgGo" style="width:100%;margin-top:12px" disabled>↗ ${t('share_img_send')}</button>`;
-      m.querySelector('#shIP').onchange=e=>{prices=e.target.checked;settings.shareImgPrices=prices;saveSettings();drawImg()};
+      const sip=m.querySelector('#shIP');if(sip)sip.onchange=e=>{prices=e.target.checked;settings.shareImgPrices=prices;saveSettings();drawImg()};
       m.querySelector('#shPick').onclick=()=>{
         const all=wishSorted();let sel=new Set((settings.shareSel?.length?shareList():all.slice(0,all.length>9?8:9)).map(e=>e.uid));
         const drawPick=()=>{body.innerHTML=`<p class="muted small" style="margin:0 0 8px">${t('share_pick_d')}</p>
@@ -1529,28 +1530,28 @@ async function openShareSheet(tab='img'){
     drawImg();return;
   }
   body.insertAdjacentHTML('afterend',`<button class="linkbtn" id="shPrev" style="margin-top:14px">👁 ${t('share_prev')}</button>`);
-  const pv=m.querySelector('#shPrev');if(pv)pv.onclick=()=>{closeModal();const snap=wishSnapshot();setTimeout(()=>viewShared(document.getElementById('main'),{cards:settings.shareLinkPrices===false?snap.map(c=>({...c,v:null})):snap,prices:settings.shareLinkPrices!==false,updated:new Date().toISOString()}),250)};
+  const pv=m.querySelector('#shPrev');if(pv)pv.onclick=()=>{closeModal();const snap=wishSnapshot();setTimeout(()=>viewShared(document.getElementById('main'),{cards:settings.shareLinkPrices?snap:snap.map(c=>({...c,v:null})),prices:!!settings.shareLinkPrices,updated:new Date().toISOString()}),250)};
   if(!user||!sb){body.innerHTML=`<p class="muted">${t('share_need_acc')}</p><button class="btn primary" id="shAcc">${t('tour_acc')}</button>`;m.querySelector('#shAcc').onclick=()=>{closeModal();openAccount()};return}
   let row=null;
   const draw=()=>{
     if(!row){body.innerHTML=`<p class="muted">${t('share_link_d')}</p>
-      <label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shPr"></label>
+      ${settings.hidePrices?'':`<label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shPr"></label>`}
       <button class="btn primary" id="shMake" style="width:100%;margin-top:12px">🔗 ${t('share_make')}</button>`;
-      m.querySelector('#shMake').onclick=async ev=>{ev.target.disabled=true;try{row=await sharePush(m.querySelector('#shPr').checked);settings.shareOn=true;saveSettings();draw()}catch(e){console.warn(e);body.insertAdjacentHTML('beforeend',`<p class="neg small">${t('share_err')}</p>`);ev.target.disabled=false}};
+      m.querySelector('#shMake').onclick=async ev=>{ev.target.disabled=true;try{row=await sharePush(m.querySelector('#shPr')?.checked??false);settings.shareOn=user.id;settings.shareLinkPrices=!!row?.show_prices;saveSettings();draw()}catch(e){console.warn(e);body.insertAdjacentHTML('beforeend',`<p class="neg small">${t('share_err')}</p>`);ev.target.disabled=false}};
       return}
     const url=shareUrl(row.token);
     body.innerHTML=`<p class="muted small" style="margin:0 0 8px">${t('share_live')}</p>
       <div class="sh-url"><input readonly value="${esc(url)}" id="shUrl"><button class="btn btn-sm" id="shCopy">${t('copy')}</button></div>
       ${navigator.share?`<button class="btn primary" id="shSend" style="width:100%;margin-top:10px">↗ ${t('share_send')}</button>`:''}
-      <label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shPr" ${row.show_prices?'checked':''}></label>
+      ${settings.hidePrices?'':`<label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shPr" ${row.show_prices?'checked':''}></label>`}
       <button class="linkbtn neg" id="shOff" style="margin-top:12px">${t('share_off')}</button>`;
     m.querySelector('#shUrl').onfocus=e=>e.target.select();
     m.querySelector('#shCopy').onclick=async()=>{try{await navigator.clipboard.writeText(url);toast(t('copied'))}catch(_){m.querySelector('#shUrl').select()}};
     const sd=m.querySelector('#shSend');if(sd)sd.onclick=()=>navigator.share({title:t('share_title'),url}).catch(()=>{});
-    m.querySelector('#shPr').onchange=async e=>{try{row=await sharePush(e.target.checked)}catch(_){toast(t('err_net'))}};
-    m.querySelector('#shOff').onclick=async()=>{if(!await confirmBox(t('share_off_q')))return;try{const{error}=await sb.from('shared_wishlists').delete().eq('user_id',user.id);if(error)throw error;row=null;settings.shareOn=false;saveSettings();openShareSheet()}catch(_){toast(t('err_net'))}};
+    const spr=m.querySelector('#shPr');if(spr)spr.onchange=async e=>{try{row=await sharePush(e.target.checked);settings.shareLinkPrices=!!row?.show_prices;saveSettings()}catch(_){toast(t('err_net'))}};
+    m.querySelector('#shOff').onclick=async()=>{if(!await confirmBox(t('share_off_q')))return;try{const{error}=await sb.from('shared_wishlists').delete().eq('user_id',user.id);if(error)throw error;row=null;settings.shareOn=false;settings.shareLinkPrices=false;saveSettings();openShareSheet()}catch(_){toast(t('err_net'))}};
   };
-  try{row=await shareGet();if(row){settings.shareOn=true;saveSettings();sharePush().catch(()=>{})}draw()}
+  try{row=await shareGet();if(row){settings.shareOn=user.id;settings.shareLinkPrices=!!row.show_prices;saveSettings();sharePush().catch(()=>{})}draw()}
   catch(e){console.warn(e);body.innerHTML=`<p class="muted">${t('share_unavail')}</p>`}
 }
 async function viewShared(m,local){
@@ -1563,7 +1564,7 @@ async function viewShared(m,local){
   if(!res){box.innerHTML=`<h1>${t('shared_t')}</h1><p class="muted">${t('shared_gone')}</p><a class="btn primary" href="${esc(APP_URL)}">${t('shared_cta')}</a>`;return}
   const cards=res.cards||[],n=cards.reduce((a,c)=>a+(c.q||1),0),tot=res.prices?cards.reduce((a,c)=>a+(c.v||0)*(c.q||1),0):0;
   box.innerHTML=`<h1>${t('shared_t')}</h1>
-    <p class="muted" style="margin:-6px 0 14px">${t('wish_count',{n})}${res.prices&&tot?` · ${t('shared_budget')} <b style="color:var(--text)">${fmtEur(tot)}</b>`:''}${res.updated?` · ${t('shared_upd',{d:fmtDate(res.updated)})}`:''}</p>
+    <p class="muted" style="margin:-6px 0 14px">${t('wish_count',{n})}${res.prices&&tot&&!settings.hidePrices?` · ${t('shared_budget')} <b style="color:var(--text)">${fmtEur(tot)}</b>`:''}${res.updated?` · ${t('shared_upd',{d:fmtDate(res.updated)})}`:''}</p>
     <div class="grid">${cards.map(c=>`<div class="tile"><span class="lbadge">${FLAGS[c.g]||''}</span>${c.q>1?`<span class="badge">${c.q}</span>`:''}
       <div class="img">${imgTag(c.i,c.sid,c.l,c.n,'low','',c.g)}</div>
       <div class="nm">${c.p?'<span class="prio on">★</span>':''}${esc(c.n)}</div>
