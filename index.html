@@ -184,7 +184,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .gbadge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);margin-left:4px;vertical-align:1px}
 .sh-edit{flex:none;width:32px;height:32px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .sh-copy .sh-edit+.sh-edit{margin-left:-6px}
-.sh-del:hover{color:var(--ko)}
+.sh-edit.sh-del{color:#ff5d5d}.sh-del:hover{color:#ff8080}
 .sh-editor{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:14px;padding:4px 14px 14px;margin:-2px 0 10px;background:color-mix(in srgb,var(--card) 60%,transparent)}
 .sh-edbtns{display:flex;gap:8px;margin-top:14px;align-items:center}.sh-edbtns span{flex:1}
 .sh-tot{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin:4px 2px 0}.sh-tot b{color:var(--text)}
@@ -384,7 +384,7 @@ canvas{max-width:100%}
   .modal:has(.sheet-cta){display:flex;flex-direction:column;min-height:100dvh}
   .modal:has(.sheet-cta) .sh{flex:1 0 auto}
   .sh.compact .sh-hero{padding:calc(12px + env(safe-area-inset-top)) 0 14px}
-  .sh.compact .sh-imgw{width:auto;height:clamp(200px,33dvh,330px);aspect-ratio:63/88}
+  .sh.compact .sh-imgw{width:auto;height:clamp(200px,calc(100dvh - 460px),420px);aspect-ratio:63/88}
   .sh.compact .sh-img{height:100%;width:auto}
   .sh.compact .sh-name{font-size:21px;margin-bottom:6px}
   .sh.compact .sh-illu{margin-top:6px}
@@ -450,7 +450,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-40';
+const APP_VERSION = '2026.11.21-41';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
