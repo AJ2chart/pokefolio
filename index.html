@@ -184,6 +184,8 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .sh-copy .v small.pos{color:var(--ok)}.sh-copy .v small.neg{color:var(--ko)}
 .gbadge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);margin-left:4px;vertical-align:1px}
 .sh-edit{flex:none;width:32px;height:32px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+.sh-copy .sh-edit+.sh-edit{margin-left:-6px}
+.sh-del:hover{color:var(--ko)}
 .sh-editor{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:14px;padding:4px 14px 14px;margin:-2px 0 10px;background:color-mix(in srgb,var(--card) 60%,transparent)}
 .sh-edbtns{display:flex;gap:8px;margin-top:14px;align-items:center}.sh-edbtns span{flex:1}
 .sh-tot{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin:4px 2px 0}.sh-tot b{color:var(--text)}
@@ -453,7 +455,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-38';
+const APP_VERSION = '2026.11.21-39';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -487,7 +489,7 @@ fr:{
  no_price:'Pas de prix disponible pour cette carte.',price_upd:'Prix du {d}',
  ebay_sold:'Voir les annonces eBay',cm_search:'Voir sur Cardmarket',
  variant:'Version',condition:'État',qty:'Quantité',buy_price:"Prix d'achat unitaire (€)",buy_date:"Date d'achat",notes:'Notes',status:'Statut',
- owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
+ owned:'Possédée',wish:'Dans ma wishlist',add_btn:'Ajouter à ma collection',edit:'Modifier',del_one:'Retirer 1 exemplaire',deleted_n:'« {n} » retirée de ta collection',deleted_one:'1 exemplaire de « {n} » retiré',range_short:'Fourchette :',est_price:'Prix estimé',over_30d:'sur 30 jours',since_track:'depuis le suivi',price_detail:'Détail des prix',bought:'Achetée',on_date:'le {d}',manual_short:'Valeur manuelle',manual_tag:'manuel',my_copies:'Mes exemplaires',copies_value:'Valeur de mes exemplaires',add_copy:'Ajouter un exemplaire',al_set:'Créer une alerte',added_from_wish:'« {n} » ajoutée à ta collection et retirée de ta wishlist',fs_hint:'Touche pour zoomer · glisse vers le bas pour fermer',fs_open:'Agrandir l’image',buy_notes:'Achat et notes (optionnel)',cta_wish:'Wishlist',in_wish:'Dans ma wishlist',owned_already:'Déjà {n} dans ta collection',add_wish_btn:'Ajouter à ma wishlist',added:'« {n} » ajoutée !',
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',deleted:'Carte supprimée',
@@ -545,7 +547,7 @@ en:{
  no_price:'No price available for this card.',price_upd:'Prices from {d}',
  ebay_sold:'See eBay listings',cm_search:'View on Cardmarket',
  variant:'Version',condition:'Condition',qty:'Quantity',buy_price:'Unit purchase price (€)',buy_date:'Purchase date',notes:'Notes',status:'Status',
- owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
+ owned:'Owned',wish:'Wanted',add_btn:'Add to my collection',edit:'Edit',del_one:'Remove 1 copy',deleted_n:'“{n}” removed from your collection',deleted_one:'1 copy of “{n}” removed',range_short:'Range:',est_price:'Estimated price',over_30d:'over 30 days',since_track:'since tracking',price_detail:'Price details',bought:'Bought',on_date:'on {d}',manual_short:'Manual value',manual_tag:'manual',my_copies:'My copies',copies_value:'Value of my copies',add_copy:'Add a copy',al_set:'Set an alert',added_from_wish:'“{n}” added to your collection and removed from your wishlist',fs_hint:'Tap to zoom · swipe down to close',fs_open:'Enlarge image',buy_notes:'Purchase and notes (optional)',cta_wish:'Wishlist',in_wish:'In my wishlist',owned_already:'{n} already in your collection',add_wish_btn:'Add to wishlist',added:'“{n}” added!',
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',deleted:'Card deleted',
@@ -1638,6 +1640,7 @@ async function openSheet(lang,id,opts={}){
       <div class="t"><div>${t('v_'+c.variant)} · ${esc(c.cond||'NM')}${c.grade?.co?` <span class="gbadge">${esc(gradeStr(c))}</span>`:''}</div>${sub?`<div>${sub}</div>`:''}</div>
       <div class="v money">${v!=null?fmtEur(v*(c.qty||1)):'—'}${ch!=null?`<small class="${ch>=0?'pos':'neg'}">${fmtPct(ch)}</small>`:c.manual>0?`<small>${t('manual_tag')}</small>`:''}</div>
       <button type="button" class="sh-edit" data-edit="${c.uid}" aria-label="${esc(t('edit'))}" title="${esc(t('edit'))}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg></button>
+      <button type="button" class="sh-edit sh-del" data-qdel="${c.uid}" aria-label="${esc(t((c.qty||1)>1?'del_one':'delete'))}" title="${esc(t((c.qty||1)>1?'del_one':'delete'))}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
     </div>${st.editing===c.uid?editor(c):''}`;
   }
   function editor(c){
@@ -1711,16 +1714,12 @@ async function openSheet(lang,id,opts={}){
     // copies: edit inline
     m.querySelectorAll('[data-edit]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();st.editing=st.editing===b.dataset.edit?null:b.dataset.edit;st.focus=null;draw();m.querySelector('.sh-editor')?.scrollIntoView({block:'nearest',behavior:'smooth'})});
     m.querySelectorAll('[data-copy]').forEach(r=>r.onclick=()=>r.querySelector('[data-edit]').click());
+    m.querySelectorAll('[data-qdel]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();delCopy(b.dataset.qdel,true)});
     const ed=m.querySelector('.sh-editor');
     if(ed){
       bindPickers(ed);
       ed.querySelector('[data-cancel]').onclick=()=>{st.editing=null;draw()};
-      ed.querySelector('[data-del]').onclick=()=>{
-        const c=collection.find(x=>x.uid===ed.dataset.ed);if(!c)return;
-        deleted[c.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==c);saveCollection();render();
-        st.editing=null;if(!copies().length)st.addOpen=true;draw();
-        toast(t('deleted'),{label:t('undo'),fn:()=>{delete deleted[c.uid];LS.set('pf_deleted',deleted);c.upd=Date.now();collection.push(c);saveCollection();render();if(document.getElementById('ov')&&m.isConnected){st.addOpen=false;draw()}}});
-      };
+      ed.querySelector('[data-del]').onclick=()=>delCopy(ed.dataset.ed);
       ed.onsubmit=async ev=>{
         ev.preventDefault();
         const c=collection.find(x=>x.uid===ed.dataset.ed);if(!c)return;
@@ -1745,6 +1744,15 @@ async function openSheet(lang,id,opts={}){
       if(!d)return;
       collection.push(entryFromDetail(d,lang,{status:'wish',variant:st.variant}));saveCollection();render();draw();toast(t('wish_added',{n:card.name}));
     };
+  }
+  function delCopy(cid,one){
+    const c=collection.find(x=>x.uid===cid);if(!c)return;
+    // trash icon on a ×2+ line removes a single copy; the editor's Delete button removes the whole line
+    if(one&&(c.qty||1)>1){c.qty--;c.upd=Date.now();saveCollection();render();draw();
+      toast(t('deleted_one',{n:card.name}),{label:t('undo'),fn:()=>{c.qty++;c.upd=Date.now();saveCollection();render();if(m.isConnected)draw()}});return}
+    deleted[c.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==c);saveCollection();render();
+    st.editing=null;if(!copies().length)st.addOpen=true;draw();
+    toast(t('deleted_n',{n:card.name}),{label:t('undo'),fn:()=>{delete deleted[c.uid];LS.set('pf_deleted',deleted);c.upd=Date.now();collection.push(c);saveCollection();render();if(m.isConnected){st.addOpen=false;draw()}}});
   }
   function addNow(){
     const f=m.querySelector('#shAdd');if(!f)return;
