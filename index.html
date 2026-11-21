@@ -135,6 +135,11 @@ html[data-pill=l]{--pill:25px;--pillfs:13.5px;--pillic:17px;--pillx:13px}
 .wbtn.on svg path{fill:currentColor}
 .wbtn.busy{opacity:.6}
 .xbtn svg{width:var(--pillx);height:var(--pillx);margin:0}
+.bbtn{right:auto;left:14px;color:var(--muted)}
+.tile.has-count .bbtn{left:calc(20px + var(--pill))}
+.bbtn svg{width:calc(var(--pillic) - 1px);height:calc(var(--pillic) - 1px);margin:0}
+.bbtn.on{color:var(--accent)}.bbtn.on svg path:first-child{fill:currentColor}
+.bbtn.hit{color:var(--accent2)}
 .xbtn:hover{color:var(--ko)}
 .tile.has-x .lbadge{right:calc(20px + var(--pill))}
 .toast{display:flex;align-items:center;gap:14px;width:max-content;max-width:min(90vw,460px)}
@@ -231,6 +236,7 @@ canvas{max-width:100%}
   .badge{top:10px;left:10px}
   .wbtn{top:10px;right:10px}.lbadge{top:12px;right:11px}
   .tile.has-x .lbadge{right:calc(18px + var(--pill))}
+  .bbtn{left:10px;right:auto}.tile.has-count .bbtn{left:calc(16px + var(--pill))}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
@@ -285,7 +291,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-20';
+const APP_VERSION = '2026.11.21-21';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -347,7 +353,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',alert_cfg:'Alerte de prix',al_below:'Prix en dessous de…',al_above:'Prix au-dessus de…',al_on:'Activer l’alerte',al_off:'Désactiver',al_saved:'Alerte de prix enregistrée',al_removed:'Alerte de prix désactivée',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -405,7 +411,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
+ copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',alert_cfg:'Price alert',al_below:'Price below…',al_above:'Price above…',al_on:'Turn on alert',al_off:'Turn off',al_saved:'Price alert saved',al_removed:'Price alert turned off',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -948,10 +954,11 @@ const copiesOf=e=>collection.reduce((n,x)=>x.cardId===e.cardId&&x.lang===e.lang&
 const gainOf=e=>e.buy>0&&entryValue(e)!=null?(entryValue(e)-e.buy)*e.qty:-Infinity;
 function entryTile(e,opts={}){
   const v=entryValue(e);const ch=e.buy>0&&v!=null?(v-e.buy)/e.buy*100:null;
-  return `<div class="tile ${opts.remove?'has-x':''}" data-uid="${e.uid}">
-    ${(()=>{const n=copiesOf(e);return n>1?`<span class="badge" title="${esc(t('copies',{n}))}">${n}</span>`:''})()}<span class="lbadge">${FLAGS[e.lang]}</span>${opts.remove?`<button class="wbtn xbtn" data-x="${e.uid}" aria-label="${esc(t('wish_remove'))}" title="${esc(t('wish_remove'))}">${XICON}</button>`:''}
+  const nCopies=copiesOf(e);
+  return `<div class="tile ${opts.remove?'has-x':''} ${nCopies>1?'has-count':''}" data-uid="${e.uid}">
+    ${nCopies>1?`<span class="badge" title="${esc(t('copies',{n:nCopies}))}">${nCopies}</span>`:''}<span class="lbadge">${FLAGS[e.lang]}</span>${opts.bell?`<button class="wbtn bbtn ${e.alert?'on':''} ${e.alert?.hit?'hit':''}" data-bell="${e.uid}" aria-label="${esc(t('alert_cfg'))}" title="${esc(e.alert?(e.alert.dir==='below'?'≤ ':'≥ ')+fmtEur(e.alert.price):t('alert_cfg'))}">${BELL}</button>`:''}${opts.remove?`<button class="wbtn xbtn" data-x="${e.uid}" aria-label="${esc(t('wish_remove'))}" title="${esc(t('wish_remove'))}">${XICON}</button>`:''}
     <div class="img">${imgTag(e.image,e.setId,e.localId,e.name,'low','',e.lang)}${e.grade?.co?`<span class="gbadge">${esc(gradeStr(e))}</span>`:''}</div>
-    <div class="nm" title="${esc(e.name)}">${e.alert?`<span title="${t('alert')}">🔔 </span>`:''}${esc(e.name)}</div>
+    <div class="nm" title="${esc(e.name)}">${e.alert&&!opts.bell?`<span title="${t('alert')}">🔔 </span>`:''}${esc(e.name)}</div>
     <div class="meta">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}${e.variant&&e.variant!=='normal'?' · '+t('v_'+e.variant):''}</div>
     <div class="row"><span class="price">${v!=null?fmtEur(v):'<span class="muted small">'+t('price_unavailable')+'</span>'}</span><span class="small ${ch>=0?'pos':'neg'}">${ch!=null?fmtPct(ch):''}</span></div>
   </div>`;
@@ -1207,6 +1214,31 @@ function renderResults(out,data,res,lang){
   const more=res.querySelector('#more');if(more)more.onclick=()=>{search.page++;runSearch(data,res,lang)};
 }
 
+const BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>';
+// quick price-alert setup from the wishlist bell
+function openAlertSheet(id){
+  const e=collection.find(x=>x.uid===id);if(!e)return;
+  const v=entryValue(e);const a=e.alert||{dir:'below',price:v!=null?Math.max(0.01,Math.floor(v*0.9*100)/100):''};
+  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 4px 0">🔔 ${t('alert_cfg')}</h2>
+    <p class="muted small" style="margin:0 0 12px">${esc(e.name)} · ${esc(e.setName)} · ${t('unit_value')} : <b>${fmtEur(v)}</b></p>
+    <form class="form" id="alForm" style="grid-template-columns:1fr">
+      <div class="seg" style="display:flex">${['below','above'].map(d=>`<button type="button" data-dir="${d}" class="${a.dir===d?'on':''}" style="flex:1;justify-content:center">${t(d==='below'?'al_below':'al_above')}</button>`).join('')}</div>
+      <label>${t('alert_price')}<input type="number" name="price" min="0" step="0.01" inputmode="decimal" value="${a.price||''}"></label>
+      <p class="small muted" style="margin:0">${t('alert_hint')}</p>
+      <div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap">
+        ${e.alert?`<button type="button" class="btn danger" id="alOff">${t('al_off')}</button>`:'<span></span>'}
+        <button type="submit" class="btn primary">${t(e.alert?'save':'al_on')}</button>
+      </div>
+    </form></div>`,'sm');
+  let dir=a.dir;
+  m.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>{dir=b.dataset.dir;m.querySelectorAll('[data-dir]').forEach(x=>x.classList.toggle('on',x===b))});
+  const f=m.querySelector('#alForm');
+  f.onsubmit=ev=>{ev.preventDefault();const p=parseFloat(String(f.price.value).replace(',','.'));if(!(p>0)){f.price.focus();return}
+    const same=e.alert&&e.alert.dir===dir&&e.alert.price===p;
+    e.alert={dir,price:p,hit:same?e.alert.hit:null};e.upd=Date.now();saveCollection();closeModal();
+    const hits=checkAlerts(false);toast(hits.length?'🔔 '+t('alert_toast',{n:hits.length}):t('al_saved'));render()};
+  const off=m.querySelector('#alOff');if(off)off.onclick=()=>{e.alert=null;e.upd=Date.now();saveCollection();closeModal();toast(t('al_removed'));render()};
+}
 const XICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>';
 const HEART='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
 const ownedCount=(id,lang)=>collection.reduce((n,x)=>x.cardId===id&&x.lang===lang&&x.status!=='wish'?n+(x.qty||1):n,0);
@@ -1387,8 +1419,9 @@ function viewWish(m){
   const total=list.reduce((s,e)=>s+(entryValue(e)||0)*e.qty,0);
   m.innerHTML=`<h1>${t('wish_title')}</h1>
   ${alertsBanner(e=>e.status==='wish')}
-  ${list.length?`<div class="stat wbudget"><div class="lbl">${t('wish_budget')}</div><div class="val">${fmtEur(total)}</div><div class="sub">${t('wish_count',{n:list.reduce((a,e)=>a+(e.qty||1),0)})}</div></div><div class="grid">${list.map(e=>entryTile(e,{remove:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
+  ${list.length?`<div class="stat wbudget"><div class="lbl">${t('wish_budget')}</div><div class="val">${fmtEur(total)}</div><div class="sub">${t('wish_count',{n:list.reduce((a,e)=>a+(e.qty||1),0)})}</div></div><div class="grid">${list.map(e=>entryTile(e,{remove:true,bell:true})).join('')}</div>`:`<div class="empty">${t('wish_empty')}</div>`}`;
   m.querySelectorAll('[data-uid]').forEach(el=>el.onclick=()=>openEntry(el.dataset.uid));
+  m.querySelectorAll('[data-bell]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openAlertSheet(b.dataset.bell)});
   m.querySelectorAll('[data-x]').forEach(b=>b.onclick=ev=>{
     ev.stopPropagation();
     const e=collection.find(x=>x.uid===b.dataset.x);if(!e)return;
