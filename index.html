@@ -69,6 +69,10 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .ab-list dd{margin:0;text-align:right}
 .ab-list a{color:var(--text)}
 .ab-legal{margin:0;padding:12px 18px 16px;font-size:11.5px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line)}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500;white-space:nowrap}
+.chip.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.sortbar{margin-top:-4px}
+.sortbar select{width:auto}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -224,6 +228,7 @@ canvas{max-width:100%}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
+  .sortbar .chip{flex:none}
   .tbtitle{flex:1 1 100%}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
@@ -274,7 +279,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-13';
+const APP_VERSION = '2026.11.21-14';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -317,7 +322,7 @@ fr:{
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
  data_note:"Ta collection est enregistrée dans ce navigateur, sur cet appareil. Exporte une sauvegarde régulièrement (et avant de changer de navigateur ou de vider les données de navigation).",
  clear_cache:'Recharger la base de cartes',cache_cleared:'Base de cartes rechargée',
- credit_short:'Prix Cardmarket & TCGplayer via TCGdex, mis à jour chaque jour',about_more:'À propos',about_tag:'Suivi de collection Pokémon TCG',ab_cards:'Base de cartes',ab_prices:'Prix',ab_daily:'mis à jour chaque jour',ab_images:'Images',ab_scan:'Lecture du scan',ab_legal:'Pokémon et les noms, images et marques associés sont la propriété de The Pokémon Company, Nintendo, Creatures et GAME FREAK. Gleamvault est un projet de fan non officiel, sans lien avec ces sociétés.',sources:'Sources : base de cartes et prix via l’API TCGdex (Cardmarket & TCGplayer, mis à jour quotidiennement). Images © The Pokémon Company / Nintendo.',
+ sort_label:'Trier les résultats',ss_relevance:'Tri : pertinence',ss_num_desc:'Numéro décroissant (raretés d’abord)',ss_num_asc:'Numéro croissant',ss_newest:'Extensions récentes d’abord',ss_oldest:'Extensions anciennes d’abord',secret_only:'Cartes secrètes',secret:'Secrète',secret_hint:'Numéro au-delà du total officiel de l’extension (ex. 199/165) ou galerie spéciale : ce sont en général les raretés les plus recherchées.',credit_short:'Prix Cardmarket & TCGplayer via TCGdex, mis à jour chaque jour',about_more:'À propos',about_tag:'Suivi de collection Pokémon TCG',ab_cards:'Base de cartes',ab_prices:'Prix',ab_daily:'mis à jour chaque jour',ab_images:'Images',ab_scan:'Lecture du scan',ab_legal:'Pokémon et les noms, images et marques associés sont la propriété de The Pokémon Company, Nintendo, Creatures et GAME FREAK. Gleamvault est un projet de fan non officiel, sans lien avec ces sociétés.',sources:'Sources : base de cartes et prix via l’API TCGdex (Cardmarket & TCGplayer, mis à jour quotidiennement). Images © The Pokémon Company / Nintendo.',
  price_unavailable:'prix indispo.',err_net:'Erreur réseau — vérifie ta connexion.',
  scan_btn:'Scanner une carte',scan_title:'Lecture de la carte',scan_loading:'Chargement du lecteur (la 1ʳᵉ fois, quelques secondes)…',scan_reading:'Lecture du nom et du numéro…',
  scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_read:'Texte lu :',scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
@@ -375,7 +380,7 @@ en:{
  import_confirm:'Replace your current collection ({a} entries) with the backup ({b} entries)?',
  data_note:'Your collection is stored in this browser, on this device. Export a backup regularly (and before switching browsers or clearing browsing data).',
  clear_cache:'Reload card database',cache_cleared:'Card database reloaded',
- credit_short:'Cardmarket & TCGplayer prices via TCGdex, updated daily',about_more:'About',about_tag:'Pokémon TCG collection tracker',ab_cards:'Card database',ab_prices:'Prices',ab_daily:'updated daily',ab_images:'Images',ab_scan:'Scan reading',ab_legal:'Pokémon and all related names, images and trademarks are the property of The Pokémon Company, Nintendo, Creatures and GAME FREAK. Gleamvault is an unofficial fan project, not affiliated with these companies.',sources:'Sources: card database and prices via the TCGdex API (Cardmarket & TCGplayer, updated daily). Images © The Pokémon Company / Nintendo.',
+ sort_label:'Sort results',ss_relevance:'Sort: relevance',ss_num_desc:'Number high → low (rares first)',ss_num_asc:'Number low → high',ss_newest:'Newest sets first',ss_oldest:'Oldest sets first',secret_only:'Secret cards',secret:'Secret',secret_hint:'Number above the set’s official count (e.g. 199/165) or special gallery: usually the most sought-after rares.',credit_short:'Cardmarket & TCGplayer prices via TCGdex, updated daily',about_more:'About',about_tag:'Pokémon TCG collection tracker',ab_cards:'Card database',ab_prices:'Prices',ab_daily:'updated daily',ab_images:'Images',ab_scan:'Scan reading',ab_legal:'Pokémon and all related names, images and trademarks are the property of The Pokémon Company, Nintendo, Creatures and GAME FREAK. Gleamvault is an unofficial fan project, not affiliated with these companies.',sources:'Sources: card database and prices via the TCGdex API (Cardmarket & TCGplayer, updated daily). Images © The Pokémon Company / Nintendo.',
  price_unavailable:'no price',err_net:'Network error — check your connection.',
  scan_btn:'Scan a card',scan_title:'Reading the card',scan_loading:'Loading the reader (a few seconds the first time)…',scan_reading:'Reading name and number…',
  scan_fail:"I couldn't identify the card.",scan_read:'Text read:',scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
@@ -951,6 +956,10 @@ function viewAdd(m){
     <select id="sset" style="width:auto;max-width:280px"><option value="">${t('all_sets')}</option></select>
     <label class="btn primary" id="scanLbl" style="white-space:nowrap">📷 ${t('scan_btn')}<input type="file" id="scanInput" accept="image/*" hidden></label>
   </div>
+  <div class="toolbar sortbar">
+    <select id="ssort" aria-label="${t('sort_label')}">${['relevance','num_desc','num_asc','newest','oldest'].map(k=>`<option value="${k}" ${(settings.searchSort||'relevance')===k?'selected':''}>${t('ss_'+k)}</option>`).join('')}</select>
+    <button type="button" class="chip ${settings.secretOnly?'on':''}" id="secretOnly" aria-pressed="${!!settings.secretOnly}" title="${esc(t('secret_hint'))}">★ ${t('secret_only')}</button>
+  </div>
   <div id="sres"></div>`;
   m.querySelectorAll('#langSeg button').forEach(b=>b.onclick=()=>{settings.cardLang=b.dataset.l;saveSettings();search.set='';search.page=1;render()});
   const info=m.querySelector('#idxInfo'),res=m.querySelector('#sres'),sq=m.querySelector('#sq'),sset=m.querySelector('#sset');
@@ -966,6 +975,8 @@ function viewAdd(m){
     sq.oninput=()=>{clearTimeout(timer);search.page=1;timer=setTimeout(go,180)};
     sq.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();clearTimeout(timer);go();sq.blur()}};
     sset.onchange=()=>{search.page=1;go()};
+    m.querySelector('#ssort').onchange=e=>{settings.searchSort=e.target.value;saveSettings();search.page=1;go()};
+    m.querySelector('#secretOnly').onclick=e=>{settings.secretOnly=!settings.secretOnly;saveSettings();e.currentTarget.classList.toggle('on',settings.secretOnly);e.currentTarget.setAttribute('aria-pressed',settings.secretOnly);search.page=1;go()};
     m.querySelector('#scanInput').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';if(f)scanCard(f,data,lang,q=>{sq.value=q;sset.value='';search.page=1;go()})};
     go();
   }).catch(()=>{info.textContent=t('err_net')});
@@ -1049,9 +1060,22 @@ async function scanCard(file,data,lang,apply){
 function runSearch(data,res,lang){
   const raw=search.q.trim();
   if(!raw&&!search.set){res.innerHTML=`<div class="empty">${t('type_to_search')}</div>`;return}
-  const out=findCards(data,raw,search.set);
+  let out=findCards(data,raw,search.set);
+  if(settings.secretOnly)out=out.filter(o=>isSecret(o.c,o.st));
+  const mode=settings.searchSort||'relevance';
+  if(mode!=='relevance'){
+    const so=o=>o.st?.o??-1;
+    out.sort(mode==='num_desc'?(a,b)=>so(b)-so(a)||numKey(b.c.l)-numKey(a.c.l)
+      :mode==='num_asc'?(a,b)=>so(b)-so(a)||numKey(a.c.l)-numKey(b.c.l)
+      :mode==='newest'?(a,b)=>so(b)-so(a)||numKey(a.c.l)-numKey(b.c.l)
+      :(a,b)=>so(a)-so(b)||numKey(a.c.l)-numKey(b.c.l));
+  }
   renderResults(out,data,res,lang);
 }
+// card number as a sortable value: plain numbers first, then lettered specials (TG05, GG10, SV049…) after the main numbering
+const numKey=l=>{const s=String(l||'');if(/^\d+$/.test(s))return parseInt(s,10);const n=parseInt(s.replace(/\D/g,''),10)||0;return 10000+n};
+// "secret" = beyond the set's official count (illustration rares, special illustration rares, gold…) or a lettered gallery/special number
+const isSecret=(c,st)=>{const s=String(c.l||'');if(/^\d+$/.test(s))return !!st?.off&&parseInt(s,10)>st.off;return /^(TG|GG|SV|RC|SH)\d/i.test(s)};
 const isReprintSet=s=>s==='30th-c'||/^cel25c/.test(s||'');
 function findCards(data,raw,setFilter){
   const tokens=norm(raw).split(' ').filter(Boolean);
@@ -1095,7 +1119,7 @@ function renderResults(out,data,res,lang){
       <div class="img">${imgTag(c.i,c.s,c.l,c.n)}</div>
       <div class="nm" title="${esc(c.n)}">${esc(c.n)}</div>
       <div class="meta">${esc(st?.n||c.s)} · ${esc(numLabel(c.l,st?.off))}</div>
-      ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:''}
+      ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:isSecret(c,st)?`<div class="meta" style="color:var(--accent)" title="${esc(t('secret_hint'))}">★ ${t('secret')}</div>`:''}
     </div>`).join('')}</div>${out.length>shown.length?`<div style="text-align:center;margin:20px"><button class="btn" id="more">${t('show_more')}</button></div>`:''}`
     :`<div class="empty">${t('no_results')}</div>`;
   res.querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>openCard(lang,el.dataset.id));
