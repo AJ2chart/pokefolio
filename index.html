@@ -52,7 +52,7 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
 .pwdeye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);cursor:pointer;padding:6px;display:grid;place-items:center}.pwdeye:hover{color:var(--text)}
 .acc-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#1a1d24;font-weight:700;font-size:12px;display:grid;place-items:center}
-.flag{border:2px solid transparent;border-radius:6px;padding:0;width:34px;height:24px;cursor:pointer;background:none;overflow:hidden;opacity:.55;display:flex}
+.flag{border:2px solid transparent;border-radius:5px;padding:0;width:28px;height:20px;cursor:pointer;background:none;overflow:hidden;opacity:.55;display:flex}
 .flag svg{width:100%;height:100%}
 .flag.on{opacity:1;border-color:var(--accent)}
 .iconbtn{background:var(--card2);border:1px solid var(--line);border-radius:10px;width:36px;height:36px;cursor:pointer;display:grid;place-items:center}
@@ -81,7 +81,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
 .seg button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--muted);display:flex;gap:6px;align-items:center}
 .seg button.on{background:var(--card2);color:var(--text)}
-.seg svg{width:20px;height:14px;border-radius:2px}
+.seg svg{width:17px;height:12px;border-radius:2px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px;cursor:pointer;transition:transform .12s,border-color .12s;position:relative}
 .tile:hover{transform:translateY(-3px);border-color:var(--accent)}
@@ -104,10 +104,10 @@ html[data-pill=l]{--pill:25px;--pillfs:13.5px;--pillic:17px;--pillx:13px}
 .wbtn.busy{opacity:.6}
 .xbtn svg{width:var(--pillx);height:var(--pillx);margin:0}
 .xbtn:hover{color:var(--ko)}
-.tile.has-x .lbadge{right:calc(21px + var(--pill))}
+.tile.has-x .lbadge{right:calc(20px + var(--pill))}
 .toast{display:flex;align-items:center;gap:14px;width:max-content;max-width:min(90vw,460px)}
 .toast-act{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:2px 0;white-space:nowrap}
-.lbadge{position:absolute;z-index:2;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.lbadge{position:absolute;z-index:2;top:15px;right:14px;width:18px;height:13px;border-radius:2px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .lbadge svg{width:100%;height:100%;display:block}
 .tile .img{position:relative}
 .gbadge{position:absolute;bottom:8px;left:8px;background:#1a1d24;color:#fff;border:1px solid var(--accent);border-radius:6px;font-size:12px;font-weight:700;padding:2px 7px}
@@ -174,7 +174,7 @@ canvas{max-width:100%}
   .hwrap{flex-wrap:nowrap;gap:8px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
   .logo{font-size:18px;gap:8px}.logo svg{width:26px;height:26px}
   .hactions{margin-left:auto;gap:5px}
-  .flag{width:30px;height:21px}
+  .flag{width:25px;height:18px;border-width:1.5px;border-radius:4px}
   .iconbtn{width:36px;height:36px}
   html,body{height:100%;overflow:hidden;overscroll-behavior:none}
   body{display:flex;flex-direction:column;height:100vh;height:100dvh}
@@ -197,7 +197,7 @@ canvas{max-width:100%}
   .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
   html[data-pill=m]{--pill:18px;--pillfs:10.5px}
   .badge{top:10px;left:10px}
-  .wbtn{top:10px;right:10px}.lbadge{top:11px;right:11px}
+  .wbtn{top:10px;right:10px}.lbadge{top:12px;right:11px}
   .tile.has-x .lbadge{right:calc(18px + var(--pill))}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
@@ -248,7 +248,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-10';
+const APP_VERSION = '2026.11.21-11';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
@@ -938,11 +938,17 @@ function viewAdd(m){
     let timer;
     const go=()=>{search.q=sq.value;search.set=sset.value;runSearch(data,res,lang)};
     sq.oninput=()=>{clearTimeout(timer);search.page=1;timer=setTimeout(go,180)};
+    sq.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();clearTimeout(timer);go();sq.blur()}};
     sset.onchange=()=>{search.page=1;go()};
     m.querySelector('#scanInput').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';if(f)scanCard(f,data,lang,q=>{sq.value=q;sset.value='';search.page=1;go()})};
     go();
   }).catch(()=>{info.textContent=t('err_net')});
 }
+
+// Phone: hide the keyboard when tapping outside a text field or when scrolling the page
+const isField=el=>el&&(el.tagName==='INPUT'&&!['checkbox','radio','button','submit','file','range'].includes(el.type)||el.tagName==='TEXTAREA'||el.isContentEditable);
+document.addEventListener('pointerdown',ev=>{const a=document.activeElement;if(isField(a)&&!isField(ev.target)&&!ev.target.closest('label'))a.blur()},true);
+document.getElementById('main').addEventListener('touchmove',()=>{const a=document.activeElement;if(isField(a)&&view==='add')a.blur()},{passive:true});
 
 /* ============ scan (free OCR in the browser, Tesseract.js) ============ */
 let ocrWorker=null,ocrLang=null;
