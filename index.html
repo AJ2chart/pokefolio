@@ -91,7 +91,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .wbtn svg{width:11px;height:11px}
 .wbtn::before{content:'';position:absolute;inset:-10px;border-radius:50%}
 .wbtn:active{transform:scale(.9)}
-.wbtn.on{background:var(--accent2);color:#fff;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
+.wbtn.on{color:var(--accent2)}
 .wbtn.on svg path{fill:currentColor}
 .wbtn.busy{opacity:.6}
 .lbadge{position:absolute;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -233,7 +233,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-6';
+const APP_VERSION = '2026.11.21-7';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
