@@ -73,6 +73,12 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .chip.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card))}
 .sortbar{margin-top:-4px}
 .sortbar select{width:auto}
+.sumbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
+.sumbar:hover{border-color:var(--muted)}
+.sumbar .sb-v b{font-size:18px}
+.sumbar .sb-go{margin-left:auto;display:inline-flex;align-items:center;gap:2px;color:var(--muted);font-size:13px;white-space:nowrap}
+.vbar{margin-top:10px}.vb-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.lflag{display:inline-block;width:16px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:2px;overflow:hidden}.lflag svg{width:100%;height:100%;display:block}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -279,7 +285,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-19';
+const APP_VERSION = '2026.11.21-20';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -295,7 +301,7 @@ const VARIANTS = ['normal','reverse','holo','firstEdition'];
 /* ============ i18n ============ */
 const I18N = {
 fr:{
- nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Wishlist',nav_evo:'Évolution',nav_data:'Réglages',
+ nav_collection:'Collection',nav_add:'Ajouter',nav_wish:'Wishlist',nav_evo:'Valeur',nav_data:'Réglages',
  stat_value:'Valeur estimée',stat_cards:'Cartes',stat_cost:"Coût d'achat",stat_gain:'Plus-value',
  unique_cards:'{n} cartes différentes',gain_on:"sur {n} carte(s) avec prix d'achat",
  refresh:'Actualiser les prix',refreshing:'Actualisation… {p}/{t}',updated_at:'Prix mis à jour {d}',never:'jamais',
@@ -320,7 +326,7 @@ fr:{
  del_confirm:'Supprimer « {n} » de ta collection ?',mark_owned:'Je l’ai eue !',
  unit_value:'Valeur unitaire',total_value:'Valeur totale',gain:'Plus-value',history:'Historique du prix',no_history:"L'historique se construit à chaque actualisation des prix.",
  wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Depuis « Ajouter », choisis le statut « Dans ma wishlist ».',wish_total:'Budget total pour tout compléter : {v}',
- evo_title:'Évolution de la collection',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
+ evo_title:'Valeur de la collection',evo_chart:'Évolution dans le temps',by_lang:'Répartition par langue',see_value:'Détails',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',cost:'Coût',
  data_title:'Réglages',not_logged:'Non connecté',manage:'Gérer mon compte',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',sec_backup:'Sauvegarde',sec_alerts:'Alertes de prix',sec_advanced:'Avancé',exp_json_t:'Exporter une sauvegarde',exp_json_d:'Fichier JSON avec toute ta collection ({n} cartes), pour la restaurer plus tard.',imp_t:'Restaurer une sauvegarde',imp_d:'Remplace la collection actuelle par celle d’un fichier exporté.',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',notif_d:'Être prévenu sur cet appareil quand une alerte de prix se déclenche (app ouverte).',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',btn_export:'Exporter',btn_import:'Importer',btn_enable:'Activer',btn_reload:'Recharger',export_json:'Exporter (JSON)',export_csv:'Exporter (CSV pour Excel)',import_json:'Importer une sauvegarde',import_ok:'{n} cartes importées',import_bad:'Fichier invalide',
  import_confirm:'Remplacer ta collection actuelle ({a} entrées) par la sauvegarde ({b} entrées) ?',
  data_note:"Ta collection est enregistrée dans ce navigateur, sur cet appareil. Exporte une sauvegarde régulièrement (et avant de changer de navigateur ou de vider les données de navigation).",
@@ -353,7 +359,7 @@ fr:{
  notif_note:"Les alertes sont vérifiées à chaque actualisation des prix (automatique toutes les 12 h, quand l'app est ouverte). Les notifications système ne marchent que si l'app est en ligne (https), pas en fichier local."
 },
 en:{
- nav_collection:'Collection',nav_add:'Add',nav_wish:'Wishlist',nav_evo:'Trends',nav_data:'Settings',
+ nav_collection:'Collection',nav_add:'Add',nav_wish:'Wishlist',nav_evo:'Value',nav_data:'Settings',
  stat_value:'Estimated value',stat_cards:'Cards',stat_cost:'Purchase cost',stat_gain:'Gain',
  unique_cards:'{n} unique cards',gain_on:'on {n} card(s) with a purchase price',
  refresh:'Refresh prices',refreshing:'Refreshing… {p}/{t}',updated_at:'Prices updated {d}',never:'never',
@@ -378,7 +384,7 @@ en:{
  del_confirm:'Remove “{n}” from your collection?',mark_owned:'Got it!',
  unit_value:'Unit value',total_value:'Total value',gain:'Gain',history:'Price history',no_history:'History builds up with each price refresh.',
  wish_title:'Wishlist',wish_empty:'No wanted cards yet. From “Add”, pick the “Wanted” status.',wish_total:'Total budget to complete: {v}',
- evo_title:'Collection trends',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',cost:'Cost',
+ evo_title:'Collection value',evo_chart:'Over time',by_lang:'Breakdown by language',see_value:'Details',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',cost:'Cost',
  data_title:'Settings',not_logged:'Not logged in',manage:'Manage my account',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',sec_backup:'Backup',sec_alerts:'Price alerts',sec_advanced:'Advanced',exp_json_t:'Export a backup',exp_json_d:'JSON file with your whole collection ({n} cards), to restore it later.',imp_t:'Restore a backup',imp_d:'Replaces the current collection with an exported file.',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',notif_d:'Get notified on this device when a price alert triggers (app open).',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',btn_export:'Export',btn_import:'Import',btn_enable:'Enable',btn_reload:'Reload',export_json:'Export (JSON)',export_csv:'Export (CSV for Excel)',import_json:'Import a backup',import_ok:'{n} cards imported',import_bad:'Invalid file',
  import_confirm:'Replace your current collection ({a} entries) with the backup ({b} entries)?',
  data_note:'Your collection is stored in this browser, on this device. Export a backup regularly (and before switching browsers or clearing browsing data).',
@@ -897,15 +903,13 @@ function viewCollection(m){
   const gainCls=tt.gain>=0?'pos':'neg';
   const sets=[...new Map(owned.map(e=>[e.lang+':'+e.setId,{k:e.setId,n:e.setName}])).values()];
   m.innerHTML=`
-  <div class="stats">
-    <div class="stat"><div class="lbl">${t('stat_value')}</div><div class="val">${fmtEur(tt.value)}</div><div class="sub">${settings.lastRefresh?t('updated_at',{d:fmtDate(settings.lastRefresh)}):''}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_cards')}</div><div class="val">${tt.count}</div><div class="sub">${t('unique_cards',{n:tt.unique})}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_cost')}</div><div class="val">${fmtEur(tt.cost)}</div><div class="sub">${t('gain_on',{n:tt.withCost})}</div></div>
-    <div class="stat"><div class="lbl">${t('stat_gain')}</div><div class="val ${tt.withCost?gainCls:''}">${tt.withCost?(tt.gain>=0?'+':'')+fmtEur(tt.gain):'—'}</div><div class="sub ${gainCls}">${tt.withCost?fmtPct(tt.gainPct):''}</div></div>
-  </div>
+  ${owned.length?`<a class="sumbar" href="#evolution">
+    <span class="sb-v"><span class="muted">${t('stat_value')}</span> <b>${fmtEur(tt.value)}</b></span>
+    ${tt.withCost?`<span class="sb-g ${gainCls}">${(tt.gain>=0?'+':'')+fmtEur(tt.gain)} <span class="small">(${fmtPct(tt.gainPct)})</span></span>`:''}
+    <span class="sb-go">${t('see_value')} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+  </a>`:''}
   ${alertsBanner(e=>e.status!=='wish')}
-  ${owned.length?dashboardPanels(owned):''}
-  <div class="toolbar" style="margin-top:26px">
+  <div class="toolbar" style="margin-top:14px">
     <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
     <button class="btn" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
     <a class="btn primary" href="#add">＋ ${t('go_add')}</a>
@@ -1398,7 +1402,32 @@ function viewWish(m){
 
 /* ============ view: evolution ============ */
 function viewEvo(m){
-  m.innerHTML=`<h1>${t('evo_title')}</h1>${snapshots.length>1?`<div class="panel"><div class="chartbox"><canvas id="evo"></canvas></div></div>`:`<div class="empty">${t('evo_empty')}</div>`}`;
+  const owned=collection.filter(e=>e.status!=='wish');
+  const tt=totals(owned);const gainCls=tt.gain>=0?'pos':'neg';
+  if(!owned.length){m.innerHTML=`<h1>${t('evo_title')}</h1><div class="empty"><p>${t('empty_collection')}</p><a class="btn primary" href="#add">＋ ${t('go_add')}</a></div>`;return}
+  const top=[...owned].filter(e=>entryValue(e)!=null).sort((a,b)=>entryValue(b)*b.qty-entryValue(a)*a.qty).slice(0,10);
+  const movers=owned.map(e=>({e,c:change7(e)})).filter(x=>x.c!=null&&Math.abs(x.c)>=0.5).sort((a,b)=>Math.abs(b.c)-Math.abs(a.c)).slice(0,8);
+  const group=key=>{const g={};for(const e of owned){const k=key(e);g[k]=(g[k]||0)+(entryValue(e)||0)*e.qty}return Object.entries(g).sort((a,b)=>b[1]-a[1])};
+  const bars=(rows,label=x=>esc(x))=>{const max=rows[0]?.[1]||1;return rows.map(([n,v])=>`<div class="vbar"><div class="vb-row small"><span>${label(n)}</span><b>${fmtEur(v)}</b></div><div class="bar"><i style="width:${Math.max(2,v/max*100)}%"></i></div></div>`).join('')};
+  const li=(e,right)=>`<div class="li" data-open="${e.uid}"><span style="width:38px;flex:none">${imgTag(e.image,e.setId,e.localId,'','low','',e.lang)}</span><div class="grow"><div><b>${esc(e.name)}</b>${e.qty>1?` <span class="muted small">×${e.qty}</span>`:''}</div><div class="muted small">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}</div></div>${right}</div>`;
+  m.innerHTML=`<h1>${t('evo_title')}</h1>
+  <div class="stats">
+    <div class="stat"><div class="lbl">${t('stat_value')}</div><div class="val">${fmtEur(tt.value)}</div><div class="sub">${settings.lastRefresh?t('updated_at',{d:fmtDate(settings.lastRefresh)}):''}</div></div>
+    <div class="stat"><div class="lbl">${t('stat_cards')}</div><div class="val">${tt.count}</div><div class="sub">${t('unique_cards',{n:tt.unique})}</div></div>
+    <div class="stat"><div class="lbl">${t('stat_cost')}</div><div class="val">${fmtEur(tt.cost)}</div><div class="sub">${t('gain_on',{n:tt.withCost})}</div></div>
+    <div class="stat"><div class="lbl">${t('stat_gain')}</div><div class="val ${tt.withCost?gainCls:''}">${tt.withCost?(tt.gain>=0?'+':'')+fmtEur(tt.gain):'—'}</div><div class="sub ${gainCls}">${tt.withCost?fmtPct(tt.gainPct):''}</div></div>
+  </div>
+  <div class="toolbar" style="justify-content:flex-end;margin:10px 0 4px"><button class="btn" id="refreshBtn">↻ ${t('refresh')}</button></div>
+  <h2>${t('evo_chart')}</h2>
+  ${snapshots.length>1?`<div class="panel"><div class="chartbox"><canvas id="evo"></canvas></div></div>`:`<div class="empty small">${t('evo_empty')}</div>`}
+  <div class="two" style="margin-top:16px">
+    <div class="panel"><b>${t('top_cards')}</b><div class="list">${top.map(e=>li(e,`<b>${fmtEur(entryValue(e)*e.qty)}</b>`)).join('')}</div></div>
+    <div class="panel"><b>${t('movers')}</b>${movers.length?`<div class="list">${movers.map(x=>li(x.e,`<b class="${x.c>=0?'pos':'neg'}">${fmtPct(x.c)}</b>`)).join('')}</div>`:`<p class="muted small">${t('no_movers')}</p>`}</div>
+    <div class="panel"><b>${t('by_set')}</b>${bars(group(e=>e.setName).slice(0,8))}</div>
+    <div class="panel"><b>${t('by_lang')}</b>${bars(group(e=>e.lang),l=>`${FLAGS[l]?`<span class="lflag">${FLAGS[l]}</span>`:''}${esc(LANG_NAMES[l]||l)}`)}</div>
+  </div>`;
+  m.querySelector('#refreshBtn').onclick=()=>refreshPrices();
+  m.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>openEntry(el.dataset.open));
   if(snapshots.length>1&&window.Chart){
     charts.push(new Chart(m.querySelector('#evo'),{type:'line',data:{labels:snapshots.map(s=>fmtDate(s.d)),datasets:[
       {label:t('value'),data:snapshots.map(s=>s.value),borderColor:getCss('--accent'),backgroundColor:'transparent',tension:.25,pointRadius:2},
