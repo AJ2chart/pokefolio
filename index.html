@@ -108,8 +108,13 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .afilters .cf-panel{align-items:center}
 .more-sentinel{display:flex;justify-content:center;min-height:40px;padding:14px}
 .tile .img{position:relative}
-.qadd{position:absolute;z-index:2;right:6px;bottom:6px;width:calc(var(--pill) + 10px);height:calc(var(--pill) + 10px);border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:var(--accent);color:#1a1d24;font-size:calc(var(--pillfs) + 8px);font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:transform .15s}
-.qadd:active{transform:scale(.9)}.qadd.busy{opacity:.6}.qadd.done{background:#3ecf8e}
+.qadd{position:absolute;z-index:2;right:8px;bottom:8px;width:calc(var(--pill) + 4px);height:calc(var(--pill) + 4px);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;color:var(--accent);background:color-mix(in srgb,var(--bg) 80%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 75%,transparent),0 2px 6px rgba(0,0,0,.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
+.qadd::before{content:'';position:absolute;inset:-8px;border-radius:50%}
+.qadd svg{width:var(--pillic);height:var(--pillic);display:block}
+.qadd .qa-ok{display:none}
+@media (hover:hover){.qadd:hover{background:var(--accent);color:#1a1d24}}
+.qadd:active{transform:scale(.88)}.qadd.busy{opacity:.55}
+.qadd.done{background:#3ecf8e;color:#0f1117;box-shadow:0 2px 6px rgba(0,0,0,.35)}.qadd.done .qa-plus{display:none}.qadd.done .qa-ok{display:block}
 .ah-t{font-size:15px;margin:18px 0 10px;display:flex;align-items:center;gap:10px}
 .linkbtn{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;padding:0;text-decoration:underline}
 .ah-sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
@@ -346,7 +351,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-29';
+const APP_VERSION = '2026.11.21-30';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1286,7 +1291,7 @@ function resultTile({c,st},lang){return `
     <div class="tile" data-id="${esc(c.id)}">
       ${(()=>{const n=ownedCount(c.id,lang);return n?`<span class="badge" title="${esc(t('owned_n',{n}))}">${n}</span>`:''})()}
       <button class="wbtn ${inWishlist(c.id,lang)?'on':''}" data-wish="${esc(c.id)}" aria-label="${esc(t('quick_wish'))}" title="${esc(t('quick_wish'))}">${HEART}</button>
-      <div class="img">${imgTag(c.i,c.s,c.l,c.n,'low','',lang)}<button class="qadd" data-qadd="${esc(c.id)}" aria-label="${esc(t('qa_title'))}" title="${esc(t('qa_title'))}">＋</button></div>
+      <div class="img">${imgTag(c.i,c.s,c.l,c.n,'low','',lang)}<button class="qadd" data-qadd="${esc(c.id)}" aria-label="${esc(t('qa_title'))}" title="${esc(t('qa_title'))}"><svg class="qa-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg><svg class="qa-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg></button></div>
       <div class="nm" title="${esc(c.n)}">${esc(c.n)}</div>
       <div class="meta">${esc(st?.n||c.s)} · ${esc(numLabel(c.l,st?.off))}</div>
       ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:isSecret(c,st)?`<div class="meta" style="color:var(--accent)" title="${esc(t('secret_hint'))}">★ ${t('secret')}</div>`:''}
@@ -1390,7 +1395,7 @@ async function quickAdd(lang,id,btn){
     else{collection.push(e);undo=()=>{deleted[e.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==e)}}
     saveCollection();
     const tile=btn.closest('.tile');const upd=()=>{if(!tile)return;tile.querySelector('.badge')?.remove();const n=ownedCount(id,lang);if(n)tile.insertAdjacentHTML('afterbegin',`<span class="badge">${n}</span>`)};upd();
-    btn.classList.add('done');setTimeout(()=>btn.classList.remove('done'),900);
+    btn.classList.add('done');setTimeout(()=>btn.classList.remove('done'),1100);
     toast(t('qa_added',{n:d.name}),{label:t('undo'),fn:()=>{undo();saveCollection();upd()}});
   }catch(_){toast(t('err_net'))}
   btn.disabled=false;btn.classList.remove('busy');
