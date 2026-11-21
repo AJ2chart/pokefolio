@@ -651,7 +651,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-73';
+const APP_VERSION = '2026.11.21-74';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1129,16 +1129,18 @@ const SB_URL='https://ufowenlhdsaezyshhwgz.supabase.co';
 const SB_KEY='sb_publishable_jABVuv0ZIqBTt9GLTxnTVg_imtAaAqk';
 const APP_URL=location.origin+location.pathname;
 let sb=null,user=null,syncState='off',syncTimer=null,syncing=false,syncAgain=false;
+// resolved once the first sync after launch is over (or right away when there is no account): the splash waits for it, briefly
+let bootSyncDone;const bootSync=new Promise(r=>bootSyncDone=r);
 function initSupabase(){
-  if(!window.supabase?.createClient)return;
+  if(!window.supabase?.createClient){bootSyncDone();return}
   try{
     sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  }catch(e){sb=null;return}
+  }catch(e){sb=null;bootSyncDone();return}
   sb.auth.onAuthStateChange((ev,session)=>{
     const prev=user?.id;user=session?.user||null;
     if(ev==='PASSWORD_RECOVERY')setTimeout(openRecovery,0);
     if(user&&user.id!==prev){cleanUrl();setTimeout(()=>syncNow(true),0)}
-    if(!user){syncState='off'}
+    if(!user){syncState='off';bootSyncDone()}
     renderShell();
   });
 }
@@ -1182,7 +1184,7 @@ async function syncNow(first){
     if(JSON.stringify(collection)!==before&&!document.querySelector('.ov'))render();
     if(first)toast(t('sync_first',{n:collection.length}));
   }catch(err){console.warn('sync',err);setSync('error')}
-  syncing=false;
+  syncing=false;bootSyncDone();
   if(syncAgain){syncAgain=false;syncNow()}
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});
@@ -2456,8 +2458,9 @@ function openManualForm(pref={}){
     if(idx[lang]&&matchManual(lang))render();
   };
 }
-// at start-up: check manual cards against the card database of their language
-setTimeout(()=>{const L=[...new Set(manualCards().map(e=>e.lang))];L.forEach(l=>loadIndex(l).then(()=>{if(matchManual(l))render()}).catch(()=>{}))},2500);
+// at start-up (during the splash): load the card database of the search language, so Ajouter opens instantly,
+// and of the manual cards' languages, to check them against it
+setTimeout(()=>{const L=new Set([settings.cardLang,...manualCards().map(e=>e.lang)]);L.forEach(l=>loadIndex(l).then(()=>{if(manualCards().some(e=>e.lang===l)&&matchManual(l))render()}).catch(()=>{}))},300);
 
 route();
 // splash: fade out once the first screen is drawn (kept at least 700 ms so it doesn't flash)
@@ -2466,7 +2469,9 @@ route();
  if(sp){const min=matchMedia('(prefers-reduced-motion: reduce)').matches?700:2250;let done=false;
   const hide=()=>{if(done)return;done=true;sp.classList.add('out');setTimeout(()=>sp.remove(),600)};
   sp.addEventListener('pointerdown',hide);addEventListener('keydown',hide,{once:true});
-  setTimeout(hide,Math.max(0,min-(Date.now()-t0)))}}
+  // after the intro, wait for the first sync of the account (at most 1 s more) so the collection shows up to date
+  const minWait=new Promise(r=>setTimeout(r,Math.max(0,min-(Date.now()-t0))));
+  minWait.then(()=>Promise.race([bootSync,new Promise(r=>setTimeout(r,1000))])).then(hide)}}
 // first launch: welcome + guided tour (only on a fresh device with an empty collection)
 setTimeout(()=>{if(!LS.get('pf_tour',0)&&!collection.length&&!user)tourStart();else LS.set('pf_tour',1)},1400);
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
