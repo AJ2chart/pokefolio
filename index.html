@@ -279,7 +279,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-17';
+const APP_VERSION = '2026.11.21-18';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -993,7 +993,8 @@ function viewAdd(m){
   m.querySelectorAll('#langSeg button').forEach(b=>b.onclick=()=>{settings.cardLang=b.dataset.l;saveSettings();search.set='';search.page=1;render()});
   const info=m.querySelector('#idxInfo'),res=m.querySelector('#sres'),sq=m.querySelector('#sq'),sset=m.querySelector('#sset');
   info.innerHTML=`<span class="spin"></span> ${t('loading_index',{l:t('lang_'+lang)})}`;
-  setTimeout(()=>sq.focus(),30);
+  // auto-focus only with a mouse/trackpad (computer); on touch screens the user taps the field when ready, so the keyboard doesn't pop up uninvited
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches)setTimeout(()=>sq.focus(),30);
   loadIndex(lang).then(data=>{
     if(settings.cardLang!==lang||view!=='add')return;
     const sets=Object.values(data.sets).sort((a,b)=>b.o-a.o);
