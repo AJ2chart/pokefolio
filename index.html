@@ -591,7 +591,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-60';
+const APP_VERSION = '2026.11.21-61';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1009,8 +1009,8 @@ function imgTag(base,setId,localId,alt,q='low',cls='',lang=''){
 const gradeStr=e=>e?.grade?.co?`${e.grade.co} ${e.grade.g}`:'';
 function ebayUrl(name,num,setName,grade,lang,setId){
   const host=settings.lang==='fr'?'www.ebay.fr':'www.ebay.com';
-  // card language in eBay's OR syntax "(a,b,c)": sellers write it many ways (FR, VF, français…); the number already pins the card, so the set name is left out
-  const L={fr:'(fr,vf,francais,français,francaise,française,french)',en:'(en,eng,anglais,anglaise,english)'}[lang];
+  // card language: exclude the OTHER languages (many sellers don't state the language of their own card); the number already pins the card, so the set name is left out
+  const L={fr:'-english -anglais -anglaise -eng -japanese -japonais -japonaise -jap -jpn',en:'-francais -français -francaise -française -french -vf -japanese -japonais -japonaise -jap -jpn'}[lang];
   const q=lang==='ja'?['pokemon japanese',setId,num,grade].filter(Boolean).join(' '):[name,num,grade,L].filter(Boolean).join(' ');
   return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(q)}&_sacat=183454&LH_Sold=1&LH_Complete=1`;
 }
