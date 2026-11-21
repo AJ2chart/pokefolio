@@ -79,6 +79,13 @@ nav a.active{color:#1a1d24;background:var(--accent)}
 .sumbar .sb-go{margin-left:auto;display:inline-flex;align-items:center;gap:2px;color:var(--muted);font-size:13px;white-space:nowrap}
 .vbar{margin-top:10px}.vb-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .lflag{display:inline-block;width:16px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:2px;overflow:hidden}.lflag svg{width:100%;height:100%;display:block}
+#ptr{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top));z-index:25;transform:translate(-50%,-60px);opacity:0;display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;box-shadow:var(--shadow);pointer-events:none;transition:opacity .15s;white-space:nowrap}
+#ptr .ptr-ic{display:inline-block;transition:transform .15s;color:var(--accent);font-weight:700}
+#ptr.busy{opacity:1;transition:transform .2s}
+#ptr.busy .ptr-ic{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;font-size:0}
+.touch-only{display:none}
+@media (hover:none) and (pointer:coarse){.ptr-hide{display:none!important}.touch-only{display:inline}}
+.sumbar .sb-up{flex-basis:100%;order:3;font-size:12px;color:var(--muted)}
 .pdemo{display:inline-grid;place-items:center;border-radius:999px;background:var(--accent);color:#1a1d24;font-weight:700;line-height:1;margin-right:6px}
 .pd-s{width:15px;height:15px;font-size:9px}.pd-m{width:19px;height:19px;font-size:11px}.pd-l{width:25px;height:25px;font-size:13.5px}
 .pwdwrap{position:relative;display:block}.pwdwrap input{padding-right:44px}
@@ -284,6 +291,7 @@ canvas{max-width:100%}
   </div>
 </header>
 <main id="main"></main>
+<div id="ptr" aria-hidden="true"><span class="ptr-ic">↓</span><span class="ptr-tx"></span></div>
 <nav id="tabbar" class="tabbar" aria-label="Navigation"></nav>
 <div id="modalRoot"></div>
 
@@ -291,7 +299,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-21';
+const APP_VERSION = '2026.11.21-22';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -353,7 +361,7 @@ fr:{
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
  err_rate:'Limite d’envoi d’e-mails atteinte pour le moment : réessaie un peu plus tard (jusqu’à une heure).',err_pwd:'Mot de passe refusé',err_fields:'Indique un e-mail valide et un mot de passe de 8 caractères minimum.',err_email:'Indique ton e-mail.',
  data_note_cloud:'Connecté : ta collection est sauvegardée en ligne et synchronisée sur tous tes appareils. L’export reste utile comme copie de sécurité.',
- copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',alert_cfg:'Alerte de prix',al_below:'Prix en dessous de…',al_above:'Prix au-dessus de…',al_on:'Activer l’alerte',al_off:'Désactiver',al_saved:'Alerte de prix enregistrée',al_removed:'Alerte de prix désactivée',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
+ copies:'{n} exemplaires de cette carte dans ta collection',owned_n:'Tu possèdes {n} exemplaire(s) de cette carte',quick_wish:'Ajouter à ma wishlist / retirer',ptr_hint:'tire vers le bas pour actualiser',ptr_pull:'Tire pour actualiser les prix',ptr_release:'Relâche pour actualiser',ptr_busy:'Actualisation des prix…',display:'Affichage',pill_size:'Taille des pastilles sur les cartes',pill_s:'Petite',pill_m:'Normale',pill_l:'Grande',wish_budget:'Budget pour compléter ta wishlist',wish_count:'{n} carte(s) à trouver',wish_remove:'Retirer de ma wishlist',alert_cfg:'Alerte de prix',al_below:'Prix en dessous de…',al_above:'Prix au-dessus de…',al_on:'Activer l’alerte',al_off:'Désactiver',al_saved:'Alerte de prix enregistrée',al_removed:'Alerte de prix désactivée',undo:'Annuler',wish_added:'« {n} » ajoutée à ta wishlist',wish_removed:'« {n} » retirée de ta wishlist',reprint_short:'Réédition',reprint:'Réédition (numéro d’origine imprimé sur la carte)',
  each:'/u',quick_add:'Ajout rapide',
  more_opts:'Gradation & valeur manuelle (optionnel)',alert_section:'Alerte de prix (optionnel)',alert_hint:'Vérifiée à chaque actualisation des prix. Pratique pour guetter une baisse sur ta wishlist.',grader:'Société de gradation',raw:'Non gradée',grade:'Note',cert:'N° de certificat',
  manual_value:'Valeur manuelle (€)',auto:'auto (Cardmarket)',alert:'Alerte de prix',alert_none:'Aucune',alert_below:'Si le prix descend sous…',alert_above:'Si le prix monte au-dessus de…',alert_price:"Seuil d'alerte (€)",
@@ -411,7 +419,7 @@ en:{
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
  err_rate:'Email sending limit reached for now: try again a bit later (up to an hour).',err_pwd:'Password rejected',err_fields:'Enter a valid email and a password of at least 8 characters.',err_email:'Enter your email.',
  data_note_cloud:'Logged in: your collection is saved online and synced across your devices. Exporting is still useful as a backup.',
- copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',alert_cfg:'Price alert',al_below:'Price below…',al_above:'Price above…',al_on:'Turn on alert',al_off:'Turn off',al_saved:'Price alert saved',al_removed:'Price alert turned off',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
+ copies:'{n} copies of this card in your collection',owned_n:'You own {n} copy/copies of this card',quick_wish:'Add to / remove from my wishlist',ptr_hint:'pull down to refresh',ptr_pull:'Pull to refresh prices',ptr_release:'Release to refresh',ptr_busy:'Refreshing prices…',display:'Display',pill_size:'Size of the badges on cards',pill_s:'Small',pill_m:'Normal',pill_l:'Large',wish_budget:'Budget to complete your wishlist',wish_count:'{n} card(s) to find',wish_remove:'Remove from my wishlist',alert_cfg:'Price alert',al_below:'Price below…',al_above:'Price above…',al_on:'Turn on alert',al_off:'Turn off',al_saved:'Price alert saved',al_removed:'Price alert turned off',undo:'Undo',wish_added:'“{n}” added to your wishlist',wish_removed:'“{n}” removed from your wishlist',reprint_short:'Reprint',reprint:'Reprint (original number printed on the card)',
  each:'/ea',quick_add:'Quick add',
  more_opts:'Grading & manual value (optional)',alert_section:'Price alert (optional)',alert_hint:'Checked on each price refresh. Handy to watch for a drop on your wishlist.',grader:'Grading company',raw:'Raw (ungraded)',grade:'Grade',cert:'Cert number',
  manual_value:'Manual value (€)',auto:'auto (Cardmarket)',alert:'Price alert',alert_none:'None',alert_below:'If price drops below…',alert_above:'If price rises above…',alert_price:'Alert threshold (€)',
@@ -912,12 +920,13 @@ function viewCollection(m){
   ${owned.length?`<a class="sumbar" href="#evolution">
     <span class="sb-v"><span class="muted">${t('stat_value')}</span> <b>${fmtEur(tt.value)}</b></span>
     ${tt.withCost?`<span class="sb-g ${gainCls}">${(tt.gain>=0?'+':'')+fmtEur(tt.gain)} <span class="small">(${fmtPct(tt.gainPct)})</span></span>`:''}
+    <span class="sb-up touch-only">${settings.lastRefresh?t('updated_at',{d:fmtDate(settings.lastRefresh)})+' · ':''}${t('ptr_hint')}</span>
     <span class="sb-go">${t('see_value')} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
   </a>`:''}
   ${alertsBanner(e=>e.status!=='wish')}
   <div class="toolbar" style="margin-top:14px">
     <h2 class="tbtitle">${t('my_collection')} <span class="muted small">(${tt.count})</span></h2>
-    <button class="btn" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
+    <button class="btn ptr-hide" id="refreshBtn" ${owned.length?'':'disabled'}>↻ ${t('refresh')}</button>
     <a class="btn primary" href="#add">＋ ${t('go_add')}</a>
   </div>
   ${owned.length?`
@@ -1031,6 +1040,18 @@ function viewAdd(m){
 const isField=el=>el&&(el.tagName==='INPUT'&&!['checkbox','radio','button','submit','file','range'].includes(el.type)||el.tagName==='TEXTAREA'||el.isContentEditable);
 document.addEventListener('pointerdown',ev=>{const a=document.activeElement;if(isField(a)&&!isField(ev.target)&&!ev.target.closest('label'))a.blur()},true);
 document.getElementById('main').addEventListener('touchmove',()=>{const a=document.activeElement;if(isField(a)&&view==='add')a.blur()},{passive:true});
+
+/* ============ pull to refresh (touch screens: Collection, Wishlist, Value) ============ */
+(function(){
+  const main=document.getElementById('main'),ptr=document.getElementById('ptr');
+  const TH=70;let y0=null,dy=0,busy=false;
+  const tx=ptr.querySelector('.ptr-tx'),ic=ptr.querySelector('.ptr-ic');
+  const show=d=>{ptr.style.transform=`translate(-50%,${Math.min(d,TH+30)-50}px)`;ptr.style.opacity=Math.min(1,d/TH);ic.style.transform=`rotate(${d>TH?180:0}deg)`;tx.textContent=t(d>TH?'ptr_release':'ptr_pull')};
+  const reset=()=>{ptr.classList.remove('busy');ptr.style.transform='';ptr.style.opacity='';dy=0;y0=null};
+  main.addEventListener('touchstart',e=>{if(busy||refreshing||!['collection','wishlist','evolution'].includes(view)||document.querySelector('.ov')||main.scrollTop>0||!collection.length){y0=null;return}y0=e.touches[0].clientY;dy=0},{passive:true});
+  main.addEventListener('touchmove',e=>{if(y0==null)return;dy=(e.touches[0].clientY-y0)*0.55;if(dy<=0||main.scrollTop>0){if(dy<=0)reset();return}if(e.cancelable)e.preventDefault();show(dy)},{passive:false});
+  main.addEventListener('touchend',async()=>{if(y0==null)return;if(dy>TH){busy=true;ptr.classList.add('busy');ptr.style.transform='translate(-50%,24px)';tx.textContent=t('ptr_busy');try{await refreshPrices()}catch(_){}busy=false}reset()});
+})();
 
 /* ============ scan (free OCR in the browser, Tesseract.js) ============ */
 let ocrWorker=null,ocrLang=null;
