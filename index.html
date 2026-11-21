@@ -278,6 +278,23 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 @keyframes spTwinkle{0%{transform:scale(0) rotate(-60deg);opacity:0}60%{transform:scale(1.35) rotate(10deg);opacity:1}100%{transform:none;opacity:1}}
 @keyframes spSheen{from{background-position:100% 0}to{background-position:0 0}}
 @keyframes spTrack{from{letter-spacing:.35em;opacity:0}to{letter-spacing:.01em;opacity:1}}
+/* Android installed app: continue from the system splash (logo already shown, centred) instead of starting from empty */
+#splash.cont .sp-logo{animation:spContLogo .6s 1.05s cubic-bezier(.2,.8,.2,1) both}
+#splash.cont span{position:absolute;top:calc(50% + 65px);animation:spTrack .75s 1.1s cubic-bezier(.2,.8,.2,1) both}
+#splash.cont .c1{animation:spCont1 1.15s .15s both}
+#splash.cont .c2{animation:spCont2 1.15s .15s both}
+#splash.cont .c3{animation:spCont3 1.15s .15s both}
+#splash.cont .star{animation:spContStar 1.2s .15s both}
+#splash.cont .dial{animation:spContDial 1s .2s cubic-bezier(.6,0,.3,1) both}
+#splash.cont .sp1{animation:spPulse .7s 1.45s ease-out both}
+#splash.cont .sp2{animation:spPulse .7s 1.57s ease-out both}
+@keyframes spContLogo{from{transform:none}to{transform:translateY(-27px)}}
+@keyframes spCont1{0%{transform:rotate(-16deg)}22%{transform:rotate(0) translateY(10px)}55%{transform:rotate(-30deg)}75%{transform:rotate(-11deg)}90%{transform:rotate(-18deg)}100%{transform:rotate(-16deg)}}
+@keyframes spCont2{0%{transform:rotate(-4deg)}22%{transform:rotate(0) translateY(10px)}55%{transform:rotate(-10deg)}75%{transform:rotate(-1deg)}90%{transform:rotate(-5deg)}100%{transform:rotate(-4deg)}}
+@keyframes spCont3{0%{transform:rotate(10deg)}22%{transform:rotate(0) translateY(10px) scale(.97)}55%{transform:rotate(22deg) translateY(-8px)}75%{transform:rotate(6deg)}90%{transform:rotate(11deg)}100%{transform:rotate(10deg)}}
+@keyframes spContStar{0%{transform:none}18%{transform:scale(0)}70%{transform:scale(0)}85%{transform:scale(1.25)}100%{transform:none}}
+@keyframes spContDial{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes spPulse{0%{transform:none}50%{transform:scale(1.45) rotate(20deg)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){#splash *{animation:none!important}#splash .sp-sheen{display:none}}
 .deals{margin:-4px 0 18px}
 .wish-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.wish-head h1{margin:0}
@@ -654,7 +671,7 @@ canvas{max-width:100%}
 </style>
 </head>
 <body>
-<div id="splash" aria-hidden="true"><div class="sp-logo"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#14213D"/><g transform="translate(251 266) scale(1.15) translate(-251 -266)"><g class="c1"><rect x="166" y="140" width="180" height="252" rx="20" fill="#2B4170"/></g><g class="c2"><rect x="166" y="140" width="180" height="252" rx="20" fill="#41639E"/></g><g class="c3"><rect x="166" y="140" width="180" height="252" rx="20" fill="#F6F2EA"/><rect x="180" y="154" width="152" height="224" rx="12" fill="none" stroke="#14213D" stroke-opacity="0.15" stroke-width="3"/><g class="star"><g transform="translate(256 214)"><polygon points="0,-30 7.64,-10.52 28.53,-9.27 12.36,4.02 17.63,24.27 0,13 -17.63,24.27 -12.36,4.02 -28.53,-9.27 -7.64,-10.52" fill="#F5A524" stroke="#F5A524" stroke-width="6" stroke-linejoin="round"/></g></g><polyline points="196,342 224,312 252,330 306,276" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><polyline points="280,276 306,276 306,302" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g></g><g class="sp1"><g transform="translate(408 118)"><path d="M0,-34 C4,-10 10,-4 34,0 C10,4 4,10 0,34 C-4,10 -10,4 -34,0 C-10,-4 -4,-10 0,-34 Z" fill="#F5A524"/></g></g><g class="sp2"><g transform="translate(446 170)"><path d="M0,-15 C2,-4 4,-2 15,0 C4,2 2,4 0,15 C-2,4 -4,2 -15,0 C-4,-2 -2,-4 0,-15 Z" fill="#F6F2EA"/></g></g><g class="dial"><g transform="translate(372 396)"><circle r="54" fill="#F5A524" stroke="#14213D" stroke-width="10"/><circle r="34" fill="#14213D"/><g stroke="#F5A524" stroke-width="7" stroke-linecap="round"><line x1="0" y1="0" x2="0" y2="-22"/><line x1="0" y1="0" x2="19" y2="11"/><line x1="0" y1="0" x2="-19" y2="11"/></g><circle r="8" fill="#F5A524"/><g fill="#14213D"><circle cx="0" cy="-44" r="3.5"/><circle cx="44" cy="0" r="3.5"/><circle cx="0" cy="44" r="3.5"/><circle cx="-44" cy="0" r="3.5"/></g></g></g></svg><div class="sp-sheen"></div></div><span>Gleamvault</span></div>
+<div id="splash" aria-hidden="true"><div class="sp-logo"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#14213D"/><g transform="translate(251 266) scale(1.15) translate(-251 -266)"><g class="c1"><rect x="166" y="140" width="180" height="252" rx="20" fill="#2B4170"/></g><g class="c2"><rect x="166" y="140" width="180" height="252" rx="20" fill="#41639E"/></g><g class="c3"><rect x="166" y="140" width="180" height="252" rx="20" fill="#F6F2EA"/><rect x="180" y="154" width="152" height="224" rx="12" fill="none" stroke="#14213D" stroke-opacity="0.15" stroke-width="3"/><g class="star"><g transform="translate(256 214)"><polygon points="0,-30 7.64,-10.52 28.53,-9.27 12.36,4.02 17.63,24.27 0,13 -17.63,24.27 -12.36,4.02 -28.53,-9.27 -7.64,-10.52" fill="#F5A524" stroke="#F5A524" stroke-width="6" stroke-linejoin="round"/></g></g><polyline points="196,342 224,312 252,330 306,276" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><polyline points="280,276 306,276 306,302" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g></g><g class="sp1"><g transform="translate(408 118)"><path d="M0,-34 C4,-10 10,-4 34,0 C10,4 4,10 0,34 C-4,10 -10,4 -34,0 C-10,-4 -4,-10 0,-34 Z" fill="#F5A524"/></g></g><g class="sp2"><g transform="translate(446 170)"><path d="M0,-15 C2,-4 4,-2 15,0 C4,2 2,4 0,15 C-2,4 -4,2 -15,0 C-4,-2 -2,-4 0,-15 Z" fill="#F6F2EA"/></g></g><g class="dial"><g transform="translate(372 396)"><circle r="54" fill="#F5A524" stroke="#14213D" stroke-width="10"/><circle r="34" fill="#14213D"/><g stroke="#F5A524" stroke-width="7" stroke-linecap="round"><line x1="0" y1="0" x2="0" y2="-22"/><line x1="0" y1="0" x2="19" y2="11"/><line x1="0" y1="0" x2="-19" y2="11"/></g><circle r="8" fill="#F5A524"/><g fill="#14213D"><circle cx="0" cy="-44" r="3.5"/><circle cx="44" cy="0" r="3.5"/><circle cx="0" cy="44" r="3.5"/><circle cx="-44" cy="0" r="3.5"/></g></g></g></svg><div class="sp-sheen"></div></div><span>Gleamvault</span></div><script>/* installed app on Android: the system already shows the icon on a navy screen, so the intro starts from the finished logo */try{if(/Android/i.test(navigator.userAgent)&&matchMedia('(display-mode: standalone)').matches)document.getElementById('splash').classList.add('cont')}catch(e){}</script>
 <header>
   <div class="hwrap">
     <a class="logo" href="#collection">
@@ -678,7 +695,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-80';
+const APP_VERSION = '2026.11.21-81';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
