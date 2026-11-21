@@ -28,6 +28,8 @@
   --shadow:0 6px 24px rgba(20,30,60,.08);
 }
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+img,svg,canvas,video{max-width:100%}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:Outfit,system-ui,-apple-system,Segoe UI,sans-serif;font-size:15px}
 a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -83,7 +85,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .tile .meta{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tile .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
 .tile .price{font-weight:700}
-.badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:12px;font-weight:700;min-width:24px;height:24px;padding:0 6px;display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 2px 6px rgba(0,0,0,.35)}
+.badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:11px;font-weight:700;line-height:1;min-width:19px;height:19px;padding:0 5px;display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
 .lbadge{position:absolute;top:14px;right:14px;width:24px;height:17px;border-radius:3px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 .lbadge svg{width:100%;height:100%;display:block}
 .tile .img{position:relative}
@@ -147,7 +149,7 @@ canvas{max-width:100%}
   html,body{height:100%;overflow:hidden;overscroll-behavior:none}
   body{display:flex;flex-direction:column;height:100vh;height:100dvh}
   header{position:relative;flex:none}
-  main{flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:14px 12px 24px;padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
+  main{flex:1 1 auto;min-height:0;width:100%;max-width:100vw;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:14px 12px 24px;padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
   .tabbar{display:flex;position:relative;flex:none;z-index:30;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px calc(4px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(4px + env(safe-area-inset-left))}
   .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:500;padding:5px 0;border-radius:10px;-webkit-tap-highlight-color:transparent}
   .tabbar a svg{width:23px;height:23px}
@@ -158,8 +160,12 @@ canvas{max-width:100%}
   .stats{gap:10px}.stat{padding:12px 14px;box-shadow:none}.stat .val{font-size:21px}.stat .sub{font-size:11px}
   .panel{padding:14px;box-shadow:none}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .grid>*,.stats>*,.two>*,.form>*,.prices>*,.toolbar>*{min-width:0}
+  .ov{overflow-x:hidden}.modal{max-width:100vw;overflow-x:hidden}
+  .kv span{overflow-wrap:anywhere}
+  input[type=date]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
   .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
-  .badge{top:11px;left:11px}.lbadge{top:11px;right:11px}
+  .badge{top:10px;left:10px;min-width:18px;height:18px;font-size:10.5px}.lbadge{top:11px;right:11px}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
