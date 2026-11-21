@@ -106,6 +106,7 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .scanbox .scanic:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
 .scanbox .scanic svg{position:static;transform:none;color:inherit}
 .afilters .cf-panel{align-items:center}
+.af-reset{white-space:nowrap;font-size:13.5px}
 .more-sentinel{display:flex;justify-content:center;min-height:40px;padding:14px}
 .tile .img{position:relative}
 .qadd{position:absolute;z-index:2;right:4px;bottom:4px;width:var(--pill);height:var(--pill);border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:rgba(14,16,22,.9);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 2px 6px rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:transform .12s,background .15s,color .15s}
@@ -314,6 +315,7 @@ canvas{max-width:100%}
   .langseg{display:flex}.langseg button{flex:1;justify-content:center}
   .afilters .cf-panel #sset{grid-column:1/-1}
   .afilters .cf-panel .chip{justify-self:start;min-height:42px}
+  .afilters .cf-panel .af-reset{grid-column:1/-1;justify-self:end;padding:2px 0}
   .ov{padding:0;align-items:flex-start}
   .modal{border-radius:0;min-height:100%;border:0;max-width:none}
   .ov:has(.modal.sm){align-items:flex-end;background:rgba(5,8,15,.55)}
@@ -360,7 +362,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-35';
+const APP_VERSION = '2026.11.21-36';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -386,7 +388,7 @@ fr:{
  top_cards:'Cartes les plus précieuses',by_set:'Répartition par extension',movers:'Plus fortes variations (7 jours)',no_movers:'Les variations apparaîtront après quelques jours d’actualisation des prix.',
  add_title:'Ajouter une carte',search_ph:'Rechercher une carte',card_lang:'Langue des cartes',
  loading_index:'Chargement de la base de cartes {l}…',index_ready:'{n} cartes {l} disponibles · extensions jusqu’à « {s} »',
- no_results:'Aucune carte trouvée.',nr_clear:'Retirer les filtres',qa_title:'Ajouter 1 exemplaire à ma collection',qa_added:'« {n} » ajoutée à ta collection',ah_sets:'Dernières extensions',ah_cards:'cartes',ah_recent:'Vues récemment',ah_clear:'Effacer',nr_in:'Voir les cartes {f} {l}',type_to_search:'Tape un nom de carte, une extension ou un numéro (ex. 199/165).',show_more:'Afficher plus',results:'{n} résultat(s)',
+ no_results:'Aucune carte trouvée.',nr_clear:'Retirer les filtres',f_reset:'Réinitialiser les filtres',qa_title:'Ajouter 1 exemplaire à ma collection',qa_added:'« {n} » ajoutée à ta collection',ah_sets:'Dernières extensions',ah_cards:'cartes',ah_recent:'Vues récemment',ah_clear:'Effacer',nr_in:'Voir les cartes {f} {l}',type_to_search:'Tape un nom de carte, une extension ou un numéro (ex. 199/165).',show_more:'Afficher plus',results:'{n} résultat(s)',
  lang_fr:'françaises',lang_en:'anglaises',lang_ja:'japonaises',ja_hint:'Cartes japonaises : tape le nom en français (ex. Dracaufeu), le nom japonais (リザードン), le code de l’extension ou le numéro.',ja_searching:'Recherche des cartes correspondantes dans cette langue…',ja_note:'Les prix et les images des cartes japonaises sont moins complets que pour les cartes françaises et anglaises.',
  set:'Extension',number:'Numéro',rarity:'Rareté',illustrator:'Illustrateur',category:'Catégorie',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Tendance',low:'Plus bas',avg7:'Moy. 7 j',avg30:'Moy. 30 j',avg1:'Moy. 1 j',market:'Market',
@@ -444,7 +446,7 @@ en:{
  top_cards:'Most valuable cards',by_set:'Breakdown by set',movers:'Biggest movers (7 days)',no_movers:'Movers will show up after a few days of price refreshes.',
  add_title:'Add a card',search_ph:'Search for a card',card_lang:'Card language',
  loading_index:'Loading {l} card database…',index_ready:'{n} {l} cards available · sets up to “{s}”',
- no_results:'No card found.',nr_clear:'Clear filters',qa_title:'Add 1 copy to my collection',qa_added:'“{n}” added to your collection',ah_sets:'Latest sets',ah_cards:'cards',ah_recent:'Recently viewed',ah_clear:'Clear',nr_in:'See {f} {l} cards',type_to_search:'Type a card name, a set or a number (e.g. 199/165).',show_more:'Show more',results:'{n} result(s)',
+ no_results:'No card found.',nr_clear:'Clear filters',f_reset:'Reset filters',qa_title:'Add 1 copy to my collection',qa_added:'“{n}” added to your collection',ah_sets:'Latest sets',ah_cards:'cards',ah_recent:'Recently viewed',ah_clear:'Clear',nr_in:'See {f} {l} cards',type_to_search:'Type a card name, a set or a number (e.g. 199/165).',show_more:'Show more',results:'{n} result(s)',
  lang_fr:'French',lang_en:'English',lang_ja:'Japanese',ja_hint:'Japanese cards: type the English name (e.g. Charizard), the Japanese name (リザードン), the set code or the number.',ja_searching:'Looking up matching cards in this language…',ja_note:'Prices and images for Japanese cards are less complete than for French and English cards.',
  set:'Set',number:'Number',rarity:'Rarity',illustrator:'Illustrator',category:'Category',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Trend',low:'Low',avg7:'7-day avg',avg30:'30-day avg',avg1:'1-day avg',market:'Market',
@@ -1080,11 +1082,13 @@ function viewAdd(m){
       <select id="sset" aria-label="${t('set')}"><option value="">${t('all_sets')}</option></select>
       <select id="ssort" aria-label="${t('sort_label')}">${['relevance','num_desc','num_asc','newest','oldest'].map(k=>`<option value="${k}" ${(settings.searchSort||'relevance')===k?'selected':''}>${t('ss_'+k)}</option>`).join('')}</select>
       <button type="button" class="chip ${settings.secretOnly?'on':''}" id="secretOnly" aria-pressed="${!!settings.secretOnly}" title="${esc(t('secret_hint'))}">★ ${t('secret_only')}</button>
+      <button type="button" class="linkbtn af-reset" id="afReset">↺ ${t('f_reset')}</button>
     </div>
   </div>
   <p class="muted small" id="idxInfo" style="margin:0 0 10px"></p>
   <div id="sres"></div>`;
-  const updCount=()=>{const n=(search.set?1:0)+((settings.searchSort||'relevance')!=='relevance'?1:0)+(settings.secretOnly?1:0);const c=m.querySelector('#afCount');c.textContent=n||'';c.style.display=n?'':'none'};updCount();
+  const updCount=()=>{const n=(search.set?1:0)+((settings.searchSort||'relevance')!=='relevance'?1:0)+(settings.secretOnly?1:0);const c=m.querySelector('#afCount');c.textContent=n||'';c.style.display=n?'':'none';m.querySelector('#afReset').style.display=n?'':'none'};updCount();
+  m.querySelector('#afReset').onclick=()=>{search.set='';search.parked='';settings.searchSort='relevance';settings.secretOnly=false;saveSettings();search.page=1;render()};
   m.querySelector('#afToggle').onclick=e=>{afOpen=!afOpen;m.querySelector('#afPanel').classList.toggle('open',afOpen);e.currentTarget.classList.toggle('on',afOpen);e.currentTarget.setAttribute('aria-expanded',afOpen)};
   // switching card language keeps the query, sort, filter and (when it exists in that language) the chosen set
   m.querySelectorAll('#langSeg button').forEach(b=>b.onclick=()=>{if(b.dataset.l===settings.cardLang)return;settings.cardLang=b.dataset.l;saveSettings();search.page=1;render()});
