@@ -87,8 +87,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 .tile .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
 .tile .price{font-weight:700}
 .badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--accent);color:#1a1d24;border-radius:999px;font-size:11px;font-weight:700;line-height:1;min-width:19px;height:19px;padding:0 5px;display:grid;place-items:center;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
-.wbtn{position:absolute;top:10px;right:10px;z-index:2;width:30px;height:30px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 4px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent;transition:transform .12s}
-.wbtn svg{width:16px;height:16px}
+.wbtn{position:absolute;top:14px;right:14px;z-index:2;width:19px;height:19px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;cursor:pointer;background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 4px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.wbtn svg{width:11px;height:11px}
+.wbtn::before{content:'';position:absolute;inset:-10px;border-radius:50%}
 .wbtn:active{transform:scale(.9)}
 .wbtn.on{background:var(--accent2);color:#fff;box-shadow:0 0 0 2px var(--card),0 1px 4px rgba(0,0,0,.35)}
 .wbtn.on svg path{fill:currentColor}
@@ -181,7 +182,8 @@ canvas{max-width:100%}
   .kv span{overflow-wrap:anywhere}
   input[type=date]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
   .tile{padding:7px}.tile:hover{transform:none}.tile .nm{font-size:14px}
-  .badge{top:10px;left:10px;min-width:18px;height:18px;font-size:10.5px}.lbadge{top:11px;right:11px}
+  .badge{top:10px;left:10px;min-width:18px;height:18px;font-size:10.5px}
+  .wbtn{top:10px;right:10px;width:18px;height:18px}.lbadge{top:11px;right:11px}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
@@ -231,7 +233,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-5';
+const APP_VERSION = '2026.11.21-6';
 const INDEX_TTL = 24*3600*1000;
 const AUTO_REFRESH = 12*3600*1000;
 const FLAGS = {
