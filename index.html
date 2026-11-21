@@ -95,7 +95,16 @@ details.extra summary{cursor:pointer;font-size:13px;color:var(--text);font-weigh
 .noimg{color:var(--muted);font-size:12px;text-align:center;padding:10px}
 .empty{text-align:center;padding:50px 20px;border:1px dashed var(--line);border-radius:var(--r);color:var(--muted)}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+details.fold{padding:0}
+details.fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 18px;user-select:none;-webkit-tap-highlight-color:transparent}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary b{white-space:nowrap}
+.fold .pv{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+details.fold[open] .pv{visibility:hidden}
+.fold .chev{flex:none;color:var(--muted);transition:transform .2s}
+details.fold[open] .chev{transform:rotate(180deg)}
+.fold .fbody{padding:0 18px 14px}
 .list .li{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .list .li:last-child{border-bottom:0}
 .list img{width:38px;border-radius:4px}
@@ -169,7 +178,7 @@ canvas{max-width:100%}
   .toolbar{gap:8px}
   .toolbar .grow{min-width:100%;flex-basis:100%}
   .toolbar select{flex:1 1 40%;min-width:0;max-width:none!important;width:auto!important}
-  .toolbar h2{flex-basis:100%}
+  .toolbar h2{flex:1 1 100%!important}
   input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:16px}
   .btn{min-height:42px;justify-content:center}
   #scanLbl{flex:1 1 100%}
@@ -806,6 +815,7 @@ function viewCollection(m){
   <p class="muted small" style="margin-top:30px">${t('sources')}</p>`;
   const rb=m.querySelector('#refreshBtn');if(rb)rb.onclick=()=>refreshPrices();
   bindAlerts(m,e=>e.status!=='wish');
+  m.querySelectorAll('details.fold').forEach(d=>d.addEventListener('toggle',()=>{settings.fold={...(settings.fold||{}),[d.dataset.k]:d.open};saveSettings()}));
   m.querySelectorAll('.alerts [data-open]').forEach(el=>el.onclick=()=>openEntry(el.dataset.open));
   if(!owned.length)return;
   const draw=()=>{
@@ -842,12 +852,14 @@ function dashboardPanels(owned){
   const sets=Object.entries(bySet).sort((a,b)=>b[1]-a[1]).slice(0,6);const max=sets[0]?.[1]||1;
   const movers=owned.map(e=>({e,c:change7(e)})).filter(x=>x.c!=null&&Math.abs(x.c)>=0.5).sort((a,b)=>Math.abs(b.c)-Math.abs(a.c)).slice(0,5);
   const li=(e,right)=>`<div class="li" data-open="${e.uid}"><span style="width:38px;flex:none">${imgTag(e.image,e.setId,e.localId,'')}</span><div class="grow"><div><b>${esc(e.name)}</b></div><div class="muted small">${esc(e.setName)} · ${esc(numLabel(e.localId,e.official))}</div></div>${right}</div>`;
+  const fold=(k,title,preview,body)=>`<details class="panel fold" data-k="${k}" ${settings.fold?.[k]?'open':''}><summary><b>${title}</b><span class="pv">${preview}</span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="fbody">${body}</div></details>`;
+  const topPv=top[0]?`${esc(top[0].name)} · ${fmtEur(entryValue(top[0]))}`:'';
+  const sidePv=movers.length?`${esc(movers[0].e.name)} ${fmtPct(movers[0].c)}`:(sets[0]?`${esc(sets[0][0])} · ${fmtEur(sets[0][1])}`:'');
   return `<div class="two" style="margin-top:16px">
-    <div class="panel"><b>${t('top_cards')}</b><div class="list">${top.map(e=>li(e,`<b>${fmtEur(entryValue(e))}</b>`)).join('')||`<p class="muted small">—</p>`}</div></div>
-    <div class="panel"><b>${movers.length?t('movers'):t('by_set')}</b>
-      ${movers.length?`<div class="list">${movers.map(x=>li(x.e,`<b class="${x.c>=0?'pos':'neg'}">${fmtPct(x.c)}</b>`)).join('')}</div>`
-      :sets.map(([n,v])=>`<div style="margin-top:10px"><div style="display:flex;justify-content:space-between" class="small"><span>${esc(n)}</span><b>${fmtEur(v)}</b></div><div class="bar"><i style="width:${Math.max(2,v/max*100)}%"></i></div></div>`).join('')}
-    </div></div>`;
+    ${fold('top',t('top_cards'),topPv,`<div class="list">${top.map(e=>li(e,`<b>${fmtEur(entryValue(e))}</b>`)).join('')||`<p class="muted small">—</p>`}</div>`)}
+    ${fold('side',movers.length?t('movers'):t('by_set'),sidePv,movers.length?`<div class="list">${movers.map(x=>li(x.e,`<b class="${x.c>=0?'pos':'neg'}">${fmtPct(x.c)}</b>`)).join('')}</div>`
+      :sets.map(([n,v])=>`<div style="margin-top:10px"><div style="display:flex;justify-content:space-between" class="small"><span>${esc(n)}</span><b>${fmtEur(v)}</b></div><div class="bar"><i style="width:${Math.max(2,v/max*100)}%"></i></div></div>`).join(''))}
+  </div>`;
 }
 
 /* ============ view: add / search ============ */
