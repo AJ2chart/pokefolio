@@ -114,7 +114,6 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .ah-set{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font:inherit;font-size:14px}
 .ah-set img{height:18px;width:auto}
 .ah-set:hover{border-color:var(--accent)}
-.preview-bar{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--text);font-size:12.5px;padding:7px 12px;border-radius:10px;margin:0 0 12px}
 .nr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .nr-acts .btn{white-space:nowrap;gap:6px}.nr-acts svg{width:17px;height:12px;border-radius:2px;flex:none}
 .cf-toggle.on{border-color:var(--accent);color:var(--accent)}
@@ -345,7 +344,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.21-27';
+const APP_VERSION = '2026.11.21-28';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -371,7 +370,7 @@ fr:{
  top_cards:'Cartes les plus précieuses',by_set:'Répartition par extension',movers:'Plus fortes variations (7 jours)',no_movers:'Les variations apparaîtront après quelques jours d’actualisation des prix.',
  add_title:'Ajouter une carte',search_ph:'Nom, extension ou n° (199/165)',card_lang:'Langue des cartes',
  loading_index:'Chargement de la base de cartes {l}…',index_ready:'{n} cartes {l} disponibles · extensions jusqu’à « {s} »',
- no_results:'Aucune carte trouvée.',nr_clear:'Retirer les filtres',qa_title:'Ajouter 1 exemplaire à ma collection',qa_added:'« {n} » ajoutée à ta collection',ah_sets:'Dernières extensions',ah_cards:'cartes',ah_recent:'Vues récemment',ah_clear:'Effacer',preview_bar:'Aperçu de test : ajout rapide ＋ et accueil de l’onglet Ajouter. Mêmes données que l’app.',nr_in:'Voir les cartes {f} {l}',type_to_search:'Tape un nom de carte, une extension ou un numéro (ex. 199/165).',show_more:'Afficher plus',results:'{n} résultat(s)',
+ no_results:'Aucune carte trouvée.',nr_clear:'Retirer les filtres',qa_title:'Ajouter 1 exemplaire à ma collection',qa_added:'« {n} » ajoutée à ta collection',ah_sets:'Dernières extensions',ah_cards:'cartes',ah_recent:'Vues récemment',ah_clear:'Effacer',nr_in:'Voir les cartes {f} {l}',type_to_search:'Tape un nom de carte, une extension ou un numéro (ex. 199/165).',show_more:'Afficher plus',results:'{n} résultat(s)',
  lang_fr:'françaises',lang_en:'anglaises',lang_ja:'japonaises',ja_hint:'Cartes japonaises : tape le nom en français (ex. Dracaufeu), le nom japonais (リザードン), le code de l’extension ou le numéro.',ja_searching:'Recherche des cartes correspondantes dans cette langue…',ja_note:'Les prix et les images des cartes japonaises sont moins complets que pour les cartes françaises et anglaises.',
  set:'Extension',number:'Numéro',rarity:'Rareté',illustrator:'Illustrateur',category:'Catégorie',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Tendance',low:'Plus bas',avg7:'Moy. 7 j',avg30:'Moy. 30 j',avg1:'Moy. 1 j',market:'Market',
@@ -429,7 +428,7 @@ en:{
  top_cards:'Most valuable cards',by_set:'Breakdown by set',movers:'Biggest movers (7 days)',no_movers:'Movers will show up after a few days of price refreshes.',
  add_title:'Add a card',search_ph:'Name, set or no. (199/165)',card_lang:'Card language',
  loading_index:'Loading {l} card database…',index_ready:'{n} {l} cards available · sets up to “{s}”',
- no_results:'No card found.',nr_clear:'Clear filters',qa_title:'Add 1 copy to my collection',qa_added:'“{n}” added to your collection',ah_sets:'Latest sets',ah_cards:'cards',ah_recent:'Recently viewed',ah_clear:'Clear',preview_bar:'Test preview: quick add ＋ and the Add tab home. Same data as the app.',nr_in:'See {f} {l} cards',type_to_search:'Type a card name, a set or a number (e.g. 199/165).',show_more:'Show more',results:'{n} result(s)',
+ no_results:'No card found.',nr_clear:'Clear filters',qa_title:'Add 1 copy to my collection',qa_added:'“{n}” added to your collection',ah_sets:'Latest sets',ah_cards:'cards',ah_recent:'Recently viewed',ah_clear:'Clear',nr_in:'See {f} {l} cards',type_to_search:'Type a card name, a set or a number (e.g. 199/165).',show_more:'Show more',results:'{n} result(s)',
  lang_fr:'French',lang_en:'English',lang_ja:'Japanese',ja_hint:'Japanese cards: type the English name (e.g. Charizard), the Japanese name (リザードン), the set code or the number.',ja_searching:'Looking up matching cards in this language…',ja_note:'Prices and images for Japanese cards are less complete than for French and English cards.',
  set:'Set',number:'Number',rarity:'Rarity',illustrator:'Illustrator',category:'Category',
  cm_title:'Cardmarket (EUR)',tcp_title:'TCGplayer (USD)',trend:'Trend',low:'Low',avg7:'7-day avg',avg30:'30-day avg',avg1:'1-day avg',market:'Market',
@@ -1048,15 +1047,12 @@ function dashboardPanels(owned){
 
 /* ============ view: add / search ============ */
 const search={q:'',set:'',page:1};
-// features under test, only active on preview.html (same app, same data)
-const PREVIEW=/preview\.html$/.test(location.pathname);
 let afOpen=false;
 function viewAdd(m){
   const lang=settings.cardLang;
   const SRCH='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
   const CAM='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>';
   m.innerHTML=`
-  ${PREVIEW?`<div class="preview-bar">🧪 ${t('preview_bar')}</div>`:''}
   <h1 class="hide-m">${t('add_title')}</h1>
   <div class="seg langseg" id="langSeg" role="group" aria-label="${esc(t('card_lang'))}">${['fr','en','ja'].map(l=>`<button data-l="${l}" class="${l===lang?'on':''}">${FLAGS[l]} ${LANG_NAMES[l]}</button>`).join('')}</div>
   <div class="cfilters afilters">
@@ -1190,7 +1186,7 @@ async function scanCard(file,data,lang,apply){
 }
 function runSearch(data,res,lang){
   const raw=search.q.trim();
-  if(!raw&&!search.set){if(PREVIEW){renderAddHome(data,res,lang);return}res.innerHTML=`<div class="empty">${t('type_to_search')}</div>`;return}
+  if(!raw&&!search.set){renderAddHome(data,res,lang);return}
   let out=findCards(data,raw,search.set);
   // names typed in another language (e.g. « Dracaufeu » while browsing English or Japanese cards) are matched through the Pokédex number
   if(/[a-z]/i.test(raw)&&(lang==='ja'||!out.length)){
@@ -1288,7 +1284,7 @@ function resultTile({c,st},lang){return `
     <div class="tile" data-id="${esc(c.id)}">
       ${(()=>{const n=ownedCount(c.id,lang);return n?`<span class="badge" title="${esc(t('owned_n',{n}))}">${n}</span>`:''})()}
       <button class="wbtn ${inWishlist(c.id,lang)?'on':''}" data-wish="${esc(c.id)}" aria-label="${esc(t('quick_wish'))}" title="${esc(t('quick_wish'))}">${HEART}</button>
-      <div class="img">${imgTag(c.i,c.s,c.l,c.n,'low','',lang)}${PREVIEW?`<button class="qadd" data-qadd="${esc(c.id)}" aria-label="${esc(t('qa_title'))}" title="${esc(t('qa_title'))}">＋</button>`:''}</div>
+      <div class="img">${imgTag(c.i,c.s,c.l,c.n,'low','',lang)}<button class="qadd" data-qadd="${esc(c.id)}" aria-label="${esc(t('qa_title'))}" title="${esc(t('qa_title'))}">＋</button></div>
       <div class="nm" title="${esc(c.n)}">${esc(c.n)}</div>
       <div class="meta">${esc(st?.n||c.s)} · ${esc(numLabel(c.l,st?.off))}</div>
       ${isReprintSet(c.s)?`<div class="meta" style="color:var(--accent)" title="${t('reprint')}">♻ ${t('reprint_short')}</div>`:isSecret(c,st)?`<div class="meta" style="color:var(--accent)" title="${esc(t('secret_hint'))}">★ ${t('secret')}</div>`:''}
@@ -1438,7 +1434,7 @@ function pricesBlock(d,variant){
   return html;
 }
 async function openCard(lang,id){
-  if(PREVIEW){try{const r=(LS.get('pf_recent',[])).filter(x=>!(x.l===lang&&x.id===id));r.unshift({l:lang,id});LS.set('pf_recent',r.slice(0,24))}catch(_){}}
+  {try{const r=(LS.get('pf_recent',[])).filter(x=>!(x.l===lang&&x.id===id));r.unshift({l:lang,id});LS.set('pf_recent',r.slice(0,24))}catch(_){}}
   const m=openModal(`<div class="mpad" style="text-align:center"><span class="spin"></span></div>`);
   let d;try{d=await getDetail(lang,id)}catch(e){m.querySelector('.mpad').textContent=t('err_net');return}
   const set=idx[lang]?.sets[d.set?.id]||{};
