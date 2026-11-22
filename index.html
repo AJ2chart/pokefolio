@@ -720,7 +720,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-95';
+const APP_VERSION = '2026.11.22-96';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -735,13 +735,12 @@ const VARIANTS = ['normal','reverse','holo','firstEdition','foil'];
 /* ============ games: Pokémon (TCGdex) and Magic (Scryfall). A card's game comes from its id: Magic ids start with "mg:" ============ */
 const GAMES={pk:{n:'Pokémon',ab:'PK',c:'#FFCB3D',langs:['fr','en','ja']},mg:{n:'Magic',ab:'MG',c:'#E08A4F',langs:['fr','en']}};
 const gameOf=x=>String(typeof x==='string'?x:(x?.cardId||'')).startsWith('mg:')?'mg':'pk';
-const PREVIEW_MG=/[?&]apercu-magic/.test(location.search);   // temporary: Magic is visible only with this flag until validated
 const gamesUsed=()=>new Set(collection.map(gameOf));
 const multiGame=()=>gamesUsed().size>1;
 // hybrid view: with one game nothing changes; with several, a pill in the header switches between "all games" and one game
 const gvActive=()=>multiGame()&&settings.gameView&&settings.gameView!=='all'&&gamesUsed().has(settings.gameView);
 const inView=e=>!gvActive()||gameOf(e)===settings.gameView;
-const gameOn=()=>PREVIEW_MG||gamesUsed().has('mg');   // the game picker in Ajouter
+const gameOn=()=>true;   // the game picker in Ajouter is always there: it is how a second game is discovered
 const gdot=g=>`<span class="gdot" style="background:${GAMES[g].c}" aria-hidden="true">${GAMES[g].ab}</span>`;
 
 /* ============ i18n ============ */
