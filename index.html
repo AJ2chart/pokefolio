@@ -720,7 +720,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-96';
+const APP_VERSION = '2026.11.22-97';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -942,6 +942,25 @@ function applySetNames(lang,data){
 }
 const setNameFor=(lang,set)=>idx[lang]?.sets[set?.id]?.n||(lang==='ja'?setLabel(lang,set?.id,set?.name):set?.name)||'';
 const SCRY='https://api.scryfall.com';
+// Scryfall rate limits: /cards/search, /named, /random = 2 per second (500 ms); everything else 10 per second.
+// Every Scryfall call goes through this queue, which spaces calls out and retries politely on 429 (Too Many Requests).
+const scryLane={slow:{last:0,chain:Promise.resolve()},fast:{last:0,chain:Promise.resolve()}};   // two lanes: a price refresh never delays a search
+function scryFetch(url,stale){
+  const slow=/\/cards\/(search|named|random)/.test(url),L=scryLane[slow?'slow':'fast'];
+  const run=async()=>{
+    for(let i=0;;i++){
+      if(stale&&stale())throw new Error('stale');   // superseded search still waiting in line: skip it
+      const wait=L.last+(slow?550:110)-Date.now();if(wait>0)await new Promise(r=>setTimeout(r,wait));
+      if(stale&&stale())throw new Error('stale');
+      L.last=Date.now();
+      const r=await fetch(url,{headers:{Accept:'application/json;q=0.9,*/*;q=0.8'}});
+      if(r.status!==429||i>=2)return r;
+      await new Promise(res=>setTimeout(res,(+r.headers.get('Retry-After')||1)*1000*(i+1)));
+    }
+  };
+  const p=L.chain.then(run,run);L.chain=p.catch(()=>{});return p;
+}
+async function scryJSON(url){const r=await scryFetch(url);if(!r.ok)throw new Error(r.status);return r.json()}
 const MG_SET_FR={fdn:'Fondations',dsk:'Duskmourn : la Maison de l’horreur',blb:'Bloomburrow',otj:'Les hors-la-loi de Croisetonnerre',mkm:'Meurtres au manoir Karlov',lci:'Les cavernes oubliées d’Ixalan',
   woe:'Les terres sauvages d’Eldraine',ltr:'Le Seigneur des Anneaux : chroniques de la Terre du Milieu',mom:'L’invasion des machines',one:'Tous phyrexians',bro:'La guerre fratricide',dmu:'Dominaria uni',
   snc:'Les rues de la Nouvelle-Capenna',neo:'Kamigawa : la dynastie néon',vow:'Innistrad : noce écarlate',mid:'Innistrad : chasse de minuit',stx:'Strixhaven : l’académie des mages',khm:'Kaldheim',
@@ -974,9 +993,9 @@ function mgToDetail(c,pc){
 }
 // Scryfall only prices the English printing: a French card takes the price of the same printing in English (same Cardmarket product)
 async function mgDetail(lang,id){
-  const c=await getJSON(`${SCRY}/cards/${encodeURIComponent(id.slice(3))}`);
+  const c=await scryJSON(`${SCRY}/cards/${encodeURIComponent(id.slice(3))}`);
   let pc=c;
-  if(!(+c.prices?.eur>0||+c.prices?.eur_foil>0)&&c.lang!=='en'){try{pc=await getJSON(`${SCRY}/cards/${encodeURIComponent(c.set)}/${encodeURIComponent(c.collector_number)}`)}catch(_){}}
+  if(!(+c.prices?.eur>0||+c.prices?.eur_foil>0)&&c.lang!=='en'){try{pc=await scryJSON(`${SCRY}/cards/${encodeURIComponent(c.set)}/${encodeURIComponent(c.collector_number)}`)}catch(_){}}
   return mgToDetail(c,pc);
 }
 async function getDetail(lang,id){
@@ -1143,7 +1162,6 @@ async function refreshPrices(silent){
       const k=queue.shift();const[lang,...rest]=k.split(':');const id=rest.join(':');
       try{
         delete detailCache[k];
-        if(id.startsWith('mg:'))await new Promise(r=>setTimeout(r,120)); // Scryfall asks for ~10 requests/second at most
         const d=await getDetail(lang,id);
         for(const e of collection.filter(x=>x.lang===lang&&x.cardId===id)){
           const p=pickPrice(d.pricing,e.variant,d.variants?.normal);
@@ -1709,13 +1727,13 @@ let mgSets=null;
 async function loadMgSets(){
   if(mgSets)return mgSets;
   const c=LS.get('pf_mgsets',null);if(c&&Date.now()-c.ts<864e5){mgSets=c.sets;return mgSets}
-  const j=await getJSON(`${SCRY}/sets`);
+  const j=await scryJSON(`${SCRY}/sets`);
   const KEEP=new Set(['core','expansion','masters','draft_innovation','commander','funny','starter','box','from_the_vault','spellbook','premium_deck','duel_deck','arsenal','promo']);
   mgSets=(j.data||[]).filter(x=>!x.digital&&KEEP.has(x.set_type)&&(x.card_count||0)>0).map(x=>({c:x.code,n:x.name,d:x.released_at||'',t:x.set_type,k:x.card_count,i:x.icon_svg_uri||''}))
     .sort((a,b)=>b.d.localeCompare(a.d));
   LS.set('pf_mgsets',{ts:Date.now(),sets:mgSets});return mgSets;
 }
-const MG_SPECIAL='(is:borderless OR is:showcase OR is:extendedart OR is:serialized OR (is:fullart -t:basic))';
+const MG_SPECIAL='(border:borderless OR frame:showcase OR frame:extendedart OR (is:full -t:basic))';   // documented Scryfall keywords (docs/syntax); numbered cards are almost always borderless or showcase
 const MG_LANG={EN:'en',FR:'fr',DE:'de',IT:'it',ES:'es',SP:'es',PT:'pt',JA:'ja',JP:'ja',KO:'ko',KR:'ko',RU:'ru',CS:'zhs',CT:'zht'};
 function parseMgFoot(texts){
   let set=null,lng=null,num=null;
@@ -1750,7 +1768,7 @@ async function scanMagic(file,lang,apply){
       const code=foot.set.toLowerCase(),L=foot.lng||lang;
       let c=null;
       for(const u of[`${SCRY}/cards/${code}/${foot.num}/${L}`,`${SCRY}/cards/${code}/${foot.num}`]){try{c=await getJSON(u);break}catch(_){}}
-      if(c&&c.lang!==L&&L!=='en'){try{const r=await getJSON(`${SCRY}/cards/search?q=${encodeURIComponent(`e:${code} cn:${foot.num} lang:${L}`)}&unique=prints`);if(r.data?.[0])c=r.data[0]}catch(_){}}
+      if(c&&c.lang!==L&&L!=='en'){try{const r=await scryJSON(`${SCRY}/cards/search?q=${encodeURIComponent(`e:${code} cn:${foot.num} lang:${L}`)}&unique=prints`);if(r.data?.[0])c=r.data[0]}catch(_){}}
       if(c){closeModal();const cl=GAMES.mg.langs.includes(c.lang)?c.lang:lang;openCard(cl,'mg:'+c.id);return}
     }
     // 2) the name at the top of the card: put it in the search
@@ -1804,7 +1822,7 @@ function viewAddMagic(m){
     const rl=S.rlang||lang;
     res.innerHTML=`${rl!==lang?`<div class="man-ban"><span><span class="lflag">${FLAGS[rl]}</span>${t('mg_fallback')}</span></div>`:S.via?`<p class="muted small" style="margin:0 0 6px">${t('mg_via',{n:esc(S.via)})}</p>`:''}<p class="muted small">${t('results',{n:S.total||S.res.length})}</p><div class="grid" id="sgrid">${S.res.map(x=>resultTile(tileOf(x),rl)).join('')}</div>${S.next?`<div style="text-align:center;margin:14px 0"><button class="btn" id="mMore">${t('mg_more')}</button></div>`:''}`;
     bindTiles(res.querySelector('#sgrid'),rl);
-    const mm=res.querySelector('#mMore');if(mm)mm.onclick=async()=>{mm.disabled=true;mm.innerHTML='<span class="spin"></span>';try{const r=await getJSON(S.next);S.res.push(...r.data);S.next=r.has_more?r.next_page:null}catch(_){toast(t('err_net'))}draw()};
+    const mm=res.querySelector('#mMore');if(mm)mm.onclick=async()=>{mm.disabled=true;mm.innerHTML='<span class="spin"></span>';try{const r=await scryJSON(S.next);S.res.push(...r.data);S.next=r.has_more?r.next_page:null}catch(_){toast(t('err_net'))}draw()};
   };
   let timer,seq=0;
   const go=async()=>{
@@ -1812,13 +1830,13 @@ function viewAddMagic(m){
     if(!ready()){draw();return}
     draw();const my=++seq;
     const [order,dir]={new:['released','desc'],old:['released','asc'],num_asc:['set','asc'],num_desc:['set','desc']}[S.sort]||['released','desc'];
-    const ask=(L,name=S.q.trim())=>fetch(`${SCRY}/cards/search?q=${encodeURIComponent([name,S.set?`e:${S.set}`:'',S.rar?`r:${S.rar}`:'',S.special?MG_SPECIAL:'','game:paper',`lang:${L}`].filter(Boolean).join(' '))}&unique=prints&order=${order}&dir=${dir}`);
+    const ask=(L,name=S.q.trim())=>scryFetch(`${SCRY}/cards/search?q=${encodeURIComponent([name,S.set?`e:${S.set}`:'',S.rar?`r:${S.rar}`:'',S.special?MG_SPECIAL:'','game:paper',`lang:${L}`].filter(Boolean).join(' '))}&unique=prints&order=${order}&dir=${dir}`,()=>my!==seq);
     try{
       let r=await ask(lang);S.rlang=lang;S.via='';
       // a name typed in another language: find it among the cards of the other languages, then search the English (Oracle) name
       if(r.status===404&&/\p{L}/u.test(S.q)&&S.q.trim().length>=3){
         for(const L of GAMES.mg.langs.filter(x=>x!==lang)){
-          try{const f=await fetch(`${SCRY}/cards/search?q=${encodeURIComponent(S.q.trim()+' lang:'+L)}&unique=cards`);
+          try{const f=await scryFetch(`${SCRY}/cards/search?q=${encodeURIComponent(S.q.trim()+' lang:'+L)}&unique=cards`,()=>my!==seq);
             if(!f.ok)continue;const names=[...new Set(((await f.json()).data||[]).map(x=>x.name))].slice(0,4);
             if(names.length){const r2=await ask(lang,'('+names.map(n=>`!"${n.replace(/"/g,'')}"`).join(' OR ')+')');if(r2.ok){r=r2;S.via=names[0]}break}
           }catch(_){}
