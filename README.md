@@ -10,7 +10,7 @@ Suivi de collection Pokémon TCG, installable sur PC et téléphone.
 - Cartes gradées (PSA, CGC, BGS, CCC, PCA, Collect Aura), alertes de prix, wishlist, historique
 - Partage de la wishlist : image à envoyer ou lien vers une page publique en lecture seule
 - Présentation guidée au premier lancement et écran « Quoi de neuf ? » après les grosses mises à jour
-- Plusieurs jeux : Pokémon (TCGdex) et Magic: The Gathering (Scryfall) ; choix du jeu dans Ajouter ; avec plusieurs jeux, boutons « Tous / Pokémon / Magic » qui filtrent Collection, Wishlist et Valeur
+- Plusieurs jeux : Pokémon (TCGdex), Magic: The Gathering (Scryfall) et One Piece (OPTCG API, édition anglaise, prix TCGplayer convertis en euros au taux BCE du jour) ; choix du jeu dans Ajouter ; avec plusieurs jeux, boutons « Tous / Pokémon / Magic » qui filtrent Collection, Wishlist et Valeur
 - Compte gratuit pour synchroniser sa collection entre appareils (Supabase), ou usage sans compte sur un seul appareil
 
 ## Structure
