@@ -1,0 +1,63 @@
+{
+ "started": "2026-11-22T17:23:49.708Z",
+ "sets": {
+  "pk-fr": {
+   "cards": 22342,
+   "withPicture": 18486,
+   "before": 0,
+   "added": 18470,
+   "errors": 16,
+   "sampleErrors": [
+    "base3-1: HTTP 404",
+    "ecard1-16: HTTP 404",
+    "pl3-26: HTTP 404",
+    "base3-32: HTTP 404",
+    "base5-63: HTTP 404"
+   ],
+   "after": 18470,
+   "remaining": 0
+  },
+  "pk-en": {
+   "cards": 23912,
+   "withPicture": 22131,
+   "before": 0,
+   "added": 22120,
+   "errors": 11,
+   "sampleErrors": [
+    "dc1-1: HTTP 404",
+    "g1-19: HTTP 404",
+    "sv10-028: HTTP 404",
+    "xy10-79: HTTP 404",
+    "ex7-88: HTTP 404"
+   ],
+   "after": 22120,
+   "remaining": 0
+  },
+  "pk-ja": {
+   "cards": 13156,
+   "withPicture": 3882,
+   "before": 0,
+   "added": 3878,
+   "errors": 4,
+   "sampleErrors": [
+    "SV1a-043: HTTP 404",
+    "S12a-055: HTTP 404",
+    "S9a-062: HTTP 404",
+    "SV1V-072: HTTP 404"
+   ],
+   "after": 3878,
+   "remaining": 0
+  },
+  "op": {
+   "cards": 3750,
+   "withPicture": 3750,
+   "before": 0,
+   "added": 3750,
+   "errors": 0,
+   "sampleErrors": [],
+   "after": 3690,
+   "remaining": 0
+  }
+ },
+ "minutes": 4
+}
