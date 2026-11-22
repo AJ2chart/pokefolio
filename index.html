@@ -719,7 +719,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-88';
+const APP_VERSION = '2026.11.22-89';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1973,22 +1973,30 @@ function runSearch(data,res,lang){
   const raw=search.q.trim();
   if(!raw&&!search.set){renderAddHome(data,res,lang);return}
   let out=findCards(data,raw,search.set);
-  // names typed in another language (e.g. « Dracaufeu » while browsing English or Japanese cards) are matched through the Pokédex number
-  if(/[a-z]/i.test(raw)&&(lang==='ja'||!out.length)){
+  // a name typed in another language (« Dracaufeu » while browsing English or Japanese cards) is matched through the Pokédex number.
+  // Matches that only come from the set name (e.g. a promo box named after the Pokémon) rank last, and are dropped when real cards are found.
+  const words=norm(raw).split(' ').filter(w=>w&&!/\d/.test(w));
+  for(const o of out)if(words.length&&!words.every(w=>(o.c.k||'').includes(w)))o.score=-1;
+  const nameHits=out.filter(o=>o.score>=0).length;
+  const rank=list=>settings.searchSort&&settings.searchSort!=='relevance'?list:list.sort((x,y)=>y.score-x.score||(y.st?.o??-1)-(x.st?.o??-1)||(parseInt(x.c.l)||0)-(parseInt(y.c.l)||0));
+  if(words.join('').length>=3&&/[a-z]/i.test(raw)&&(lang==='ja'||nameHits<3)){ // few or no cards by that name in this language: look the name up in the other ones
     const req=++jaReq;
-    if(!out.length)res.innerHTML=`<div class="empty"><span class="spin"></span> ${t('ja_searching')}</div>`;
+    if(!nameHits)res.innerHTML=`<div class="empty"><span class="spin"></span> ${t('ja_searching')}</div>`;
     crossLangIds(lang,raw).then(ids=>{
       if(req!==jaReq||view!=='add'||settings.cardLang!==lang)return;
       if(ids&&ids.size){
         const rest=norm(raw).split(' ').filter(w=>/\d/.test(w)).join(' ');
         const extra=findCards(data,rest,search.set).filter(o=>ids.has(o.c.id));
-        const seen=new Set(out.map(o=>o.c.id));extra.forEach(o=>{if(!seen.has(o.c.id))out.push(o)});
+        if(extra.length){
+          out=out.filter(o=>o.score>=0);
+          const seen=new Set(out.map(o=>o.c.id));extra.forEach(o=>{if(!seen.has(o.c.id)){o.score=2.5;out.push(o)}});
+        }
       }
-      renderResults(finishResults(out),data,res,lang);
+      renderResults(finishResults(rank(out)),data,res,lang);
     });
-    if(!out.length)return;
+    if(!nameHits)return;
   }
-  renderResults(finishResults(out),data,res,lang);
+  renderResults(finishResults(rank(out)),data,res,lang);
 }
 let jaReq=0;const dexCache={};
 async function crossLangIds(target,q){
