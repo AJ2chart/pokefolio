@@ -1134,6 +1134,7 @@ async function refreshPrices(silent){
         for(const e of collection.filter(x=>x.lang===lang&&x.cardId===id)){
           const p=pickPrice(d.pricing,e.variant,d.variants?.normal);
           e.price=p;e.tcp=d.pricing?.tcgplayer||null;pushHistory(e);
+          if(id.startsWith('mg:')){e.setName=d.set.name;e.rarity=d.rarity} // Magic: set name (French when known) and rarity follow the source
         }
       }catch(err){failed++}
       done++;upd();
