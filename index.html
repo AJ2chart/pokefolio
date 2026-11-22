@@ -719,7 +719,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-91';
+const APP_VERSION = '2026.11.22-92';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -2020,9 +2020,9 @@ async function crossLangIds(target,q){
       for(const c of cand.slice(0,3)){
         const d=await getDetail(srcLang,c.id).catch(()=>null);
         const dex=d?.dexId?.[0];if(!dex)continue;
-        // the filter is only trusted when the answer is really about one Pokémon: not too many cards, and most of them sharing a name word
+        // the answer is only trusted when it is really about one Pokémon: not the whole card list
         // (an ignored filter returns the whole card list, which used to flood the results)
-        const ok=r=>{if(!Array.isArray(r)||!r.length||r.length>1500)return false;const f={};for(const x of r)for(const w of new Set(norm(x.name||'').split(' ').filter(w=>w.length>2&&w!=='ex')))f[w]=(f[w]||0)+1;return Math.max(0,...Object.values(f))>=r.length*0.5};
+        const ok=r=>Array.isArray(r)&&r.length>0&&r.length<=1500&&!(idx[target]&&r.length>idx[target].cards.length*0.25); // size only: Japanese names have no spaces to compare
         let r=null;
         for(const u of[`${API}/${target}/dex-ids/${dex}`,`${API}/${target}/dexIds/${dex}`,`${API}/${target}/cards?dexId=eq:${dex}`,`${API}/${target}/cards?dexId=${dex}`]){
           let j=await getJSON(u).catch(()=>null);if(j&&!Array.isArray(j)&&Array.isArray(j.cards))j=j.cards;
