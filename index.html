@@ -741,7 +741,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-115';
+const APP_VERSION = '2026.11.22-116';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -2025,6 +2025,9 @@ function viewAddOp(m){
   };
   const draw=async()=>{
     let d;try{d=await loadOpIndex()}catch(_){res.innerHTML=`<div class="empty small"><p>${t('err_net')}</p></div>`;return}
+    // rarity list: only the rarities that really exist in the data (no empty « Promo » / « Trésor » choice)
+    const orar=m.querySelector('#orar');if(orar&&!orar.dataset.f){orar.dataset.f=1;const have=new Set(d.cards.map(c=>c.r));if(S.rar&&!have.has(S.rar))S.rar='';
+      orar.innerHTML=`<option value="">${t('mg_rar_all')}</option>`+['SEC','SR','L','R','UC','C','SP','TR','P'].filter(r=>have.has(r)).map(r=>`<option value="${r}" ${S.rar===r?'selected':''}>${opRar(r)}</option>`).join('');updCount()}
     if(!oset.dataset.f){oset.dataset.f=1;oset.innerHTML=`<option value="">${t('all_sets')}</option>`+[...d.sets].sort((a,b)=>b.o-a.o).map(s=>`<option value="${esc(s.id)}" ${S.set===s.id?'selected':''}>${esc(s.n)} (${esc(s.id)})</option>`).join('')}
     if(!ready()){
       const pr=d.sets.find(s=>s.id==='PROMO'),sets=[...d.sets].filter(s=>s!==pr).sort((a,b)=>b.o-a.o).slice(0,pr?7:8);if(pr)sets.push(pr);   // promos always reachable from the home screen
