@@ -720,7 +720,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-97';
+const APP_VERSION = '2026.11.22-98';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1836,8 +1836,8 @@ function viewAddMagic(m){
       // a name typed in another language: find it among the cards of the other languages, then search the English (Oracle) name
       if(r.status===404&&/\p{L}/u.test(S.q)&&S.q.trim().length>=3){
         for(const L of GAMES.mg.langs.filter(x=>x!==lang)){
-          try{const f=await scryFetch(`${SCRY}/cards/search?q=${encodeURIComponent(S.q.trim()+' lang:'+L)}&unique=cards`,()=>my!==seq);
-            if(!f.ok)continue;const names=[...new Set(((await f.json()).data||[]).map(x=>x.name))].slice(0,4);
+          try{const f=await scryFetch(`${SCRY}/cards/search?q=${encodeURIComponent([S.q.trim(),S.set?`e:${S.set}`:'',S.rar?`r:${S.rar}`:'',S.special?MG_SPECIAL:'','lang:'+L].filter(Boolean).join(' '))}&unique=cards`,()=>my!==seq);   // same filters as the search, so the names found are the right ones
+            if(!f.ok)continue;const names=[...new Set(((await f.json()).data||[]).map(x=>x.name))].slice(0,12);
             if(names.length){const r2=await ask(lang,'('+names.map(n=>`!"${n.replace(/"/g,'')}"`).join(' OR ')+')');if(r2.ok){r=r2;S.via=names[0]}break}
           }catch(_){}
         }
