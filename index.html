@@ -741,7 +741,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-107';
+const APP_VERSION = '2026.11.22-108';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1449,6 +1449,22 @@ function openRecovery(){
 /* ============ routing & shell ============ */
 const VIEWS=['collection','add','wishlist','evolution','data'];
 // a shared wishlist link (?w=token) opens a read-only page instead of the app
+// ?diag-op : one-off check, from the user's own browser, that the One Piece source answers and allows the app to read it (CORS)
+const DIAG_OP=/[?&]diag-op/.test(location.search);
+async function viewDiagOp(m){
+  const tests=[['Liste des extensions','https://optcgapi.com/api/allSets/'],['Carte OP01-001','https://optcgapi.com/api/sets/card/OP01-001/'],['Extension OP-09','https://optcgapi.com/api/sets/OP-09/']];
+  m.innerHTML=`<h1>Test source One Piece</h1><p class="muted small">Résultat à envoyer à Claude (capture d’écran).</p><div id="dg"></div>`;
+  const out=m.querySelector('#dg');
+  for(const[l,u]of tests){
+    const t0=Date.now();let line;
+    try{const r=await fetch(u,{headers:{Accept:'application/json'}});const j=await r.json();const a=Array.isArray(j)?j:[j];const c=a[0]||{};
+      line=`✅ <b>${l}</b> · HTTP ${r.status} · ${a.length} élément(s) · ${Date.now()-t0} ms<br><span class="small muted">${esc(Object.keys(c).slice(0,24).join(', '))}</span><br><span class="small">${esc(JSON.stringify(c).slice(0,420))}</span>`}
+    catch(e){line=`❌ <b>${l}</b> · ${esc(String(e&&e.message||e))} · ${Date.now()-t0} ms (bloqué par le navigateur = CORS refusé)`}
+    out.insertAdjacentHTML('beforeend',`<div class="stat" style="margin:10px 0;word-break:break-word">${line}</div>`);
+  }
+  const im=new Image();im.onload=()=>out.insertAdjacentHTML('beforeend','<p>✅ Image officielle chargée :</p>');im.onerror=()=>out.insertAdjacentHTML('beforeend','<p>❌ Image officielle non chargée</p>');
+  im.src='https://en.onepiece-cardgame.com/images/cardlist/card/OP01-001.png';im.style.cssText='width:160px;border-radius:8px;display:block;margin-top:6px';out.after(im);
+}
 const SHARED_TOKEN=(new URLSearchParams(location.search).get('w')||'').replace(/[^a-f0-9]/gi,'').slice(0,64)||null;
 const TAB_ICONS={
   collection:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
@@ -1503,6 +1519,7 @@ function render(){
   charts.forEach(c=>c.destroy());charts=[];
   renderShell();
   const m=document.getElementById('main');
+  if(DIAG_OP){viewDiagOp(m);return}
   if(SHARED_TOKEN){document.documentElement.dataset.shared='1';viewShared(m);return}
   m.dataset.view=view;
   ({collection:viewCollection,add:viewAdd,wishlist:viewWish,evolution:viewEvo,data:viewData})[view](m);
