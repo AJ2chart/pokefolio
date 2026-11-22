@@ -741,7 +741,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-112';
+const APP_VERSION = '2026.11.22-113';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -1287,14 +1287,16 @@ function printedNum(setId,localId,off,lang){
 }
 function ebayUrl(name,num,setName,grade,lang,setId,sold=true,game='pk',id=''){
   const host=settings.lang==='fr'?'www.ebay.fr':'www.ebay.com';
+  // a raw card is compared with raw cards (graded slabs sell at other prices), and obvious fakes are left out
+  const X=[grade?'':'-psa -bgs -cgc -graded -gradée -gradé','-proxy -custom -orica -replica'].filter(Boolean).join(' ');
   if(game==='op'){const L={fr:'-english -anglais -eng -japanese -japonais -jap',en:'-japanese -japonais -jap -jpn -francais -français -french',ja:'japanese'}[lang]||'';
     const ver={par:'parallel',alt:'"alternate art"',manga:'manga',sp:'SP'}[opVerOfId(id)]??'-parallel -manga -"alt art" -alternate -sp -gold',nm=String(name||'').replace(/\./g,' ').replace(/\s+/g,' ').trim();
-    return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(['one piece',num,nm,ver,grade,L].filter(Boolean).join(' '))}${sold?'&LH_Sold=1&LH_Complete=1':'&_sop=15'}`}
+    return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(['one piece',num,nm,ver,grade,L,X].filter(Boolean).join(' '))}${sold?'&LH_Sold=1&LH_Complete=1':'&_sop=15'}`}
   if(game==='mg'){const L={fr:'-english -anglais -anglaise -eng',en:'-francais -français -french -vf'}[lang]||'';
-    return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(['mtg',name,setName,grade,L].filter(Boolean).join(' '))}${sold?'&LH_Sold=1&LH_Complete=1':'&_sop=15'}`}
+    return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(['mtg',name,setName,grade,L,X].filter(Boolean).join(' '))}${sold?'&LH_Sold=1&LH_Complete=1':'&_sop=15'}`}
   // card language: exclude the OTHER languages (many sellers don't state the language of their own card); the number already pins the card, so the set name is left out
   const L={fr:'-english -anglais -anglaise -eng -japanese -japonais -japonaise -jap -jpn',en:'-francais -français -francaise -française -french -vf -japanese -japonais -japonaise -jap -jpn'}[lang];
-  const q=lang==='ja'?['pokemon japanese',setId,num,grade].filter(Boolean).join(' '):[name,num,grade,L].filter(Boolean).join(' ');
+  const q=lang==='ja'?['pokemon japanese',setId,num,grade,X].filter(Boolean).join(' '):[name,num,grade,L,X].filter(Boolean).join(' ');
   // sold = completed sales (to value a card); otherwise live listings, cheapest first incl. shipping (to buy it)
   return `https://${host}/sch/i.html?_nkw=${encodeURIComponent(q)}&_sacat=183454${sold?'&LH_Sold=1&LH_Complete=1':'&_sop=15'}`;
 }
