@@ -156,6 +156,18 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .ah-set{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font:inherit;font-size:14px}
 .ah-set img{height:18px;width:auto}
 .ah-set:hover{border-color:var(--accent)}
+.ah-logo{display:none}
+/* Ajouter on computers (layout A): centred page, bigger set tiles with the set logo */
+@media (min-width:721px){
+  #main[data-view=add]{max-width:1040px}
+  #main[data-view=add] .add-top{max-width:none}
+  #main[data-view=add] .ah-sets{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  #main[data-view=add] .ah-set{padding:12px;font-size:14.5px}
+  #main[data-view=add] .ah-logo{display:flex;align-items:center;justify-content:center;width:100%;height:64px;margin-bottom:8px;border-radius:9px;background:var(--card2)}
+  #main[data-view=add] .ah-logo img{max-height:46px;max-width:86%;height:auto;width:auto;object-fit:contain}
+  #main[data-view=add] .ah-logo.mg img{width:38px;height:38px}
+  #main[data-view=add] .ah-set:has(.ah-logo) .ah-sym{display:none}
+}
 .sheet-cta{position:sticky;bottom:0;z-index:3;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 24px;background:color-mix(in srgb,var(--bg2) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);border-radius:0 0 18px 18px}
 
 .cta-wish{gap:7px}.cta-wish svg{width:20px;height:20px;flex:none}
@@ -728,7 +740,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-105';
+const APP_VERSION = '2026.11.22-106';
 const INDEX_TTL = 24*3600*1000;
 const INDEX_VER = 2; // bump when the cached index format changes
 const AUTO_REFRESH = 12*3600*1000;
@@ -927,7 +939,7 @@ async function loadIndex(lang,force){
       const [cards,sets,pocket,frSets]=await Promise.all([getJSON(`${API}/${lang}/cards`),getJSON(`${API}/${lang}/sets`),getJSON(`${API}/${lang}/series/tcgp`).catch(()=>({sets:[]})),lang==='en'?getJSON(`${API}/fr/sets`).catch(()=>[]):Promise.resolve([])]);
       const frName={};(frSets||[]).forEach(x=>{frName[x.id]=x.name});
       const excl=new Set((pocket.sets||[]).map(s=>s.id));
-      const setMap={};sets.forEach((s,i)=>{if(!excl.has(s.id))setMap[s.id]={id:s.id,src:s.name,fr:frName[s.id],o:i,off:s.cardCount?.official,tot:s.cardCount?.total,sym:s.symbol||''}});
+      const setMap={};sets.forEach((s,i)=>{if(!excl.has(s.id))setMap[s.id]={id:s.id,src:s.name,fr:frName[s.id],o:i,off:s.cardCount?.official,tot:s.cardCount?.total,sym:s.symbol||'',logo:s.logo||''}});
       const list=[];
       for(const c of cards){
         const sid=c.id.slice(0,c.id.length-String(c.localId).length-1);
@@ -1489,6 +1501,7 @@ function render(){
   renderShell();
   const m=document.getElementById('main');
   if(SHARED_TOKEN){document.documentElement.dataset.shared='1';viewShared(m);return}
+  m.dataset.view=view;
   ({collection:viewCollection,add:viewAdd,wishlist:viewWish,evolution:viewEvo,data:viewData})[view](m);
   m.querySelectorAll('[data-gsel]').forEach(b=>b.onclick=()=>{if(b.classList.contains('on'))return;settings.gameView=b.dataset.gsel;saveSettings();const mn=document.getElementById('main'),x=scrollY,y=mn.scrollTop;render();scrollTo(0,x);mn.scrollTop=y});
   m.querySelector('.gv-b.on')?.scrollIntoView({inline:'nearest',block:'nearest'});
@@ -1851,7 +1864,7 @@ function viewAddMagic(m){
     res.innerHTML=`<p class="muted small" style="margin:2px 0 14px">${t('mg_hint')}</p><div id="mhome"><span class="spin"></span></div><p class="muted small">${t('mg_src')}</p>`;
     try{const sets=(await loadMgSets()).filter(x=>['core','expansion','masters','draft_innovation','commander'].includes(x.t)&&x.d<=today()).slice(0,8);
       const h=res.querySelector('#mhome');if(!h)return;
-      h.innerHTML=`<h3 class="ah-t">${t('ah_sets')}</h3><div class="ah-sets">${sets.map(x=>`<button class="ah-set" data-mset="${esc(x.c)}">${x.i?`<img src="${esc(x.i)}" alt="" loading="lazy" class="mg-sym" onerror="this.remove()">`:''}<span>${esc(mgSetName(x.c,x.n))}</span><small class="muted">${t('n_cards',{n:x.k})}</small></button>`).join('')}</div>`;
+      h.innerHTML=`<h3 class="ah-t">${t('ah_sets')}</h3><div class="ah-sets">${sets.map(x=>`<button class="ah-set" data-mset="${esc(x.c)}">${x.i?`<span class="ah-logo mg"><img src="${esc(x.i)}" alt="" loading="lazy" class="mg-sym" onerror="this.parentNode.remove()"></span><img src="${esc(x.i)}" alt="" loading="lazy" class="mg-sym ah-sym" onerror="this.remove()">`:''}<span>${esc(mgSetName(x.c,x.n))}</span><small class="muted">${t('n_cards',{n:x.k})}</small></button>`).join('')}</div>`;
       h.querySelectorAll('[data-mset]').forEach(b=>b.onclick=()=>{S.set=b.dataset.mset;mset.value=S.set;updCount();go()});
     }catch(_){const h=res.querySelector('#mhome');if(h)h.innerHTML=''}
   };
@@ -2200,7 +2213,7 @@ function renderAddHome(data,res,lang){
   const recent=rec.map(x=>byId.get(x.id)).filter(Boolean).slice(0,12);
   res.innerHTML=`<p class="muted small" style="margin:2px 0 14px">${lang==='ja'?`${t('ja_hint')} ${t('ja_note')}`:t('type_to_search')}</p>
     ${sets.length?`<h3 class="ah-t">${t('ah_sets')}</h3>`:''}
-    <div class="ah-sets">${sets.map(st=>`<button class="ah-set" data-set="${esc(st.id)}">${st.sym?`<img src="${esc(st.sym)}.webp" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(st.n)}</span>${st.off?`<small class="muted">${st.tot||st.off} ${t('ah_cards')}</small>`:''}</button>`).join('')}</div>
+    <div class="ah-sets">${sets.map(st=>`<button class="ah-set" data-set="${esc(st.id)}">${st.logo?`<span class="ah-logo"><img src="${esc(st.logo)}.webp" alt="" loading="lazy" onerror="this.parentNode.remove()"></span>`:''}${st.sym?`<img class="ah-sym" src="${esc(st.sym)}.webp" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(st.n)}</span>${st.off?`<small class="muted">${st.tot||st.off} ${t('ah_cards')}</small>`:''}</button>`).join('')}</div>
     ${recent.length?`<h3 class="ah-t">${t('ah_recent')} <button class="linkbtn" id="ahClear">${t('ah_clear')}</button></h3><div class="grid">${recent.map(c=>resultTile({c,st:data.sets[c.s]},lang)).join('')}</div>`:''}`;
   bindTiles(res,lang);
   res.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{search.set=b.dataset.set;search.parked='';search.page=1;render()});
