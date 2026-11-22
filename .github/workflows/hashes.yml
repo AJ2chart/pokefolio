@@ -1,0 +1,32 @@
+# Card picture fingerprints for the app's scan (see tools/hash-cards.mjs). Runs daily and when the tools change.
+name: card-fingerprints
+on:
+  schedule: [{ cron: '17 3 * * *' }]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/**', '.github/workflows/hashes.yml']
+permissions:
+  contents: write
+concurrency: { group: fingerprints, cancel-in-progress: false }
+jobs:
+  hash:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save --no-package-lock sharp@0.33
+      - run: node tools/hash-cards.mjs
+        env: { TIME_BUDGET_MIN: '85' }
+      - name: Save fingerprints
+        if: always()
+        run: |
+          git config user.name "gleamvault-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add hashes
+          git diff --cached --quiet && exit 0
+          git commit -m "Empreintes des cartes (mise à jour automatique)"
+          for i in 1 2 3; do git pull --rebase -q && git push && exit 0; sleep 5; done
+          exit 1
