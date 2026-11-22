@@ -9,6 +9,7 @@ Suivi de collection Pokémon TCG, installable sur PC et téléphone.
 - Scan d'une carte par photo (lecture du nom et du numéro dans le navigateur, gratuite)
 - Cartes gradées (PSA, CGC, BGS, CCC, PCA, Collect Aura), alertes de prix, wishlist, historique
 - Partage de la wishlist : image à envoyer ou lien vers une page publique en lecture seule
+- Plusieurs jeux : Pokémon (TCGdex) et Magic: The Gathering (Scryfall) ; avec plusieurs jeux, filtre « Tous les jeux / un jeu »
 - Compte gratuit pour synchroniser sa collection entre appareils (Supabase), ou usage sans compte sur un seul appareil
 
 ## Structure
