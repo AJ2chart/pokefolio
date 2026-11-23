@@ -1,5 +1,5 @@
 {
- "started": "2026-11-23T07:37:46.681Z",
+ "started": "2026-11-23T07:45:04.049Z",
  "sets": {
   "pk-fr": {
    "cards": 22342,
@@ -8,11 +8,11 @@
    "added": 0,
    "errors": 16,
    "sampleErrors": [
+    "sm12-72: HTTP 404",
+    "sv08-102: HTTP 404",
     "base3-32: HTTP 404",
-    "base3-1: HTTP 404",
     "ecard1-16: HTTP 404",
-    "pl3-26: HTTP 404",
-    "sv08-102: HTTP 404"
+    "sm5-147: HTTP 404"
    ],
    "after": 18470,
    "remaining": 0,
@@ -25,11 +25,11 @@
    "added": 0,
    "errors": 11,
    "sampleErrors": [
+    "sm3-165: HTTP 404",
     "xy10-79: HTTP 404",
-    "30th-G: HTTP 404",
-    "swsh6-181: HTTP 404",
     "g1-19: HTTP 404",
-    "sv10-028: HTTP 404"
+    "swsh6-181: HTTP 404",
+    "30th-R: HTTP 404"
    ],
    "after": 22120,
    "remaining": 0,
@@ -42,10 +42,10 @@
    "added": 0,
    "errors": 4,
    "sampleErrors": [
-    "S9a-062: HTTP 404",
     "SV1V-072: HTTP 404",
-    "SV1a-043: HTTP 404",
-    "S12a-055: HTTP 404"
+    "S12a-055: HTTP 404",
+    "S9a-062: HTTP 404",
+    "SV1a-043: HTTP 404"
    ],
    "after": 3878,
    "remaining": 0,
@@ -63,8 +63,16 @@
    "updated": "2026-11-22T17:27:50.958Z"
   },
   "mg": {
-   "error": "Unexpected non-whitespace character after JSON at position 5228 (line 2 column 1)"
+   "cards": 49716,
+   "withPicture": 49716,
+   "before": 0,
+   "added": 49716,
+   "errors": 0,
+   "sampleErrors": [],
+   "after": 49716,
+   "remaining": 0,
+   "updated": "2026-11-23T07:50:24.694Z"
   }
  },
- "minutes": 0
+ "minutes": 5
 }
