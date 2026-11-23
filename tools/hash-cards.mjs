@@ -40,8 +40,9 @@ async function main() {
   // Magic: Scryfall bulk file « unique artwork » (one card per illustration), paper cards only, small pictures (146×204)
   try {
     const meta = await getJSON('https://api.scryfall.com/bulk-data/unique_artwork');
-    if (!meta.download_uri) throw new Error('no download_uri: ' + JSON.stringify(meta).slice(0, 200));
-    const cards = await getJSON(meta.download_uri);
+    const dl = meta.download_uri || meta.download_url || Object.entries(meta).find(([k, v]) => /download/i.test(k) && typeof v === 'string')?.[1];
+    if (!dl) throw new Error('no download link, keys: ' + Object.keys(meta).join(','));
+    const cards = await getJSON(dl);
     const SKIP = new Set(['art_series', 'token', 'double_faced_token', 'emblem', 'vanguard', 'planar', 'scheme', 'reversible_card']);
     const list = cards.filter(c => (c.games || []).includes('paper') && !SKIP.has(c.layout) && !c.digital)
       .map(c => ({ id: c.id, url: (c.image_uris || c.card_faces?.[0]?.image_uris || {}).small || '' }));
