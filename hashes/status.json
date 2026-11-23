@@ -1,63 +1,70 @@
 {
- "started": "2026-11-22T17:23:49.708Z",
+ "started": "2026-11-23T07:15:50.579Z",
  "sets": {
   "pk-fr": {
    "cards": 22342,
    "withPicture": 18486,
-   "before": 0,
-   "added": 18470,
+   "before": 18470,
+   "added": 0,
    "errors": 16,
    "sampleErrors": [
-    "base3-1: HTTP 404",
-    "ecard1-16: HTTP 404",
     "pl3-26: HTTP 404",
     "base3-32: HTTP 404",
+    "base3-1: HTTP 404",
+    "sv02-108: HTTP 404",
     "base5-63: HTTP 404"
    ],
    "after": 18470,
-   "remaining": 0
+   "remaining": 0,
+   "updated": "2026-11-22T17:25:21.629Z"
   },
   "pk-en": {
    "cards": 23912,
    "withPicture": 22131,
-   "before": 0,
-   "added": 22120,
+   "before": 22120,
+   "added": 0,
    "errors": 11,
    "sampleErrors": [
-    "dc1-1: HTTP 404",
-    "g1-19: HTTP 404",
-    "sv10-028: HTTP 404",
-    "xy10-79: HTTP 404",
-    "ex7-88: HTTP 404"
+    "30th-B: HTTP 404",
+    "A1-175: HTTP 404",
+    "30th-R: HTTP 404",
+    "ex7-88: HTTP 404",
+    "sm3-165: HTTP 404"
    ],
    "after": 22120,
-   "remaining": 0
+   "remaining": 0,
+   "updated": "2026-11-22T17:26:59.391Z"
   },
   "pk-ja": {
    "cards": 13156,
    "withPicture": 3882,
-   "before": 0,
-   "added": 3878,
+   "before": 3878,
+   "added": 0,
    "errors": 4,
    "sampleErrors": [
     "SV1a-043: HTTP 404",
+    "SV1V-072: HTTP 404",
     "S12a-055: HTTP 404",
-    "S9a-062: HTTP 404",
-    "SV1V-072: HTTP 404"
+    "S9a-062: HTTP 404"
    ],
    "after": 3878,
-   "remaining": 0
+   "remaining": 0,
+   "updated": "2026-11-22T17:27:19.215Z"
   },
   "op": {
    "cards": 3750,
    "withPicture": 3750,
-   "before": 0,
-   "added": 3750,
+   "before": 3690,
+   "added": 0,
    "errors": 0,
    "sampleErrors": [],
    "after": 3690,
-   "remaining": 0
+   "remaining": 0,
+   "updated": "2026-11-22T17:27:50.958Z"
+  },
+  "mg": {
+   "error": "Failed to parse URL from undefined"
   }
  },
- "minutes": 4
+ "minutes": 0
 }
