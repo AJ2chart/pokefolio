@@ -1,4 +1,5 @@
-// Computes the fingerprint of every card picture (Pokémon FR/EN/JA from TCGdex, One Piece from OPTCG API)
+// Computes the fingerprint of every card picture (Pokémon FR/EN/JA from TCGdex, One Piece from OPTCG API,
+// Magic from Scryfall: one per artwork, the app then tells the printings apart)
 // and writes them to hashes/*.json, used by the app's scan. Run daily by .github/workflows/hashes.yml.
 // Incremental: cards already fingerprinted are kept; a run stops after TIME_BUDGET and the next one continues.
 import fs from 'fs';
@@ -25,7 +26,9 @@ async function run(key, game, list) {   // list: [{id, url}]
   async function worker() { while (i < todo.length && Date.now() - t0 < TIME_BUDGET) { const c = todo[i++]; try { h[c.id] = await fp(c.url, game); st.added++ } catch (e) { st.errors++; if (st.sampleErrors.length < 5) st.sampleErrors.push(c.id + ': ' + e.message) } } }
   await Promise.all(Array.from({ length: CONC }, worker));
   st.after = Object.keys(h).length; st.remaining = todo.length - st.added - st.errors;
-  fs.writeFileSync(file, JSON.stringify({ v: 1, game, updated: new Date().toISOString(), h }));
+  // rewrite the table only when it changed: the app downloads it again only when its date changes (mobile data)
+  if (st.added || !old.updated) fs.writeFileSync(file, JSON.stringify({ v: 1, game, updated: new Date().toISOString(), h }));
+  st.updated = st.added || !old.updated ? new Date().toISOString() : old.updated;
 }
 async function main() {
   for (const lang of ['fr', 'en', 'ja']) {
@@ -34,6 +37,15 @@ async function main() {
   }
   try { const cards = await getJSON('https://optcgapi.com/api/allSetCards/'); await run('op', 'op', cards.filter(c => c.card_image_id).map(c => ({ id: c.card_image_id, url: c.card_image || '' }))) }
   catch (e) { status.sets.op = { error: String(e.message || e) } }
+  // Magic: Scryfall bulk file « unique artwork » (one card per illustration), paper cards only, small pictures (146×204)
+  try {
+    const meta = await getJSON('https://api.scryfall.com/bulk-data/unique-artwork');
+    const cards = await getJSON(meta.download_uri);
+    const SKIP = new Set(['art_series', 'token', 'double_faced_token', 'emblem', 'vanguard', 'planar', 'scheme', 'reversible_card']);
+    const list = cards.filter(c => (c.games || []).includes('paper') && !SKIP.has(c.layout) && !c.digital)
+      .map(c => ({ id: c.id, url: (c.image_uris || c.card_faces?.[0]?.image_uris || {}).small || '' }));
+    await run('mg', 'mg', list);
+  } catch (e) { status.sets.mg = { error: String(e.message || e) } }
   status.minutes = Math.round((Date.now() - t0) / 6e4); fs.writeFileSync(`${OUT}/status.json`, JSON.stringify(status, null, 1));
 }
 main().catch(e => { status.fatal = String(e.stack || e); fs.writeFileSync(`${OUT}/status.json`, JSON.stringify(status, null, 1)); process.exit(1) });

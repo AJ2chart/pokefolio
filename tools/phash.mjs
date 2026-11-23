@@ -6,6 +6,7 @@
 export const REGIONS = {
   pk: { full: [0.04, 0.96, 0.03, 0.97], art: [0.08, 0.92, 0.10, 0.50] },
   op: { full: [0.04, 0.96, 0.03, 0.97], art: [0.06, 0.94, 0.08, 0.62] },
+  mg: { full: [0.04, 0.96, 0.03, 0.97], art: [0.09, 0.91, 0.115, 0.555] },   // modern frame art box
 };
 
 export function toGray(rgba, w, h) {
