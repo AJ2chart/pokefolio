@@ -689,7 +689,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.22-123';
+const APP_VERSION = '2026.11.23-124';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
@@ -827,11 +827,11 @@ const LS = {
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Storage error')}}
 };
 const settings = Object.assign({lang:'fr',cardLang:'fr',theme:'dark',lastRefresh:0,sort:'value'}, LS.get('pf_settings',{}));
-let collection = LS.get('pf_collection',[]);
+let collection = LS.get('pf_collection',[]);   // quick copy (mirror); the real store is IndexedDB, see « collection storage » below
 let snapshots = LS.get('pf_snapshots',[]);
 const saveSettings=()=>LS.set('pf_settings',settings);
 let deleted = LS.get('pf_deleted',{});
-const saveCollection=()=>{LS.set('pf_collection',collection);takeSnapshot();scheduleSync()};
+const saveCollection=()=>{persistColl();takeSnapshot();scheduleSync()};
 const idx = {fr:null,en:null};       // card index per language
 const loading = {fr:null,en:null};
 const detailCache = {};
@@ -853,8 +853,50 @@ const idb = {
   db:null,
   open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open('pokefolio',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
   async get(k){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}catch(e){return null}},
-  async set(k,v){try{const db=await this.open();await new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res})}catch(e){}}
+  async set(k,v){try{const db=await this.open();await new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res})}catch(e){}},
+  // strict versions (errors are reported): used for the collection, where a silent failure is not acceptable
+  async getS(k){const db=await this.open();return new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})},
+  async setS(k,v){const db=await this.open();return new Promise((res,rej)=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})}
 };
+
+/* ============ collection storage ============
+   The collection lives in IndexedDB (no 5 MB limit; localStorage held ~3 MB for 3 000 cards). A copy stays in localStorage while it is
+   small enough (fast first read, safety net if we ever had to go back). 'pf_coll_ls' = {ts,len} of that copy: a copy written by
+   someone else (older app version, restored by hand) is detected by its length and wins. Writes are grouped (150 ms) and flushed
+   when the app goes to the background. If IndexedDB is unavailable or fails, the app stays on localStorage as before. */
+const COLL_MIRROR_MAX=2e6;            // characters (localStorage counts 2 bytes each: ~4 MB)
+let collTs=0,collIdb=!!window.indexedDB,collTimer=null,collDirty=false;
+function persistColl(now){collDirty=true;clearTimeout(collTimer);if(now)return persistCollNow();collTimer=setTimeout(persistCollNow,150)}
+async function persistCollNow(){
+  clearTimeout(collTimer);collTimer=null;if(!collDirty)return;collDirty=false;
+  const ts=collTs=Math.max(Date.now(),collTs+1),data=collection;let mirror=false;
+  try{const str=JSON.stringify(data);if(str.length<=COLL_MIRROR_MAX||!collIdb){localStorage.setItem('pf_collection',str);localStorage.setItem('pf_coll_ls',JSON.stringify({ts,len:str.length}));mirror=true}
+      else{localStorage.removeItem('pf_collection');localStorage.removeItem('pf_coll_ls')}}
+  catch(e){if(collIdb)try{localStorage.removeItem('pf_collection');localStorage.removeItem('pf_coll_ls')}catch(_){}}   // without IndexedDB, keep the last copy that fit
+  if(collIdb){try{await idb.setS('pf_collection',{ts,data});return}catch(e){collIdb=false}}
+  if(!mirror)toast('Storage error');
+}
+addEventListener('pagehide',()=>{if(collDirty)persistCollNow()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&collDirty)persistCollNow()});
+async function loadCollStore(){
+  if(!collIdb)return;
+  try{
+    const raw=localStorage.getItem('pf_collection'),meta=LS.get('pf_coll_ls',null);
+    const rec=await idb.getS('pf_collection');
+    const lsForeign=raw!==null&&(!meta||meta.len!==raw.length);          // written by an older version / by hand
+    const lsNewer=raw!==null&&meta&&rec&&meta.ts>rec.ts;                   // IndexedDB write did not finish last time
+    if(rec&&Array.isArray(rec.data)&&!lsForeign&&!lsNewer){if(rec.ts!==meta?.ts||raw===null)collection=rec.data;collTs=rec.ts;return}
+    if(raw===null&&!rec)return;                                            // nothing stored yet
+    // first launch with IndexedDB (or the copy is newer): move the localStorage copy over, then read it back to check it
+    const ts=collTs=Math.max(Date.now(),(rec?.ts||0)+1);
+    await idb.setS('pf_collection',{ts,data:collection});
+    const back=await idb.getS('pf_collection');
+    if(!back||JSON.stringify(back.data)!==raw&&JSON.stringify(back.data)!==JSON.stringify(collection))throw new Error('verify');
+    localStorage.setItem('pf_coll_ls',JSON.stringify({ts,len:(raw||'').length}));
+    try{navigator.storage?.persist?.()}catch(_){}
+  }catch(e){collIdb=false}
+}
+const collReady=loadCollStore();
 
 async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error(r.status);return r.json()}
 
@@ -1062,7 +1104,7 @@ function checkAlerts(notify){
     const ok=e.alert.dir==='below'?v<=e.alert.price:v>=e.alert.price;
     if(ok){if(!e.alert.hit){e.alert.hit=Date.now();hits.push(e)}}else e.alert.hit=null;
   }
-  LS.set('pf_collection',collection);
+  persistColl();
   if(hits.length&&notify){
     toast('🔔 '+t('alert_toast',{n:hits.length}));
     try{if('Notification' in window&&Notification.permission==='granted'&&settings.notif!==false)hits.forEach(e=>new Notification('Gleamvault',{body:t('alert_msg',{n:e.name,v:fmtEur(entryValue(e))})}))}catch(_){}
@@ -1312,6 +1354,7 @@ function mergeData(local,remote){
   return{collection:[...map.values()],snapshots:[...snaps.values()].sort((a,b)=>a.d.localeCompare(b.d)),del};
 }
 async function syncNow(first){
+  await collReady;   // never merge into a collection not yet read from storage
   if(!sb||!user||updBlocked)return;
   if(syncing){syncAgain=true;return}
   syncing=true;setSync('syncing');
@@ -1321,7 +1364,7 @@ async function syncNow(first){
     if(error)throw error;
     const merged=mergeData({collection,snapshots,del:deleted},data?.data||{});
     collection=merged.collection;snapshots=merged.snapshots;deleted=merged.del;
-    LS.set('pf_collection',collection);LS.set('pf_snapshots',snapshots);LS.set('pf_deleted',deleted);
+    persistColl(true);LS.set('pf_snapshots',snapshots);LS.set('pf_deleted',deleted);
     const{error:e2}=await sb.from('user_data').upsert({user_id:user.id,data:{v:1,collection,snapshots,del:deleted},updated_at:new Date().toISOString()});
     if(e2)throw e2;
     settings.lastSync=Date.now();saveSettings();setSync('ok');
@@ -1362,7 +1405,7 @@ async function openAccount(){
     m.querySelector('#aOut').onclick=()=>{
       const m2=openModal(`<div class="mpad"><p style="margin:10px 30px 18px 0">${t('logout_q')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button class="btn" id="oKeep">${t('logout_keep')}</button><button class="btn danger" id="oWipe">${t('logout_wipe')}</button></div></div>`,'sm');
-      const out=async wipe=>{await syncNow();await sb.auth.signOut();if(wipe){collection=[];snapshots=[];deleted={};LS.set('pf_collection',[]);LS.set('pf_snapshots',[]);LS.set('pf_deleted',{})}closeModal();toast(t('logged_out'));render()};
+      const out=async wipe=>{await syncNow();await sb.auth.signOut();if(wipe){collection=[];snapshots=[];deleted={};persistColl(true);LS.set('pf_snapshots',[]);LS.set('pf_deleted',{})}closeModal();toast(t('logged_out'));render()};
       m2.querySelector('#oKeep').onclick=()=>out(false);m2.querySelector('#oWipe').onclick=()=>out(true);
     };
     return;
@@ -1470,7 +1513,7 @@ document.getElementById('privBtn').onclick=()=>setPriv(!settings.hidePrices);
 document.getElementById('themeBtn').onclick=()=>{settings.theme=settings.theme==='dark'?'light':'dark';saveSettings();render()};
 function setLang(l){settings.lang=l;saveSettings();for(const L of ['fr','en','ja'])if(idx[L])applySetNames(L,idx[L]);syncEntrySetNames();search.page=1;render()}
 // keep the set names stored in the collection in line with the display names (French for English/Japanese cards)
-function syncEntrySetNames(){let ch=false;for(const e of collection){if(gameOf(e)!=='pk')continue;const nm=idx[e.lang]?.sets[e.setId]?.n;if(nm&&nm!==e.setName){e.setName=nm;ch=true}}if(ch)LS.set('pf_collection',collection);return ch}
+function syncEntrySetNames(){let ch=false;for(const e of collection){if(gameOf(e)!=='pk')continue;const nm=idx[e.lang]?.sets[e.setId]?.n;if(nm&&nm!==e.setName){e.setName=nm;ch=true}}if(ch)persistColl();return ch}
 
 let charts=[];
 function render(){
@@ -3233,9 +3276,10 @@ function openManualForm(pref={}){
 }
 // at start-up (during the splash): load the card database of the search language, so Ajouter opens instantly,
 // and of the manual cards' languages, to check them against it
-setTimeout(()=>{const L=new Set([settings.cardLang,...manualCards().map(e=>e.lang)]);L.forEach(l=>loadIndex(l).then(()=>{if(manualCards().some(e=>e.lang===l)&&matchManual(l))render()}).catch(()=>{}))},300);
+setTimeout(()=>collReady.then(()=>{const L=new Set([settings.cardLang,...manualCards().map(e=>e.lang)]);L.forEach(l=>loadIndex(l).then(()=>{if(manualCards().some(e=>e.lang===l)&&matchManual(l))render()}).catch(()=>{}))}),300);
 
-route();
+// first screen once the collection is read from IndexedDB (a few ms, hidden by the intro)
+collReady.then(route);
 setTimeout(refreshFx,1500);   // dollar → euro rate of the day
 // splash: fade out once the first screen is drawn (kept at least 700 ms so it doesn't flash)
 // full intro (~2 s) unless the device asks for reduced motion; a tap or a key skips it
@@ -3256,7 +3300,7 @@ function openNews(){
   m.querySelector('#nwOk').onclick=()=>closeModal();
   m.querySelector('#nwTry').onclick=()=>{settings.game='op';saveSettings();closeModal();setTimeout(()=>{location.hash='#add';render()},60)};
 }
-setTimeout(()=>{if(SHARED_TOKEN)return;if(!LS.get('pf_tour',0)&&!collection.length&&!user){LS.set('pf_news',NEWS_ID);tourStart()}else{LS.set('pf_tour',1);if((+LS.get('pf_news',0)||0)<NEWS_ID&&!document.getElementById('ov'))openNews()}},1400);
+setTimeout(()=>collReady.then(()=>{if(SHARED_TOKEN)return;if(!LS.get('pf_tour',0)&&!collection.length&&!user){LS.set('pf_news',NEWS_ID);tourStart()}else{LS.set('pf_tour',1);if((+LS.get('pf_news',0)||0)<NEWS_ID&&!document.getElementById('ov'))openNews()}}),1400);
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 /* ============ updates: the app opens from the cache, so it checks itself whether a newer version is online ============
    - newer version → discreet bar « Update » (one tap reloads), checked at launch, on return to the foreground, every 6 h;
@@ -3303,7 +3347,7 @@ document.addEventListener('visibilitychange',async()=>{
 });
 setTimeout(()=>checkUpdate(true),8000);setInterval(()=>checkUpdate(true),6*3600*1000);
 loadIndex(settings.cardLang).then(()=>{if(syncEntrySetNames()&&!document.querySelector('.ov'))render()}).catch(()=>{});
-if(collection.length&&Date.now()-settings.lastRefresh>AUTO_REFRESH)refreshPrices(true);
+collReady.then(()=>{if(collection.length&&Date.now()-settings.lastRefresh>AUTO_REFRESH)refreshPrices(true)});
 </script>
 </body>
 </html>
