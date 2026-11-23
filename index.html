@@ -701,7 +701,7 @@ addEventListener('error',e=>{if(e.message)logErr(e.message,(e.filename||'').spli
 addEventListener('unhandledrejection',e=>{const r=e.reason;logErr('promise: '+(r&&(r.message||r.name)||r),r&&r.stack&&String(r.stack).split('\n').slice(0,3).join(' | '))});
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.23-129';
+const APP_VERSION = '2026.11.23-130';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
@@ -842,7 +842,27 @@ const LS = {
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Storage error')}}
 };
 const settings = Object.assign({lang:'fr',cardLang:'fr',theme:'dark',lastRefresh:0,sort:'value'}, LS.get('pf_settings',{}));
-let collection = LS.get('pf_collection',[]);   // quick copy (mirror); the real store is IndexedDB, see « collection storage » below
+// Entries can come from a backup file, another device (sync), the local copy or an older version. Identifiers and codes are
+// forced to safe values here, so that a crafted file can never inject markup through them (names and free texts are
+// escaped wherever they are shown). Applied when the collection is read, restored or merged.
+const MY_SRCS=['ebay','vinted','cm','shop','other'];
+const safeId=v=>String(v??'').replace(/[<>"'`&\\\s]/g,'').slice(0,120);
+function cleanEntry(e){
+  if(!e||typeof e!=='object'||Array.isArray(e))return null;
+  e.uid=/^[\w-]{1,64}$/.test(String(e.uid??''))?String(e.uid):uidGen();
+  for(const k of ['cardId','setId','localId','variant','cond','image','official'])if(e[k]!=null)e[k]=safeId(e[k]);
+  if(!e.cardId)return null;
+  e.lang=['fr','en','ja'].includes(e.lang)?e.lang:'en';
+  e.status=e.status==='wish'?'wish':'owned';
+  e.qty=Math.min(9999,Math.max(1,parseInt(e.qty)||1));
+  for(const k of ['name','setName','rarity','notes','artist'])if(e[k]!=null&&typeof e[k]!=='string')e[k]=String(e[k]);
+  if(e.myPrice&&typeof e.myPrice==='object'){if(!MY_SRCS.includes(e.myPrice.src))e.myPrice.src='other';e.myPrice.v=+e.myPrice.v||0;e.myPrice.est=+e.myPrice.est||0}else delete e.myPrice;
+  if(e.buy!=null)e.buy=+e.buy||0;
+  return e;
+}
+const cleanList=l=>Array.isArray(l)?l.map(cleanEntry).filter(Boolean):[];
+function uidGen(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36)}
+let collection = cleanList(LS.get('pf_collection',[]));   // quick copy (mirror); the real store is IndexedDB, see « collection storage » below
 let snapshots = LS.get('pf_snapshots',[]);
 const saveSettings=()=>LS.set('pf_settings',settings);
 let deleted = LS.get('pf_deleted',{});
@@ -902,7 +922,7 @@ async function loadCollStore(){
     const lsForeign=raw!==null&&(!meta||meta.len!==raw.length);          // written by an older version / by hand
     const lsNewer=raw!==null&&meta&&rec&&meta.ts>rec.ts;                   // IndexedDB write did not finish last time
     if(collTimedOut)return;   // too late: the session already runs on the local copy
-    if(rec&&Array.isArray(rec.data)&&!lsForeign&&!lsNewer){if(rec.ts!==meta?.ts||raw===null)collection=rec.data;collTs=rec.ts;localStorage.setItem('pf_coll_idb','1');return}
+    if(rec&&Array.isArray(rec.data)&&!lsForeign&&!lsNewer){if(rec.ts!==meta?.ts||raw===null)collection=cleanList(rec.data);collTs=rec.ts;localStorage.setItem('pf_coll_idb','1');return}
     if(raw===null&&!rec)return;                                            // nothing stored yet
     // first launch with IndexedDB (or the copy is newer): move the localStorage copy over, then read it back to check it
     const ts=collTs=Math.max(Date.now(),(rec?.ts||0)+1);
@@ -1407,7 +1427,7 @@ async function syncNow(first){
     const{data,error}=await sb.from('user_data').select('data').eq('user_id',user.id).maybeSingle();
     if(error)throw error;
     const merged=mergeData({collection,snapshots,del:deleted},data?.data||{});
-    collection=merged.collection;snapshots=merged.snapshots;deleted=merged.del;
+    collection=cleanList(merged.collection);snapshots=merged.snapshots;deleted=merged.del;
     persistColl(true);LS.set('pf_snapshots',snapshots);LS.set('pf_deleted',deleted);
     const{error:e2}=await sb.from('user_data').upsert({user_id:user.id,data:{v:1,collection,snapshots,del:deleted},updated_at:new Date().toISOString()});
     if(e2)throw e2;
@@ -1799,9 +1819,13 @@ async function viewShared(m,local){
   if(local)box.insertAdjacentHTML('beforebegin',`<div class="man-ban"><span>👁 ${t('share_prev_ban')}</span><a class="btn btn-sm" href="#wishlist" id="shPrevBack">${t('share_prev_back')}</a></div>`);
   const pb=m.querySelector('#shPrevBack');if(pb)pb.onclick=ev=>{ev.preventDefault();location.hash='#wishlist';render()};
   if(!res){box.innerHTML=`<h1>${t('shared_t')}</h1><p class="muted">${t('shared_gone')}</p><a class="btn primary" href="${esc(APP_URL)}">${t('shared_cta')}</a>`;return}
-  const cards=res.cards||[],n=cards.reduce((a,c)=>a+(c.q||1),0),tot=res.prices?cards.reduce((a,c)=>a+(c.v||0)*(c.q||1),0):0;
+  // the shared data was written by someone else: numbers forced to numbers, codes to safe values, pictures to known hosts
+  const IMG_OK=/^https:\/\/(assets\.tcgdex\.net|cards\.scryfall\.io|images\.scrydex\.com|optcgapi\.com|www\.optcgapi\.com|en\.onepiece-cardgame\.com)\//;
+  const cards=(Array.isArray(res.cards)?res.cards:[]).filter(c=>c&&typeof c==='object').map(c=>({q:Math.min(9999,Math.max(1,parseInt(c.q)||1)),v:Number.isFinite(+c.v)&&c.v!=null&&c.v!==''?+c.v:null,
+    g:['fr','en','ja'].includes(c.g)?c.g:'',i:typeof c.i==='string'&&IMG_OK.test(c.i)?safeId(c.i):'',sid:safeId(c.sid),l:safeId(c.l),o:safeId(c.o),n:String(c.n??''),s:String(c.s??''),p:!!c.p}));
+  const n=cards.reduce((a,c)=>a+c.q,0),tot=res.prices?cards.reduce((a,c)=>a+(c.v||0)*c.q,0):0;
   box.innerHTML=`<h1>${t('shared_t')}</h1>
-    <p class="muted" style="margin:-6px 0 14px">${t('wish_count',{n})}${res.prices&&tot&&!settings.hidePrices?` · ${t('shared_budget')} <b style="color:var(--text)">${fmtEur(tot)}</b>`:''}${res.updated?` · ${t('shared_upd',{d:fmtDate(res.updated)})}`:''}</p>
+    <p class="muted" style="margin:-6px 0 14px">${t('wish_count',{n})}${res.prices&&tot&&!settings.hidePrices?` · ${t('shared_budget')} <b style="color:var(--text)">${fmtEur(tot)}</b>`:''}${res.updated?` · ${t('shared_upd',{d:esc(fmtDate(res.updated))})}`:''}</p>
     <div class="grid">${cards.map(c=>`<div class="tile"><span class="lbadge">${FLAGS[c.g]||''}</span>${c.q>1?`<span class="badge">${c.q}</span>`:''}
       <div class="img">${imgTag(c.i,c.sid,c.l,c.n,'low','',c.g)}</div>
       <div class="nm">${c.p?'<span class="prio on">★</span>':''}${esc(c.n)}</div>
@@ -3176,7 +3200,7 @@ function viewData(m){
       if(!Array.isArray(list)||list.some(e=>!e.cardId||!e.name))throw 0;
       if(collection.length&&!(await confirmBox(t('import_confirm',{a:collection.length,b:list.length}))))return;
       const now=Date.now();collection.forEach(x=>{deleted[x.uid]=now});LS.set('pf_deleted',deleted);
-      collection=list.map(e=>Object.assign({uid:uid(),qty:1,status:'owned',variant:'normal',cond:'NM',lang:'fr',added:Date.now(),hist:[]},e,{upd:now+1}));
+      collection=cleanList(list.map(e=>Object.assign({uid:uid(),qty:1,status:'owned',variant:'normal',cond:'NM',lang:'fr',added:Date.now(),hist:[]},e,{upd:now+1})));
       if(Array.isArray(data.snapshots))snapshots=data.snapshots;
       LS.set('pf_snapshots',snapshots);saveCollection();toast(t('import_ok',{n:collection.length}));render();
     }catch(e){toast(t('import_bad'))}
