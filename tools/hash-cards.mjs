@@ -45,7 +45,13 @@ async function main() {
     if (!dl) throw new Error('no download link, keys: ' + Object.keys(meta).join(','));
     // the bulk file comes gzipped without a Content-Encoding header: unpack it ourselves
     const raw = Buffer.from(await (await fetch(dl, { headers: { 'User-Agent': 'Gleamvault-hashes/1.0 (github.com/AJ2chart/pokefolio)' } })).arrayBuffer());
-    const cards = JSON.parse((raw[0] === 0x1f && raw[1] === 0x8b ? zlib.gunzipSync(raw) : raw).toString('utf8'));
+    const text = (raw[0] === 0x1f && raw[1] === 0x8b ? zlib.gunzipSync(raw) : raw).toString('utf8');
+    let cards;
+    try { cards = JSON.parse(text) }
+    catch (e) {   // one card per line (JSON lines), with or without the surrounding [ ] and trailing commas
+      cards = text.split('\n').map(l => l.trim().replace(/^\[/, '').replace(/[,\]]+$/, '')).filter(l => l.startsWith('{')).map(l => { try { return JSON.parse(l) } catch (_) { return null } }).filter(Boolean);
+      if (!cards.length) throw new Error('bulk file unreadable: ' + e.message + ' / starts with ' + JSON.stringify(text.slice(0, 80)));
+    }
     const SKIP = new Set(['art_series', 'token', 'double_faced_token', 'emblem', 'vanguard', 'planar', 'scheme', 'reversible_card']);
     const list = cards.filter(c => (c.games || []).includes('paper') && !SKIP.has(c.layout) && !c.digital)
       .map(c => ({ id: c.id, url: (c.image_uris || c.card_faces?.[0]?.image_uris || {}).small || '' }));
