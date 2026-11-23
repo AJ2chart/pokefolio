@@ -3,6 +3,7 @@
 // and writes them to hashes/*.json, used by the app's scan. Run daily by .github/workflows/hashes.yml.
 // Incremental: cards already fingerprinted are kept; a run stops after TIME_BUDGET and the next one continues.
 import fs from 'fs';
+import zlib from 'zlib';
 import sharp from 'sharp';
 import { toGray, fingerprint } from './phash.mjs';
 
@@ -42,7 +43,9 @@ async function main() {
     const meta = await getJSON('https://api.scryfall.com/bulk-data/unique_artwork');
     const dl = meta.download_uri || meta.download_url || Object.entries(meta).find(([k, v]) => /download/i.test(k) && typeof v === 'string')?.[1];
     if (!dl) throw new Error('no download link, keys: ' + Object.keys(meta).join(','));
-    const cards = await getJSON(dl);
+    // the bulk file comes gzipped without a Content-Encoding header: unpack it ourselves
+    const raw = Buffer.from(await (await fetch(dl, { headers: { 'User-Agent': 'Gleamvault-hashes/1.0 (github.com/AJ2chart/pokefolio)' } })).arrayBuffer());
+    const cards = JSON.parse((raw[0] === 0x1f && raw[1] === 0x8b ? zlib.gunzipSync(raw) : raw).toString('utf8'));
     const SKIP = new Set(['art_series', 'token', 'double_faced_token', 'emblem', 'vanguard', 'planar', 'scheme', 'reversible_card']);
     const list = cards.filter(c => (c.games || []).includes('paper') && !SKIP.has(c.layout) && !c.digital)
       .map(c => ({ id: c.id, url: (c.image_uris || c.card_faces?.[0]?.image_uris || {}).small || '' }));
