@@ -2,9 +2,9 @@
 // The page opens at once from the cache and is refreshed in the background: an update shows on the next launch
 // (the network was awaited at every launch before, several seconds on a poor connection). First launch: network.
 // The libraries and font served by CDNs are kept too, so the app works offline and does not wait for them.
-const CACHE = 'gleamvault-v7';
+const CACHE = 'gleamvault-v8';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
-const LIBS = /^https:\/\/(cdn\.jsdelivr\.net\/npm\/(@supabase\/supabase-js@2|tesseract\.js@5\/dist\/tesseract\.min\.js)|cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/|fonts\.googleapis\.com\/css2|fonts\.gstatic\.com\/)/;
+const LIBS = /^https:\/\/(cdn\.jsdelivr\.net\/npm\/(@supabase\/supabase-js@2[\d.]*\/|tesseract\.js@5[\d.]*\/dist\/tesseract\.min\.js)|cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/|fonts\.googleapis\.com\/css2|fonts\.gstatic\.com\/)/;
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
