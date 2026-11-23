@@ -1,5 +1,5 @@
 {
- "started": "2026-11-23T07:15:50.579Z",
+ "started": "2026-11-23T07:29:20.787Z",
  "sets": {
   "pk-fr": {
    "cards": 22342,
@@ -8,11 +8,11 @@
    "added": 0,
    "errors": 16,
    "sampleErrors": [
-    "pl3-26: HTTP 404",
     "base3-32: HTTP 404",
-    "base3-1: HTTP 404",
-    "sv02-108: HTTP 404",
-    "base5-63: HTTP 404"
+    "ecard1-16: HTTP 404",
+    "base5-63: HTTP 404",
+    "pl3-26: HTTP 404",
+    "xy1-125: HTTP 404"
    ],
    "after": 18470,
    "remaining": 0,
@@ -25,11 +25,11 @@
    "added": 0,
    "errors": 11,
    "sampleErrors": [
-    "30th-B: HTTP 404",
+    "dc1-1: HTTP 404",
+    "swsh6-181: HTTP 404",
     "A1-175: HTTP 404",
-    "30th-R: HTTP 404",
-    "ex7-88: HTTP 404",
-    "sm3-165: HTTP 404"
+    "30th-G: HTTP 404",
+    "xy10-79: HTTP 404"
    ],
    "after": 22120,
    "remaining": 0,
@@ -43,9 +43,9 @@
    "errors": 4,
    "sampleErrors": [
     "SV1a-043: HTTP 404",
+    "S9a-062: HTTP 404",
     "SV1V-072: HTTP 404",
-    "S12a-055: HTTP 404",
-    "S9a-062: HTTP 404"
+    "S12a-055: HTTP 404"
    ],
    "after": 3878,
    "remaining": 0,
@@ -63,7 +63,7 @@
    "updated": "2026-11-22T17:27:50.958Z"
   },
   "mg": {
-   "error": "Failed to parse URL from undefined"
+   "error": "no download_uri: {\"object\":\"bulk_data\",\"id\":\"6bbcf976-6369-4401-88fc-3a9e4984c305\",\"type\":\"unique_artwork\",\"updated_at\":\"2026-11-22T22:03:06.593+00:00\",\"uri\":\"https://api.scryfall.com/bulk-data/6bbcf976-6369-4401-88fc"
   }
  },
  "minutes": 0
