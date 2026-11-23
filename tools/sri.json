@@ -1,0 +1,21 @@
+{
+ "generated": "2026-11-23T21:43:38.752Z",
+ "supabase": {
+  "version": "2.119.2",
+  "url": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js",
+  "integrity": "sha384-A97u3Qnt9GZHURO9YJZRe7VQgGUeFzcv6I1oIGnUTxQrCxnpQMwR0/G8F2zt9abZ",
+  "bytes": 221417
+ },
+ "tesseract": {
+  "version": "5.1.1",
+  "url": "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js",
+  "integrity": "sha384-GJqSu7vueQ9qN0E9yLPb3Wtpd7OrgK8KmYzC8T1IysG1bcvxvIO4qtYR/D3A991F",
+  "bytes": 66695
+ },
+ "chart": {
+  "version": "4.4.1",
+  "url": "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js",
+  "integrity": "sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD",
+  "bytes": 200807
+ }
+}
