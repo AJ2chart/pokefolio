@@ -485,7 +485,8 @@ select:hover{border-color:color-mix(in srgb,var(--line) 50%,var(--muted))}select
 .bigsearch{font-size:17px;padding:13px 16px}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
 .seg button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--muted);display:flex;gap:6px;align-items:center;white-space:nowrap;justify-content:center}
-.seg svg,.sh-flag svg,.lbadge::after,.lflag::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);pointer-events:none}[data-theme=light] .lbadge::after,[data-theme=light] .lflag::after{box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+.seg svg,.sh-flag svg{box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.lbadge::after,.lflag::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);pointer-events:none}[data-theme=light] .lbadge::after,[data-theme=light] .lflag::after{box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
 .seg button.on{background:var(--card2);color:var(--text)}
 .seg svg{width:17px;height:12px;border-radius:2px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
@@ -707,7 +708,7 @@ addEventListener('error',e=>{if(e.message)logErr(e.message,(e.filename||'').spli
 addEventListener('unhandledrejection',e=>{const r=e.reason;logErr('promise: '+(r&&(r.message||r.name)||r),r&&r.stack&&String(r.stack).split('\n').slice(0,3).join(' | '))});
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.23-131';
+const APP_VERSION = '2026.11.23-132';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
