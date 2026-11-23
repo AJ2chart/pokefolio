@@ -92,7 +92,7 @@ html[data-priv] .money,html[data-priv] .tile .row,html[data-priv] .alerts{displa
 .sumbar.sb-b .sb-chk-l{display:inline!important}
 }
 .sumbar .sb-go{margin-left:auto;display:inline-flex;align-items:center;gap:2px;color:var(--muted);font-size:13px;white-space:nowrap}
-.lflag{display:inline-block;width:16px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:2px;overflow:hidden}.lflag svg{width:100%;height:100%;display:block}
+.lflag{display:inline-block;position:relative;width:16px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:2px;overflow:hidden}.lflag svg{width:100%;height:100%;display:block}
 #ptr{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top));z-index:25;transform:translate(-50%,-60px);opacity:0;display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;box-shadow:var(--shadow);pointer-events:none;transition:opacity .15s;white-space:nowrap}
 #ptr .ptr-ic{display:inline-block;transition:transform .15s;color:var(--accent-ink);font-weight:700}
 #ptr.busy{opacity:1;transition:transform .2s}
@@ -481,7 +481,7 @@ select:hover{border-color:color-mix(in srgb,var(--line) 50%,var(--muted))}select
 .bigsearch{font-size:17px;padding:13px 16px}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
 .seg button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--muted);display:flex;gap:6px;align-items:center;white-space:nowrap;justify-content:center}
-.seg svg,.sh-flag svg,.lbadge svg,.lflag svg{box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.seg svg,.sh-flag svg,.lbadge::after,.lflag::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);pointer-events:none}[data-theme=light] .lbadge::after,[data-theme=light] .lflag::after{box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
 .seg button.on{background:var(--card2);color:var(--text)}
 .seg svg{width:17px;height:12px;border-radius:2px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
@@ -696,7 +696,7 @@ canvas{max-width:100%}
 'use strict';
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.23-127';
+const APP_VERSION = '2026.11.23-128';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
@@ -708,9 +708,9 @@ const saveData=()=>!!(navigator.connection&&navigator.connection.saveData);
 const INDEX_MAX_AGE=7*864e5;   // the card list is downloaded again at least once a week, and sooner if the sets changed
 const LANG_NAMES={fr:'Français',en:'English',ja:'日本語'};
 const FLAGS = {
-  fr:'<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ed2939"/></svg>',
-  ja:'<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".6" fill="#bc002d"/></svg>',
-  en:'<svg viewBox="0 0 60 30"><clipPath id="uk"><path d="M0 0v30h60V0z"/></clipPath><clipPath id="uk2"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#uk)"><path d="M0 0v30h60V0z" fill="#012169"/><path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30m0-30L0 30" clip-path="url(#uk2)" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg>'
+  fr:'<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ed2939"/></svg>',
+  ja:'<svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".6" fill="#bc002d"/></svg>',
+  en:'<svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2.4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>'
 };
 const CONDITIONS = ['MT','NM','EX','GD','LP','PL','PO'];
 const VARIANTS = ['normal','reverse','holo','firstEdition','foil'];
