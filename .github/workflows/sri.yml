@@ -1,0 +1,25 @@
+# Computes exact versions + integrity hashes of the CDN libraries (tools/sri.mjs → tools/sri.json). Runs when the script
+# changes or by hand; the app's code is then updated with these values (by Claude, after review).
+name: Empreintes des bibliothèques
+on:
+  push:
+    paths: ['tools/sri.mjs']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sri:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node tools/sri.mjs
+      - name: Enregistrer
+        run: |
+          git config user.name "gleamvault-bot"; git config user.email "bot@users.noreply.github.com"
+          git add tools/sri.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Empreintes des bibliothèques (automatique)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done; exit 1
