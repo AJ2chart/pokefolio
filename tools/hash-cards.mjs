@@ -39,7 +39,8 @@ async function main() {
   catch (e) { status.sets.op = { error: String(e.message || e) } }
   // Magic: Scryfall bulk file « unique artwork » (one card per illustration), paper cards only, small pictures (146×204)
   try {
-    const meta = await getJSON('https://api.scryfall.com/bulk-data/unique-artwork');
+    const meta = await getJSON('https://api.scryfall.com/bulk-data/unique_artwork');
+    if (!meta.download_uri) throw new Error('no download_uri: ' + JSON.stringify(meta).slice(0, 200));
     const cards = await getJSON(meta.download_uri);
     const SKIP = new Set(['art_series', 'token', 'double_faced_token', 'emblem', 'vanguard', 'planar', 'scheme', 'reversible_card']);
     const list = cards.filter(c => (c.games || []).includes('paper') && !SKIP.has(c.layout) && !c.digital)
