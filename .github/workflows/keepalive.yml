@@ -1,0 +1,32 @@
+# Keeps the free Supabase project awake: it is paused after 7 days without activity (sign-in and sync then stop until it is
+# restarted by hand). Two harmless read requests a day with the PUBLIC key already in index.html (never the secret key):
+# a read of shared_wishlists (empty for an anonymous visitor because of RLS) and the share function with a token that
+# cannot exist. Both reach the database, which is what counts as activity.
+name: Supabase éveillé
+on:
+  schedule:
+    - cron: '41 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Requêtes de maintien
+        env:
+          SB_URL: https://ufowenlhdsaezyshhwgz.supabase.co
+          SB_KEY: sb_publishable_jABVuv0ZIqBTt9GLTxnTVg_imtAaAqk
+        run: |
+          set -u
+          ok=0
+          for i in 1 2 3; do
+            a=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $SB_KEY" -H "Authorization: Bearer $SB_KEY" "$SB_URL/rest/v1/shared_wishlists?select=user_id&limit=1")
+            b=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "apikey: $SB_KEY" -H "Authorization: Bearer $SB_KEY" -H 'Content-Type: application/json' -d '{"p_token":"keepalive-0000000000000000000000"}' "$SB_URL/rest/v1/rpc/get_shared_wishlist")
+            echo "lecture: $a  fonction: $b"
+            if [ "${a#2}" != "$a" ] || [ "${b#2}" != "$b" ]; then ok=1; break; fi
+            sleep 20
+          done
+          # a paused or broken project answers 5xx/timeouts: fail so GitHub e-mails the owner
+          [ "$ok" = 1 ] || { echo "Supabase ne répond pas : vérifier le projet dans le tableau de bord"; exit 1; }
