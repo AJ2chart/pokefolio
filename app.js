@@ -712,12 +712,19 @@ function imgCandidates(base,setId,localId,q,lang=''){
 }
 const noImg=new Set(LS.get('pf_noimg',[]).filter(x=>typeof x==='string'));let noImgT=null;
 const noImgSave=()=>{clearTimeout(noImgT);noImgT=setTimeout(()=>LS.set('pf_noimg',[...noImg].slice(-2000)),400)};
-window.pfImgLoad=el=>{const w=el.naturalWidth,h=el.naturalHeight;if(el.src.includes('scrydex')&&((w===367&&h===511)||(w===640&&h===892)||(w===245&&h===341))){pfImgErr(el);return}if(el.dataset.k&&noImg.delete(el.dataset.k))noImgSave()};
-window.pfImgErr=el=>{const c=(el.dataset.c||'').split('|').filter(Boolean);if(c.length){el.dataset.c=c.slice(1).join('|');el.src=c[0]}else{if(el.dataset.k&&!noImg.has(el.dataset.k)){noImg.add(el.dataset.k);noImgSave()}const d=document.createElement('div');d.className='noimg';d.textContent=el.alt;el.replaceWith(d)}};
+// picture source that worked, per card and size: tried first next time, so a card whose picture comes from a backup source
+// does not show an empty box (failed first source) each time its screen is redrawn
+const imgOk=new Map(Object.entries(LS.get('pf_imgok',{})).filter(([k,v])=>typeof v==='string'));let imgOkT=null;
+const imgOkSave=()=>{clearTimeout(imgOkT);imgOkT=setTimeout(()=>LS.set('pf_imgok',Object.fromEntries([...imgOk].slice(-3000))),600)};
+window.pfImgLoad=el=>{const w=el.naturalWidth,h=el.naturalHeight;if(el.src.includes('scrydex')&&((w===367&&h===511)||(w===640&&h===892)||(w===245&&h===341))){if(el.dataset.ok&&imgOk.delete(el.dataset.ok))imgOkSave();pfImgErr(el);return}if(el.dataset.k&&noImg.delete(el.dataset.k))noImgSave();
+  if(el.dataset.ok&&imgOk.get(el.dataset.ok)!==el.src){imgOk.set(el.dataset.ok,el.src);imgOkSave()}};
+window.pfImgErr=el=>{if(el.dataset.ok&&imgOk.get(el.dataset.ok)===el.src){imgOk.delete(el.dataset.ok);imgOkSave()}   // remembered source no longer works
+  const c=(el.dataset.c||'').split('|').filter(Boolean);if(c.length){el.dataset.c=c.slice(1).join('|');el.src=c[0]}else{if(el.dataset.k&&!noImg.has(el.dataset.k)){noImg.add(el.dataset.k);noImgSave()}const d=document.createElement('div');d.className='noimg';d.textContent=el.alt;el.replaceWith(d)}};
 function imgTag(base,setId,localId,alt,q='low',cls='',lang=''){
-  const c=imgCandidates(base,setId,localId,q,lang),k=lang&&setId&&localId?`${lang}|${setId}|${localId}`:'';
+  let c=imgCandidates(base,setId,localId,q,lang);const k=lang&&setId&&localId?`${lang}|${setId}|${localId}`:'',ok=k?`${k}|${q}`:'';
   if(!c.length){if(k&&!noImg.has(k)){noImg.add(k);noImgSave()}return `<div class="noimg">${esc(alt)}</div>`}
-  return `<img ${cls?`class="${cls}"`:''} loading="lazy" src="${esc(c[0])}" data-c="${esc(c.slice(1).join('|'))}"${k?` data-k="${esc(k)}"`:''} alt="${esc(alt)}" data-err="pf">`;
+  const good=ok&&imgOk.get(ok);if(good&&c.includes(good))c=[good,...c.filter(x=>x!==good)];   // only reorders our own sources
+  return `<img ${cls?`class="${cls}"`:''} loading="lazy" src="${esc(c[0])}" data-c="${esc(c.slice(1).join('|'))}"${k?` data-k="${esc(k)}" data-ok="${esc(ok)}"`:''} alt="${esc(alt)}" data-err="pf">`;
 }
 const gradeStr=e=>e?.grade?.co?`${e.grade.co} ${e.grade.g}`:'';
 // number as printed on the card, for marketplace searches: letter cards (Mew R/G/B → "R/RGB"),
