@@ -84,7 +84,7 @@ fr:{
  scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
  scan_found:'Carte lue : « {q} » ({n} résultats), choisis la bonne.',
  scan_retry:'Carte full art ? Nouvelle tentative de lecture du numéro…',scan_again:'Reprendre une photo',
- account:'Compte',password_plain:'Mot de passe',pwd_confirm:'Confirme le mot de passe',signup_go:'Créer mon compte',no_account:'Pas encore de compte ?',have_account:'Déjà un compte ?',err_pwd_match:'Les deux mots de passe ne sont pas identiques.',auth_login:'Connexion en cours…',auth_signup:'Création du compte en cours…',err_timeout:'Le serveur ne répond pas. Vérifie ta connexion et réessaie dans un instant.',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
+ account:'Compte',password_plain:'Mot de passe',pwd_confirm:'Confirme le mot de passe',signup_go:'Créer mon compte',no_account:'Pas encore de compte ?',have_account:'Déjà un compte ?',err_pwd_match:'Les deux mots de passe ne sont pas identiques.',auth_login:'Connexion en cours…',auth_signup:'Création du compte en cours…',auth_send:'Envoi en cours…',err_timeout:'Le serveur ne répond pas. Vérifie ta connexion et réessaie dans un instant.',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
  account_why:'Crée un compte gratuit pour retrouver ta collection sur ton PC et ton téléphone. Sans compte, elle reste sur cet appareil.',
  check_mail:'Compte créé ! Clique sur le lien reçu par e-mail pour le confirmer, puis connecte-toi.',reset_sent:'E-mail envoyé : suis le lien pour choisir un nouveau mot de passe.',
  logged_in:'Connecté ! Synchronisation…',logged_out:'Déconnecté',sync_first:'Collection synchronisée ({n} entrées)',
@@ -134,7 +134,7 @@ en:{
  scan_fail:"I couldn't identify the card.",scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
  scan_found:'Card read: “{q}” ({n} results), pick the right one.',
  scan_retry:'Full-art card? Retrying to read the number…',scan_again:'Take another photo',
- account:'Account',password_plain:'Password',pwd_confirm:'Confirm the password',signup_go:'Create my account',no_account:'No account yet?',have_account:'Already have an account?',err_pwd_match:'The two passwords do not match.',auth_login:'Logging in…',auth_signup:'Creating your account…',err_timeout:'The server is not responding. Check your connection and try again in a moment.',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
+ account:'Account',password_plain:'Password',pwd_confirm:'Confirm the password',signup_go:'Create my account',no_account:'No account yet?',have_account:'Already have an account?',err_pwd_match:'The two passwords do not match.',auth_login:'Logging in…',auth_signup:'Creating your account…',auth_send:'Sending…',err_timeout:'The server is not responding. Check your connection and try again in a moment.',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
  account_why:'Create a free account to get your collection on both your computer and your phone. Without an account, it stays on this device.',
  check_mail:'Account created! Click the link in the email to confirm it, then log in.',reset_sent:'Email sent: follow the link to choose a new password.',
  logged_in:'Logged in! Syncing…',logged_out:'Logged out',sync_first:'Collection synced ({n} entries)',
@@ -952,23 +952,22 @@ function openForgot(prefill){
       <p id="fMsg" class="small" style="margin:0"></p>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('forgot_send')}</button><button class="btn" type="button" id="fBack">${t('back')}</button></div>
     </form></div>`,'sm auth');
-  const f=m.querySelector('#fForm'),msg=m.querySelector('#fMsg');
+  const f=m.querySelector('#fForm'),{say,run}=authForm(f,m.querySelector('#fMsg'));
   if(matchMedia('(hover: hover) and (pointer: fine)').matches)setTimeout(()=>f.email.focus(),30);
   m.querySelector('#fBack').onclick=()=>openLogin(f.email.value.trim());
-  f.onsubmit=async ev=>{ev.preventDefault();
-    if(!f.email.checkValidity()){msg.textContent=t('err_email');msg.style.color='var(--ko)';return}
-    const btn=f.querySelector('[type=submit]');btn.disabled=true;
-    const{error}=await sb.auth.resetPasswordForEmail(f.email.value.trim(),{redirectTo:APP_URL});
-    btn.disabled=false;msg.textContent=error?authErr(error):t('reset_sent');msg.style.color=error?'var(--ko)':'var(--ok)'};
+  // same safety as login / sign-up: waiting message, buttons locked, 20 s limit, an answer always shown (network failure included)
+  f.onsubmit=ev=>{ev.preventDefault();say('');
+    if(!f.email.checkValidity()){say(t('err_email'));return}
+    run('auth_send',async()=>{const{error}=await sb.auth.resetPasswordForEmail(f.email.value.trim(),{redirectTo:APP_URL});if(error)throw error;say(t('reset_sent'),true)})};
 }
 function openRecovery(){
   const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 10px 0">${t('new_pwd')}</h2><form class="form" id="rForm" style="grid-template-columns:1fr">
     <label>${t('password')}${pwdField('pwd','new-password')}</label>
     <p id="rMsg" class="small" style="margin:0;color:var(--ko)"></p><div><button class="btn primary" type="submit">${t('save')}</button></div></form></div>`,'sm auth');
   bindPwdToggles(m);
-  const f=m.querySelector('#rForm');
-  f.onsubmit=async ev=>{ev.preventDefault();if(f.pwd.value.length<PWD_MIN){m.querySelector('#rMsg').textContent=t('err_pwd_len');return}
-    const{error}=await sb.auth.updateUser({password:f.pwd.value});if(error)m.querySelector('#rMsg').textContent=authErr(error);else{closeModal();toast(t('saved'))}};
+  const f=m.querySelector('#rForm'),{say,run}=authForm(f,m.querySelector('#rMsg'));
+  f.onsubmit=ev=>{ev.preventDefault();say('');if(f.pwd.value.length<PWD_MIN){say(t('err_pwd_len'));return}
+    run('auth_send',async()=>{const{error}=await sb.auth.updateUser({password:f.pwd.value});if(error)throw error;closeModal();toast(t('saved'))})};
 }
 
 /* ============ routing & shell ============ */
