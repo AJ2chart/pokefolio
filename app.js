@@ -855,8 +855,8 @@ async function openAccount(){
     // account deletion (GDPR): typed confirmation, then the server removes the account and its data; cards stay on this device
     m.querySelector('#aDel').onclick=()=>{
       const m3=openModal(`<div class="mpad"><h2 style="margin:0 40px 8px 0">${t('del_acc')}</h2><p>${t('del_acc_d')}</p>
-        <label class="small muted" for="delWord">${t('del_acc_type',{w:t('del_acc_word')})}</label><input id="delWord" class="input" autocomplete="off" style="width:100%;margin:6px 0 14px">
-        <p class="small" id="delMsg" role="alert"></p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="delNo" type="button">${t('cancel')}</button><button class="btn danger" id="delYes" type="button" disabled>${t('del_acc_btn')}</button></div></div>`,'sm');
+        <label class="small muted" for="delWord">${t('del_acc_type',{w:t('del_acc_word')})}</label><input id="delWord" type="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" style="margin:6px 0 14px">
+        <p class="small" id="delMsg" role="alert"></p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="delNo" type="button">${t('cancel')}</button><button class="btn danger" id="delYes" type="button" disabled>${t('del_acc_btn')}</button></div></div>`,'sm auth');
       const w=m3.querySelector('#delWord'),yes=m3.querySelector('#delYes');
       w.oninput=()=>{yes.disabled=w.value.trim().toUpperCase()!==t('del_acc_word').toUpperCase()};
       m3.querySelector('#delNo').onclick=()=>closeModal();
@@ -1236,7 +1236,7 @@ async function openShareSheet(tab='img'){
       return}
     const url=shareUrl(row.token);
     body.innerHTML=`<p class="muted small" style="margin:0 0 8px">${t('share_live')}</p>
-      <div class="sh-url"><input readonly value="${esc(url)}" id="shUrl"><button class="btn btn-sm" id="shCopy">${t('copy')}</button></div>
+      <div class="sh-url"><input type="text" readonly value="${esc(url)}" id="shUrl"><button class="btn btn-sm" id="shCopy">${t('copy')}</button></div>
       ${navigator.share?`<button class="btn primary" id="shSend" style="width:100%;margin-top:10px">↗ ${t('share_send')}</button>`:''}
       ${settings.hidePrices?'':`<label class="s-line"><span>${t('share_prices')}</span><input type="checkbox" id="shPr" ${row.show_prices?'checked':''}></label>`}
       <button class="linkbtn neg" id="shOff" style="margin-top:12px">${t('share_off')}</button>`;
