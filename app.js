@@ -84,7 +84,7 @@ fr:{
  scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
  scan_found:'Carte lue : « {q} » ({n} résultats), choisis la bonne.',
  scan_retry:'Carte full art ? Nouvelle tentative de lecture du numéro…',scan_again:'Reprendre une photo',
- account:'Compte',auth_login:'Connexion en cours…',auth_signup:'Création du compte en cours…',err_timeout:'Le serveur ne répond pas. Vérifie ta connexion et réessaie dans un instant.',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
+ account:'Compte',password_plain:'Mot de passe',pwd_confirm:'Confirme le mot de passe',signup_go:'Créer mon compte',no_account:'Pas encore de compte ?',have_account:'Déjà un compte ?',err_pwd_match:'Les deux mots de passe ne sont pas identiques.',auth_login:'Connexion en cours…',auth_signup:'Création du compte en cours…',err_timeout:'Le serveur ne répond pas. Vérifie ta connexion et réessaie dans un instant.',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
  account_why:'Crée un compte gratuit pour retrouver ta collection sur ton PC et ton téléphone. Sans compte, elle reste sur cet appareil.',
  check_mail:'Compte créé ! Clique sur le lien reçu par e-mail pour le confirmer, puis connecte-toi.',reset_sent:'E-mail envoyé : suis le lien pour choisir un nouveau mot de passe.',
  logged_in:'Connecté ! Synchronisation…',logged_out:'Déconnecté',sync_first:'Collection synchronisée ({n} entrées)',
@@ -134,7 +134,7 @@ en:{
  scan_fail:"I couldn't identify the card.",scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
  scan_found:'Card read: “{q}” ({n} results), pick the right one.',
  scan_retry:'Full-art card? Retrying to read the number…',scan_again:'Take another photo',
- account:'Account',auth_login:'Logging in…',auth_signup:'Creating your account…',err_timeout:'The server is not responding. Check your connection and try again in a moment.',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
+ account:'Account',password_plain:'Password',pwd_confirm:'Confirm the password',signup_go:'Create my account',no_account:'No account yet?',have_account:'Already have an account?',err_pwd_match:'The two passwords do not match.',auth_login:'Logging in…',auth_signup:'Creating your account…',err_timeout:'The server is not responding. Check your connection and try again in a moment.',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
  account_why:'Create a free account to get your collection on both your computer and your phone. Without an account, it stays on this device.',
  check_mail:'Account created! Click the link in the email to confirm it, then log in.',reset_sent:'Email sent: follow the link to choose a new password.',
  logged_in:'Logged in! Syncing…',logged_out:'Logged out',sync_first:'Collection synced ({n} entries)',
@@ -874,38 +874,64 @@ async function openAccount(){
     };
     return;
   }
-  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('account')}</h2><p class="muted small">${t('account_why')}</p>
-    <form class="form" id="aForm" style="grid-template-columns:1fr">
-      <label>E-mail<input maxlength="254" type="email" name="email" required autocomplete="email"></label>
-      <label>${t('password')}${pwdField('pwd','current-password')}</label>
-      <p id="aMsg" class="small" style="margin:0"></p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('login')}</button><button class="btn" type="button" id="aUp">${t('signup')}</button></div>
-      <button class="btn" type="button" id="aForgot" style="border:0;background:none;text-decoration:underline;padding:4px 0;justify-self:start">${t('forgot')}</button>
-    </form></div>`,'sm');
-  bindPwdToggles(m);
-  const f=m.querySelector('#aForm'),msg=m.querySelector('#aMsg');
+  openLogin();
+}
+// shared by the login and sign-up forms: shows that an attempt is running, locks the buttons, always ends with a visible answer
+function authForm(f,msg){
   const say=(x,ok)=>{msg.textContent=x;msg.style.color=ok?'var(--ok)':'var(--ko)'};
-  // every attempt shows that it is running, locks the buttons, and always ends with a visible answer (error, timeout or success)
-  const btns=[...f.querySelectorAll('button')];
   const run=async(wait,fn)=>{
-    if(f.dataset.busy)return;f.dataset.busy='1';btns.forEach(b=>b.disabled=true);msg.style.color='';msg.textContent=t(wait);
+    if(f.dataset.busy)return;f.dataset.busy='1';const btns=[...f.querySelectorAll('button')];btns.forEach(b=>b.disabled=true);msg.style.color='';msg.textContent=t(wait);
     try{await Promise.race([fn(),new Promise((_,ko)=>setTimeout(()=>ko(new Error('timeout')),20000))])}
     catch(e){logErr('auth: '+(e?.message||e),'auth');say(/timeout/.test(String(e?.message))?t('err_timeout'):authErr(e))}
     finally{delete f.dataset.busy;btns.forEach(b=>b.disabled=false)}};
+  return{say,run};
+}
+// login only: a single main button, so a quick tap can never create an account by mistake; sign-up is its own form
+function openLogin(prefill){
+  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('login')}</h2><p class="muted small">${t('account_why')}</p>
+    <form class="form" id="aForm" style="grid-template-columns:1fr">
+      <label>E-mail<input maxlength="254" type="email" name="email" required autocomplete="email" value="${esc(prefill||'')}"></label>
+      <label>${t('password_plain')}${pwdField('pwd','current-password')}</label>
+      <p id="aMsg" class="small" style="margin:0"></p>
+      <div><button class="btn primary" type="submit">${t('login')}</button></div>
+      <button class="linkbtn" type="button" id="aForgot" style="justify-self:start">${t('forgot')}</button>
+      <p class="small" style="margin:8px 0 0;border-top:1px solid var(--line,rgba(127,127,127,.25));padding-top:12px">${t('no_account')} <button class="linkbtn" type="button" id="aGoUp">${t('signup')}</button></p>
+    </form></div>`,'sm');
+  bindPwdToggles(m);
+  const f=m.querySelector('#aForm'),{say,run}=authForm(f,m.querySelector('#aMsg'));
+  setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
   f.onsubmit=ev=>{ev.preventDefault();say('');
     if(!f.email.checkValidity()||!f.pwd.value){say(t('err_fields_login'));return}
     run('auth_login',async()=>{
       const{error}=await sb.auth.signInWithPassword({email:f.email.value.trim(),password:f.pwd.value});
       if(error)throw error;closeModal();toast(t('logged_in'))})};
-  m.querySelector('#aUp').onclick=()=>{say('');
+  m.querySelector('#aGoUp').onclick=()=>openSignup(f.email.value.trim());
+  m.querySelector('#aForgot').onclick=()=>openForgot(f.email.value.trim());
+}
+function openSignup(prefill){
+  const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('signup')}</h2><p class="muted small">${t('account_why')}</p>
+    <form class="form" id="uForm" style="grid-template-columns:1fr">
+      <label>E-mail<input maxlength="254" type="email" name="email" required autocomplete="email" value="${esc(prefill||'')}"></label>
+      <label>${t('password')}${pwdField('pwd','new-password')}</label>
+      <label>${t('pwd_confirm')}${pwdField('pwd2','new-password')}</label>
+      <p id="uMsg" class="small" style="margin:0"></p>
+      <div><button class="btn primary" type="submit">${t('signup_go')}</button></div>
+      <p class="small" style="margin:8px 0 0;border-top:1px solid var(--line,rgba(127,127,127,.25));padding-top:12px">${t('have_account')} <button class="linkbtn" type="button" id="uGoIn">${t('login')}</button></p>
+    </form></div>`,'sm');
+  bindPwdToggles(m);
+  const f=m.querySelector('#uForm'),{say,run}=authForm(f,m.querySelector('#uMsg'));
+  setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
+  f.onsubmit=ev=>{ev.preventDefault();say('');
     if(!f.email.checkValidity()||f.pwd.value.length<PWD_MIN){say(t('err_fields'));return}
+    if(f.pwd.value!==f.pwd2.value){say(t('err_pwd_match'));return}
     run('auth_signup',async()=>{
       const{data,error}=await sb.auth.signUp({email:f.email.value.trim(),password:f.pwd.value,options:{emailRedirectTo:APP_URL}});
       if(error)throw error;
       // address already used: Supabase answers « ok » without creating anything (no identity) so as not to reveal it
       if(data?.user&&Array.isArray(data.user.identities)&&!data.user.identities.length){say(t('err_exists'));return}
-      if(!data?.session)say(t('check_mail'),true);else{closeModal();toast(t('logged_in'))}})};
-  m.querySelector('#aForgot').onclick=()=>openForgot(f.email.value.trim());
+      if(data?.session){closeModal();toast(t('logged_in'));return}
+      f.querySelectorAll('input').forEach(i=>i.disabled=true);f.querySelector('[type=submit]').hidden=true;say(t('check_mail'),true)})};
+  m.querySelector('#uGoIn').onclick=()=>openLogin(f.email.value.trim());
 }
 const PWD_MIN=8;
 const EYE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -921,7 +947,7 @@ function openForgot(prefill){
     </form></div>`,'sm');
   const f=m.querySelector('#fForm'),msg=m.querySelector('#fMsg');
   setTimeout(()=>f.email.focus(),30);
-  m.querySelector('#fBack').onclick=()=>openAccount();
+  m.querySelector('#fBack').onclick=()=>openLogin(f.email.value.trim());
   f.onsubmit=async ev=>{ev.preventDefault();
     if(!f.email.checkValidity()){msg.textContent=t('err_email');msg.style.color='var(--ko)';return}
     const btn=f.querySelector('[type=submit]');btn.disabled=true;
