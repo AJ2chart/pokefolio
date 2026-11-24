@@ -708,7 +708,7 @@ addEventListener('error',e=>{if(e.message)logErr(e.message,(e.filename||'').spli
 addEventListener('unhandledrejection',e=>{const r=e.reason;logErr('promise: '+(r&&(r.message||r.name)||r),r&&r.stack&&String(r.stack).split('\n').slice(0,3).join(' | '))});
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.24-134';
+const APP_VERSION = '2026.11.24-135';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
@@ -968,7 +968,17 @@ const JA_SET_FR={SV1S:'Écarlate et Violet',SV1V:'Écarlate et Violet',SV2P:'Év
 function setLabel(lang,id,name){
   if(lang!=='ja')return name;
   const fr=JA_SET_FR[String(id||'').toUpperCase()];
-  return `${fr||(settings.lang==='en'?'Japanese set':'Extension japonaise')} · ${id}`;
+  // no clear French equivalent: the set's own (Japanese) name, more telling than a generic label repeated on every tile
+  const own=/-P$/i.test(id)?'Promos':(name&&name!==id?name:'');
+  return `${fr||own||(settings.lang==='en'?'Japanese set':'Extension japonaise')} · ${id}`;
+}
+// Japanese sets: the source's list is not in release order. Main sets follow their code (era, number, « a » = the subset that
+// comes after): SM < S < SV < M. Promos, decks and special codes have no place in the chronology: kept after, in the source's order.
+const JA_ERA={SM:1,S:2,SV:3,M:4};
+function jaOrder(id,i){
+  const m=/^(SV|SM|S|M)(\d+)([a-zA-Z]?)$/.exec(String(id||''));
+  if(!m)return -100000+i;
+  return JA_ERA[m[1]]*10000+(+m[2])*10+(/^a$/i.test(m[3])?5:0);
 }
 const idxSig=sets=>sets.length+':'+sets.reduce((a,x)=>a+(+x.cardCount?.total||0),0);
 async function loadIndex(lang,force){
@@ -1001,7 +1011,12 @@ async function loadIndex(lang,force){
 }
 // Display names of sets: French for English and Japanese cards when the app is in French (the original name stays searchable)
 function applySetNames(lang,data){
+  // number of cards of a set when the source gives no count (promos): counted in the index
+  const cnt={};for(const c of data.cards)cnt[c.s]=(cnt[c.s]||0)+1;
   for(const st of Object.values(data.sets)){
+    if(st.oi==null)st.oi=st.o;
+    if(lang==='ja')st.o=jaOrder(st.id,st.oi);
+    st.cnt=cnt[st.id]||0;
     st.n=lang==='ja'?setLabel(lang,st.id,st.src):(lang==='en'&&settings.lang==='fr'&&st.fr)?st.fr:st.src;
     st.alt=st.n===st.src?'':st.src;
   }
@@ -2591,7 +2606,7 @@ function renderAddHome(data,res,lang){
   const recent=rec.map(x=>byId.get(x.id)).filter(Boolean).slice(0,12);
   res.innerHTML=`<p class="muted small" style="margin:2px 0 14px">${lang==='ja'?`${t('ja_hint')} ${t('ja_note')}`:t('type_to_search')}</p>
     ${sets.length?`<h3 class="ah-t">${t('ah_sets')}</h3>`:''}
-    <div class="ah-sets">${sets.map(st=>`<button class="ah-set" data-set="${esc(st.id)}">${st.logo?`<span class="ah-logo"><img src="${esc(st.logo)}.webp" alt="" loading="lazy" onerror="this.parentNode.remove()"></span>`:''}${st.sym?`<img class="ah-sym" src="${esc(st.sym)}.webp" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(st.n)}</span>${st.off?`<small class="muted">${st.tot||st.off} ${t('ah_cards')}</small>`:''}</button>`).join('')}</div>
+    <div class="ah-sets">${sets.map(st=>`<button class="ah-set" data-set="${esc(st.id)}">${st.logo?`<span class="ah-logo"><img src="${esc(st.logo)}.webp" alt="" loading="lazy" onerror="this.parentNode.remove()"></span>`:''}${st.sym?`<img class="ah-sym" src="${esc(st.sym)}.webp" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(st.n)}</span>${(st.tot||st.off||st.cnt)?`<small class="muted">${st.tot||st.off||st.cnt} ${t('ah_cards')}</small>`:''}</button>`).join('')}</div>
     ${recent.length?`<h3 class="ah-t">${t('ah_recent')} <button class="linkbtn" id="ahClear">${t('ah_clear')}</button></h3><div class="grid">${recent.map(c=>resultTile({c,st:data.sets[c.s]},lang)).join('')}</div>`:''}`;
   bindTiles(res,lang);
   res.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{search.set=b.dataset.set;search.parked='';search.page=1;render()});
