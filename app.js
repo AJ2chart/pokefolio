@@ -980,9 +980,12 @@ let cgShown=0,cgObs=null;
 function route(){const prev=view;view=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'collection';if(prev!==view)cgShown=0;render();if(prev!==view){const mm=document.getElementById('main');if(mm)mm.scrollTop=0;window.scrollTo(0,0)}}
 window.addEventListener('hashchange',route);
 
+// phone status bar matches the top bar of the chosen theme (navy during the intro, set in the page)
+function syncThemeColor(){const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content=settings.theme==='light'?'#ffffff':'#0f1117'}
 function renderShell(){
   document.documentElement.lang=settings.lang;
   document.documentElement.dataset.theme=settings.theme;
+  if(!document.getElementById('splash'))syncThemeColor();
   document.documentElement.dataset.pill=settings.pill||'m';
   if(settings.hidePrices)document.documentElement.dataset.priv='1';else delete document.documentElement.dataset.priv;
   const labels={collection:'nav_collection',add:'nav_add',wishlist:'nav_wish',evolution:'nav_evo',data:'nav_data'};
@@ -2880,7 +2883,7 @@ setTimeout(refreshFx,1500);   // dollar → euro rate of the day
 // full intro (~2 s) unless the device asks for reduced motion; a tap or a key skips it
 {const t0=performance.timing?.navigationStart||Date.now(),sp=document.getElementById('splash');
  if(sp){const min=matchMedia('(prefers-reduced-motion: reduce)').matches?700:2250;let done=false;
-  const hide=()=>{if(done)return;done=true;sp.classList.add('out');{const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content='#0f1117'}setTimeout(()=>sp.remove(),600)};
+  const hide=()=>{if(done)return;done=true;sp.classList.add('out');syncThemeColor();setTimeout(()=>sp.remove(),600)};
   sp.addEventListener('pointerdown',hide);addEventListener('keydown',hide,{once:true});
   // after the intro, wait for the first sync of the account (at most 1 s more) so the collection shows up to date
   const minWait=new Promise(r=>setTimeout(r,Math.max(0,min-(Date.now()-t0))));
