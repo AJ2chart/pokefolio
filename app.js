@@ -81,9 +81,9 @@ fr:{
  sort_label:'Trier les résultats',ss_relevance:'Tri : pertinence',ss_num_desc:'Numéro décroissant (raretés d’abord)',ss_num_asc:'Numéro croissant',ss_newest:'Extensions récentes d’abord',ss_oldest:'Extensions anciennes d’abord',secret_only:'Cartes secrètes',secret:'Secrète',secret_hint:'Numéro au-delà du total officiel de l’extension (ex. 199/165) ou galerie spéciale : ce sont en général les raretés les plus recherchées.',credit_short:'Prix Cardmarket & TCGplayer via TCGdex, mis à jour chaque jour',credit_short_mg:'Prix Cardmarket & TCGplayer via TCGdex (Pokémon) et Scryfall (Magic), mis à jour chaque jour',credit_op:'One Piece : OPTCG API (prix TCGplayer convertis en euros au taux BCE du jour)',op_ph:'Nom ou numéro (OP09-118)',op_hint:'Tape un nom (ex. Luffy, Shanks), un surnom (ex. Barbe Blanche, Big Mom, Akainu) ou un numéro (ex. OP09-118, 118). Chaque version (parallèle, illustration alternative, manga) est une carte à part avec son propre prix.',op_src:'Données, visuels et prix : OPTCG API (édition anglaise, prix TCGplayer convertis en euros). Visuels officiels marqués « SAMPLE » par Bandai.',op_none:'Aucune carte trouvée. Les noms sont en anglais : essaie le nom anglais ou le numéro de la carte.',op_loading:'Chargement de la liste des cartes One Piece…',op_lang_note:'Les données One Piece viennent de l’édition anglaise : visuel et prix de la version anglaise, même numéro de carte.',op_special_hint:'Parallèles, illustrations alternatives, manga, spéciales',op_promos:'Promos',opv_par:'Parallèle',opv_alt:'Illustration alternative',opv_manga:'Manga',opv_sp:'Spéciale',ss_price:'Prix décroissant',tcp_only_msg_op:'Prix du marché américain TCGplayer pour l’édition anglaise, converti en euros au taux du jour de la Banque centrale européenne. Nos sources n’ont pas de prix Cardmarket pour One Piece.',scan_op_num:'Numéro lu : {n}',scan_op_tips:'Cadre bien le bas de la carte, où est imprimé le numéro (ex. OP09-118), avec une bonne lumière, ou tape le numéro dans la recherche.',about_more:'À propos',ab_ncards:'{n} cartes',ab_ncard1:'{n} carte',ab_legal:'Pokémon et les noms, images et marques associés sont la propriété de The Pokémon Company, Nintendo, Creatures et GAME FREAK. Magic: The Gathering est une marque de Wizards of the Coast. One Piece © Eiichiro Oda / Shueisha, Toei Animation ; One Piece Card Game © Bandai. Gleamvault est un projet de fan non officiel, sans lien avec ces sociétés.',
  price_unavailable:'prix indispo.',err_net:'Erreur réseau — vérifie ta connexion.',
  scan_btn:'Scanner une carte',scan_title:'Lecture de la carte',scan_loading:'Chargement du lecteur (la 1ʳᵉ fois, quelques secondes)…',scan_reading:'Lecture du nom et du numéro…',
- scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_read:'Texte lu :',scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
+ scan_fail:"Je n'ai pas réussi à identifier la carte.",scan_tips:'Astuce : cadre la carte en entier et bien droite, à plat, avec une bonne lumière et sans reflet. Tu peux aussi taper le numéro imprimé en bas (ex. 199/165).',
  scan_found:'Carte lue : « {q} » ({n} résultats), choisis la bonne.',
- scan_retry:'Carte full art ? Nouvelle tentative de lecture du numéro…',
+ scan_retry:'Carte full art ? Nouvelle tentative de lecture du numéro…',scan_again:'Reprendre une photo',
  account:'Compte',login:'Se connecter',signup:'Créer un compte',logout:'Se déconnecter',password:'Mot de passe (8 caractères min.)',show_pwd:'Afficher le mot de passe',hide_pwd:'Masquer le mot de passe',forgot_title:'Mot de passe oublié',forgot_why:'Indique l’e-mail de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.',forgot_send:'Envoyer le lien',back:'Retour',err_fields_login:'Indique ton e-mail et ton mot de passe.',err_wait:'Pour ta sécurité, attends une minute avant de redemander un e-mail pour cette adresse.',err_pwd_len:'Le mot de passe doit faire au moins 8 caractères.',forgot:'Mot de passe oublié ?',new_pwd:'Nouveau mot de passe',
  account_why:'Crée un compte gratuit pour retrouver ta collection sur ton PC et ton téléphone. Sans compte, elle reste sur cet appareil.',
  check_mail:'Compte créé ! Clique sur le lien reçu par e-mail pour le confirmer, puis connecte-toi.',reset_sent:'E-mail envoyé : suis le lien pour choisir un nouveau mot de passe.',
@@ -131,9 +131,9 @@ en:{
  sort_label:'Sort results',ss_relevance:'Sort: relevance',ss_num_desc:'Number high → low (rares first)',ss_num_asc:'Number low → high',ss_newest:'Newest sets first',ss_oldest:'Oldest sets first',secret_only:'Secret cards',secret:'Secret',secret_hint:'Number above the set’s official count (e.g. 199/165) or special gallery: usually the most sought-after rares.',credit_short:'Cardmarket & TCGplayer prices via TCGdex, updated daily',credit_short_mg:'Cardmarket & TCGplayer prices via TCGdex (Pokémon) and Scryfall (Magic), updated daily',credit_op:'One Piece: OPTCG API (TCGplayer prices converted to euros at the ECB rate of the day)',op_ph:'Name or number (OP09-118)',op_hint:'Type a name (e.g. Luffy, Shanks), a nickname (e.g. Whitebeard, Big Mom, Akainu) or a number (e.g. OP09-118, 118). Each version (parallel, alternate art, manga) is a separate card with its own price.',op_src:'Data, pictures and prices: OPTCG API (English edition, TCGplayer prices converted to euros). Official pictures are marked “SAMPLE” by Bandai.',op_none:'No card found. Names are in English: try the English name or the card number.',op_loading:'Loading the One Piece card list…',op_lang_note:'One Piece data comes from the English edition: English picture and price, same card number.',op_special_hint:'Parallels, alternate arts, manga, specials',op_promos:'Promos',opv_par:'Parallel',opv_alt:'Alternate art',opv_manga:'Manga',opv_sp:'Special',ss_price:'Price high → low',tcp_only_msg_op:'US TCGplayer market price for the English edition, converted to euros at the European Central Bank rate of the day. Our sources have no Cardmarket price for One Piece.',scan_op_num:'Number read: {n}',scan_op_tips:'Frame the bottom of the card, where the number is printed (e.g. OP09-118), in good light, or type the number in the search.',about_more:'About',ab_ncards:'{n} cards',ab_ncard1:'{n} card',ab_legal:'Pokémon and all related names, images and trademarks are the property of The Pokémon Company, Nintendo, Creatures and GAME FREAK. Magic: The Gathering is a trademark of Wizards of the Coast. One Piece © Eiichiro Oda / Shueisha, Toei Animation; One Piece Card Game © Bandai. Gleamvault is an unofficial fan project, not affiliated with these companies.',
  price_unavailable:'no price',err_net:'Network error — check your connection.',
  scan_btn:'Scan a card',scan_title:'Reading the card',scan_loading:'Loading the reader (a few seconds the first time)…',scan_reading:'Reading name and number…',
- scan_fail:"I couldn't identify the card.",scan_read:'Text read:',scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
+ scan_fail:"I couldn't identify the card.",scan_tips:'Tip: frame the whole card, straight and flat, with good light and no glare. You can also type the number printed at the bottom (e.g. 199/165).',
  scan_found:'Card read: “{q}” ({n} results), pick the right one.',
- scan_retry:'Full-art card? Retrying to read the number…',
+ scan_retry:'Full-art card? Retrying to read the number…',scan_again:'Take another photo',
  account:'Account',login:'Log in',signup:'Sign up',logout:'Log out',password:'Password (min. 8 characters)',show_pwd:'Show password',hide_pwd:'Hide password',forgot_title:'Forgot password',forgot_why:'Enter your account email: you will receive a link to choose a new password.',forgot_send:'Send the link',back:'Back',err_fields_login:'Enter your email and password.',err_wait:'For security, wait a minute before requesting another email for this address.',err_pwd_len:'The password must be at least 8 characters.',forgot:'Forgot password?',new_pwd:'New password',
  account_why:'Create a free account to get your collection on both your computer and your phone. Without an account, it stays on this device.',
  check_mail:'Account created! Click the link in the email to confirm it, then log in.',reset_sent:'Email sent: follow the link to choose a new password.',
@@ -1333,9 +1333,10 @@ async function scanMagic(file,lang,apply){
     const r=await rec;
     if(r&&r.length&&await mgRecognised(m,st,outEl,r,foot,lang,top,apply))return;
     // 3) the name at the top of the card: put it in the search
-    if(top.length>=3){closeModal();apply(top);toast(t('scan_mg_name',{q:top}));return}
+    // only a real word (3 letters in a row): reader noise like « a , xq » must not end up in the search
+    if(/\p{L}{3,}/u.test(top)){closeModal();apply(top);toast(t('scan_mg_name',{q:top}));return}
     st.innerHTML=`<b>${t('scan_fail')}</b>`;
-    outEl.innerHTML=`<p class="muted">${t('scan_read')} <code>${esc(texts.join(' ').replace(/\s+/g,' ').trim().slice(0,160)||'—')}</code></p><p>${t('scan_mg_tips')}</p>`;
+    outEl.innerHTML='';scanHelp(outEl,'scan_mg_tips','mScan');
   }catch(e){
     // text reading unavailable (offline engine, error): the picture alone can still find the card
     const r=await rec;if(r&&r.length&&await mgRecognised(m,st,outEl,r,{},lang,'',apply))return;
@@ -1608,8 +1609,8 @@ async function scanOp(file,lang,apply){
       closeModal();apply(num);toast(t('scan_op_num',{n:num}));return}
     if(recSure(r)){pick(r[0].id);return}
     st.innerHTML=`<b>${t(r&&r.length?'scan_rec_only':'scan_fail')}</b>`;
-    outEl.innerHTML=`<p class="muted">${t('scan_read')} <code>${esc(texts.join(' ').replace(/\s+/g,' ').trim().slice(0,160)||'—')}</code></p>`;
-    if(!showRec(outEl,r,opInfo,pick))outEl.insertAdjacentHTML('beforeend',`<p>${t('scan_op_tips')}</p>`);
+    outEl.innerHTML='';
+    scanHelp(outEl,showRec(outEl,r,opInfo,pick)?null:'scan_op_tips','oScan');
   }catch(e){
     const r=await rec;
     if(recSure(r)){pick(r[0].id);return}
@@ -1764,6 +1765,11 @@ function showRec(box,rec,info,onPick){
   box.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>onPick(b.dataset.rec));
   return true;
 }
+// failed scan: no raw text from the reader (often meaningless with a poor photo), but the tips and a new photo in one touch
+function scanHelp(outEl,tipsKey,inputId){
+  outEl.insertAdjacentHTML('beforeend',`${tipsKey?`<p>${t(tipsKey)}</p>`:''}<button class="btn primary" type="button" data-rescan>📷 ${t('scan_again')}</button>`);
+  outEl.querySelector('[data-rescan]').onclick=()=>{closeModal();document.getElementById(inputId)?.click()};
+}
 async function scanCard(file,data,lang,apply){
   const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 12px 0">📷 ${t('scan_title')}</h2>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start"><img id="scanPrev" alt="" style="width:150px;border-radius:10px;background:var(--card2)">
@@ -1798,8 +1804,8 @@ async function scanCard(file,data,lang,apply){
     if(!q){
       if(recSure(r)){pick(r[0].id);return}
       st.innerHTML=`<b>${t(r&&r.length?'scan_rec_only':'scan_fail')}</b>`;
-      outEl.innerHTML=`<p class="muted">${t('scan_read')} <code>${esc((top+' '+b1+' '+b2+' '+extra).replace(/\s+/g,' ').trim().slice(0,160)||'—')}</code></p>`;
-      if(!showRec(outEl,r,pkInfo,pick))outEl.insertAdjacentHTML('beforeend',`<p>${t('scan_tips')}</p>`);
+      outEl.innerHTML='';
+      scanHelp(outEl,showRec(outEl,r,pkInfo,pick)?null:'scan_tips','scanInput');
       return;
     }
     // several cards share the number / name: the picture decides when it clearly points to one of them
