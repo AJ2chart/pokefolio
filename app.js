@@ -896,10 +896,10 @@ function openLogin(prefill){
       <div><button class="btn primary" type="submit">${t('login')}</button></div>
       <button class="linkbtn" type="button" id="aForgot" style="justify-self:start">${t('forgot')}</button>
       <p class="small" style="margin:8px 0 0;border-top:1px solid var(--line,rgba(127,127,127,.25));padding-top:12px">${t('no_account')} <button class="linkbtn" type="button" id="aGoUp">${t('signup')}</button></p>
-    </form></div>`,'sm');
+    </form></div>`,'sm auth');
   bindPwdToggles(m);
   const f=m.querySelector('#aForm'),{say,run}=authForm(f,m.querySelector('#aMsg'));
-  setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches)setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
   f.onsubmit=ev=>{ev.preventDefault();say('');
     if(!f.email.checkValidity()||!f.pwd.value){say(t('err_fields_login'));return}
     run('auth_login',async()=>{
@@ -917,10 +917,10 @@ function openSignup(prefill){
       <p id="uMsg" class="small" style="margin:0"></p>
       <div><button class="btn primary" type="submit">${t('signup_go')}</button></div>
       <p class="small" style="margin:8px 0 0;border-top:1px solid var(--line,rgba(127,127,127,.25));padding-top:12px">${t('have_account')} <button class="linkbtn" type="button" id="uGoIn">${t('login')}</button></p>
-    </form></div>`,'sm');
+    </form></div>`,'sm auth');
   bindPwdToggles(m);
   const f=m.querySelector('#uForm'),{say,run}=authForm(f,m.querySelector('#uMsg'));
-  setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches)setTimeout(()=>(f.email.value?f.pwd:f.email).focus(),30);
   f.onsubmit=ev=>{ev.preventDefault();say('');
     if(!f.email.checkValidity()||f.pwd.value.length<PWD_MIN){say(t('err_fields'));return}
     if(f.pwd.value!==f.pwd2.value){say(t('err_pwd_match'));return}
@@ -944,9 +944,9 @@ function openForgot(prefill){
       <label>E-mail<input maxlength="254" type="email" name="email" required autocomplete="email" value="${esc(prefill||'')}"></label>
       <p id="fMsg" class="small" style="margin:0"></p>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">${t('forgot_send')}</button><button class="btn" type="button" id="fBack">${t('back')}</button></div>
-    </form></div>`,'sm');
+    </form></div>`,'sm auth');
   const f=m.querySelector('#fForm'),msg=m.querySelector('#fMsg');
-  setTimeout(()=>f.email.focus(),30);
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches)setTimeout(()=>f.email.focus(),30);
   m.querySelector('#fBack').onclick=()=>openLogin(f.email.value.trim());
   f.onsubmit=async ev=>{ev.preventDefault();
     if(!f.email.checkValidity()){msg.textContent=t('err_email');msg.style.color='var(--ko)';return}
@@ -957,7 +957,7 @@ function openForgot(prefill){
 function openRecovery(){
   const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 10px 0">${t('new_pwd')}</h2><form class="form" id="rForm" style="grid-template-columns:1fr">
     <label>${t('password')}${pwdField('pwd','new-password')}</label>
-    <p id="rMsg" class="small" style="margin:0;color:var(--ko)"></p><div><button class="btn primary" type="submit">${t('save')}</button></div></form></div>`,'sm');
+    <p id="rMsg" class="small" style="margin:0;color:var(--ko)"></p><div><button class="btn primary" type="submit">${t('save')}</button></div></form></div>`,'sm auth');
   bindPwdToggles(m);
   const f=m.querySelector('#rForm');
   f.onsubmit=async ev=>{ev.preventDefault();if(f.pwd.value.length<PWD_MIN){m.querySelector('#rMsg').textContent=t('err_pwd_len');return}
