@@ -17,7 +17,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install --no-save --no-package-lock sharp@0.33
+      # exact version, no install scripts (sharp 0.33 ships prebuilt binaries as optional packages): this job can push to the repo
+      - run: npm install --no-save --no-package-lock --ignore-scripts sharp@0.33.5
       - run: node tools/hash-cards.mjs
         env: { TIME_BUDGET_MIN: '85' }
       - name: Save fingerprints
