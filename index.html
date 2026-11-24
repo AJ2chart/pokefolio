@@ -708,7 +708,7 @@ addEventListener('error',e=>{if(e.message)logErr(e.message,(e.filename||'').spli
 addEventListener('unhandledrejection',e=>{const r=e.reason;logErr('promise: '+(r&&(r.message||r.name)||r),r&&r.stack&&String(r.stack).split('\n').slice(0,3).join(' | '))});
 /* ============ constants ============ */
 const API = 'https://api.tcgdex.net/v2';
-const APP_VERSION = '2026.11.23-132';
+const APP_VERSION = '2026.11.24-133';
 // oldest version still allowed to run: raise it to APP_VERSION only for a critical change (e.g. sync data format).
 // Older apps then show a blocking « update needed » screen and stop syncing until updated.
 const MIN_VERSION = '2026.11.22-123';
@@ -1383,23 +1383,26 @@ const numLabel=(l,off)=>off&&/^\d+$/.test(l)?`${l}/${String(off).padStart(String
 const SB_URL='https://ufowenlhdsaezyshhwgz.supabase.co';
 const SB_KEY='sb_publishable_jABVuv0ZIqBTt9GLTxnTVg_imtAaAqk';
 const APP_URL=location.origin+location.pathname;
-let sb=null,user=null,syncState='off',syncTimer=null,syncing=false,syncAgain=false;
+let sb=null,user=null,authKnown=false,syncState='off',syncTimer=null,syncing=false,syncAgain=false;
 // resolved once the first sync after launch is over (or right away when there is no account): the splash waits for it, briefly
 let bootSyncDone;const bootSync=new Promise(r=>bootSyncDone=r);
 // the accounts library is downloaded in parallel (preloaded in <head>) instead of blocking the first display
 let sbReady=null;
-function initSupabase(){sbReady=(window.supabase?.createClient?Promise.resolve():loadScript(LIBS.sb.src,LIBS.sb.sri)).then(setupSupabase,()=>bootSyncDone())}
+function initSupabase(){sbReady=(window.supabase?.createClient?Promise.resolve():loadScript(LIBS.sb.src,LIBS.sb.sri)).then(setupSupabase,()=>{bootSyncDone();authSettled()})}
+// the account is only known once Supabase has read the saved session (loaded in the background): until then no « guest » reminder
+function authSettled(){if(authKnown)return;authKnown=true;if(backupDue()&&!document.getElementById('bkBan')&&view==='collection')render()}
 function setupSupabase(){
-  if(!window.supabase?.createClient){bootSyncDone();return}
+  if(!window.supabase?.createClient){bootSyncDone();authSettled();return}
   try{
     sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  }catch(e){sb=null;bootSyncDone();return}
+  }catch(e){sb=null;bootSyncDone();authSettled();return}
   sb.auth.onAuthStateChange((ev,session)=>{
     const prev=user?.id;user=session?.user||null;
     if(ev==='PASSWORD_RECOVERY')setTimeout(openRecovery,0);
     if(user&&user.id!==prev){cleanUrl();setTimeout(()=>syncNow(true),0)}
     if(!user){syncState='off';bootSyncDone()}
-    renderShell();
+    if(user)document.getElementById('bkBan')?.remove();
+    renderShell();authSettled();
   });
 }
 function cleanUrl(){if(/[?&]code=/.test(location.search))history.replaceState(null,'',location.pathname+(VIEWS.includes(location.hash.slice(1))?location.hash:''))}
@@ -3347,10 +3350,11 @@ async function linkManual(uids){
 // « Create a free account » / « Export a backup » / « Later » (30 days). An account or an export stops it.
 const BACKUP_MIN=50,BACKUP_EVERY=30*864e5;
 function exportBackup(){download(`gleamvault-${today()}.json`,JSON.stringify({app:'gleamvault',version:1,exported:new Date().toISOString(),collection,snapshots},null,1),'application/json');settings.lastBackup=Date.now();saveSettings();document.getElementById('bkBan')?.remove()}
-const backupDue=()=>!user&&!SHARED_TOKEN&&collection.length>=BACKUP_MIN&&Date.now()-Math.max(settings.lastBackup||0,settings.backupLater||0)>BACKUP_EVERY;
+const hasSavedSession=()=>{try{return Object.keys(localStorage).some(k=>/^sb-.+-auth-token$/.test(k))}catch(e){return false}};
+const backupDue=()=>authKnown&&!user&&!hasSavedSession()&&!SHARED_TOKEN&&collection.length>=BACKUP_MIN&&Date.now()-Math.max(settings.lastBackup||0,settings.backupLater||0)>BACKUP_EVERY;
 function backupBanner(){
   if(!backupDue())return '';
-  return `<div class="man-ban bk-ban" id="bkBan"><span>💾 ${t('bk_text',{n:collection.length})}</span><span class="bk-acts"><button class="btn btn-sm primary" id="bkAcc">${t('bk_account')}</button><button class="btn btn-sm" id="bkExp">${t('bk_export')}</button><button class="btn btn-sm ghost" id="bkLater">${t('bk_later')}</button></span></div>`;
+  return `<div class="man-ban bk-ban" id="bkBan"><span>💾 ${t('bk_text',{n:totals(collection.filter(e=>e.status!=='wish')).count})}</span><span class="bk-acts"><button class="btn btn-sm primary" id="bkAcc">${t('bk_account')}</button><button class="btn btn-sm" id="bkExp">${t('bk_export')}</button><button class="btn btn-sm ghost" id="bkLater">${t('bk_later')}</button></span></div>`;
 }
 function bindBackupBanner(m){
   const b=m.querySelector('#bkBan');if(!b)return;
