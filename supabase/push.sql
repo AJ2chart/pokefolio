@@ -32,6 +32,10 @@ create policy "own devices: read" on public.push_subs for select to authenticate
 drop policy if exists "own devices: delete" on public.push_subs;
 create policy "own devices: delete" on public.push_subs for delete to authenticated using (user_id = auth.uid());
 revoke all on public.push_subs, public.push_state, public.push_runs from anon;
+-- recent Supabase projects no longer give new tables to the server role by default: the daily function needs these
+grant select, insert, update, delete on public.push_subs, public.push_state, public.push_runs to service_role;
+grant select on public.user_data to service_role;
+grant select, delete on public.push_subs to authenticated;
 
 -- Saving a device goes through this function: it takes the device for the signed-in person (the push address is
 -- a secret only that browser knows, so a phone that changes account simply moves to the new account).
