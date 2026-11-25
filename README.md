@@ -22,6 +22,7 @@ Suivi de collection de cartes à collectionner (Pokémon, Magic: The Gathering, 
 - `supabase/delete_account.sql` : suppression de son compte depuis l'app
 - `supabase/push.sql` : notifications de prix (appareils abonnés) et historique des prix
 - `supabase/functions/notify-prices/` : fonction serveur des notifications ; éditer `src/`, puis `node tools/build-push.mjs` génère `index.ts`
+- `tests/` : tests automatiques (Chrome sans écran, sans internet : les sources sont simulées). `python3 tests/controle_beton.py` = Contrôle béton complet (5 onglets, fiches et panneaux × petit téléphone / téléphone / PC × sombre / clair × FR / EN × Mode Safe, données extrêmes, appareil ralenti ×6) ; `--selftest` vérifie que chaque détecteur attrape un vrai bug réintroduit ; `node tests/push_t.mjs` = notifications de prix (serveur) ; `python3 tests/v150_t.py [--slow]` = non-régression v-150
 - `tools/` : empreintes des cartes pour le scan (`hash-cards.mjs`, `phash.mjs`) et des bibliothèques (`sri.mjs`) ; `.github/workflows/` : tâches automatiques (empreintes, maintien de Supabase éveillé)
 
 Les images et noms des cartes sont © The Pokémon Company / Nintendo / Creatures / GAME FREAK. Projet de fan non officiel, non affilié.

@@ -10,9 +10,9 @@
 <title>Gleamvault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" media="print" id="gfont"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"></noscript>
-<meta name="app-version" content="2026.11.25-150">
+<meta name="app-version" content="2026.11.25-151">
 <meta name="app-min-version" content="2026.11.22-123">
-<!-- APP_VERSION = '2026.11.25-150' · MIN_VERSION = '2026.11.22-123' (read by versions up to 2026.11.24-136) -->
+<!-- APP_VERSION = '2026.11.25-151' · MIN_VERSION = '2026.11.22-123' (read by versions up to 2026.11.24-136) -->
 <meta name="theme-color" content="#0f1117">
 <meta name="description" content="Suivi de collection de cartes à collectionner (Pokémon, Magic, One Piece) : cartes FR/EN, prix Cardmarket, scan, alertes.">
 <meta property="og:type" content="website">
@@ -198,7 +198,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .sh-links{display:flex;gap:14px}
 .sh-links a{color:var(--muted);text-decoration:none;font-size:13.5px}
 .sh-links a:hover{color:var(--text)}
-.sh-wish{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent2) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent2) 30%,var(--line));font-size:14px}
+.sh-wish{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent2) 10%,var(--card));border:1px solid color-mix(in srgb,var(--accent2) 30%,var(--line));font-size:14px}
 .sh-wish>span{color:var(--accent2);font-weight:600;white-space:nowrap}.sh-wish .linkbtn{white-space:nowrap}
 .sh-wish .linkbtn{text-decoration:none;color:var(--text);font-size:13.5px}
 .sh-sec{margin:22px 0 10px;font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
@@ -219,7 +219,7 @@ body:has(#ov .sheet-cta) .toast{bottom:90px}
 .sh-copy{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px;cursor:pointer;transition:border-color .15s}
 .sh-copy.focus,.sh-copy.open{border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
 .sh-copy .q{min-width:36px;height:34px;border-radius:10px;background:var(--card2);display:grid;place-items:center;font-weight:700;font-size:14px}
-.sh-copy .t{flex:1;min-width:0}
+.sh-copy{flex-wrap:wrap}.sh-copy .t{flex:1;min-width:6em}.sh-copy .v{margin-left:auto}.sh-copy .v+.sh-edit{margin-left:auto}   /* very large amounts: the row wraps instead of crushing the version text */
 .sh-copy .t>div:first-child{font-weight:600;font-size:14.5px}
 .sh-copy .t>div+div{font-size:12.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
 .sh-copy .v{text-align:right;font-weight:700;font-size:14.5px;white-space:nowrap}
@@ -704,7 +704,7 @@ canvas{max-width:100%}
 </style>
 </head>
 <body>
-<div id="splash" aria-hidden="true"><div class="sp-logo"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#14213D"/><g transform="translate(251 266) scale(1.15) translate(-251 -266)"><g class="c1"><rect x="166" y="140" width="180" height="252" rx="20" fill="#2B4170"/></g><g class="c2"><rect x="166" y="140" width="180" height="252" rx="20" fill="#41639E"/></g><g class="c3"><rect x="166" y="140" width="180" height="252" rx="20" fill="#F6F2EA"/><rect x="180" y="154" width="152" height="224" rx="12" fill="none" stroke="#14213D" stroke-opacity="0.15" stroke-width="3"/><g class="star"><g transform="translate(256 214)"><polygon points="0,-30 7.64,-10.52 28.53,-9.27 12.36,4.02 17.63,24.27 0,13 -17.63,24.27 -12.36,4.02 -28.53,-9.27 -7.64,-10.52" fill="#F5A524" stroke="#F5A524" stroke-width="6" stroke-linejoin="round"/></g></g><polyline points="196,342 224,312 252,330 306,276" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><polyline points="280,276 306,276 306,302" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g></g><g class="sp1"><g transform="translate(408 118)"><path d="M0,-34 C4,-10 10,-4 34,0 C10,4 4,10 0,34 C-4,10 -10,4 -34,0 C-10,-4 -4,-10 0,-34 Z" fill="#F5A524"/></g></g><g class="sp2"><g transform="translate(446 170)"><path d="M0,-15 C2,-4 4,-2 15,0 C4,2 2,4 0,15 C-2,4 -4,2 -15,0 C-4,-2 -2,-4 0,-15 Z" fill="#F6F2EA"/></g></g><g class="dial"><g transform="translate(372 396)"><circle r="54" fill="#F5A524" stroke="#14213D" stroke-width="10"/><circle r="34" fill="#14213D"/><g stroke="#F5A524" stroke-width="7" stroke-linecap="round"><line x1="0" y1="0" x2="0" y2="-22"/><line x1="0" y1="0" x2="19" y2="11"/><line x1="0" y1="0" x2="-19" y2="11"/></g><circle r="8" fill="#F5A524"/><g fill="#14213D"><circle cx="0" cy="-44" r="3.5"/><circle cx="44" cy="0" r="3.5"/><circle cx="0" cy="44" r="3.5"/><circle cx="-44" cy="0" r="3.5"/></g></g></g></svg><div class="sp-sheen"></div></div><span>Gleamvault</span></div><script src="boot.js?v=2026.11.25-150"></script>
+<div id="splash" aria-hidden="true"><div class="sp-logo"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#14213D"/><g transform="translate(251 266) scale(1.15) translate(-251 -266)"><g class="c1"><rect x="166" y="140" width="180" height="252" rx="20" fill="#2B4170"/></g><g class="c2"><rect x="166" y="140" width="180" height="252" rx="20" fill="#41639E"/></g><g class="c3"><rect x="166" y="140" width="180" height="252" rx="20" fill="#F6F2EA"/><rect x="180" y="154" width="152" height="224" rx="12" fill="none" stroke="#14213D" stroke-opacity="0.15" stroke-width="3"/><g class="star"><g transform="translate(256 214)"><polygon points="0,-30 7.64,-10.52 28.53,-9.27 12.36,4.02 17.63,24.27 0,13 -17.63,24.27 -12.36,4.02 -28.53,-9.27 -7.64,-10.52" fill="#F5A524" stroke="#F5A524" stroke-width="6" stroke-linejoin="round"/></g></g><polyline points="196,342 224,312 252,330 306,276" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><polyline points="280,276 306,276 306,302" fill="none" stroke="#14213D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g></g><g class="sp1"><g transform="translate(408 118)"><path d="M0,-34 C4,-10 10,-4 34,0 C10,4 4,10 0,34 C-4,10 -10,4 -34,0 C-10,-4 -4,-10 0,-34 Z" fill="#F5A524"/></g></g><g class="sp2"><g transform="translate(446 170)"><path d="M0,-15 C2,-4 4,-2 15,0 C4,2 2,4 0,15 C-2,4 -4,2 -15,0 C-4,-2 -2,-4 0,-15 Z" fill="#F6F2EA"/></g></g><g class="dial"><g transform="translate(372 396)"><circle r="54" fill="#F5A524" stroke="#14213D" stroke-width="10"/><circle r="34" fill="#14213D"/><g stroke="#F5A524" stroke-width="7" stroke-linecap="round"><line x1="0" y1="0" x2="0" y2="-22"/><line x1="0" y1="0" x2="19" y2="11"/><line x1="0" y1="0" x2="-19" y2="11"/></g><circle r="8" fill="#F5A524"/><g fill="#14213D"><circle cx="0" cy="-44" r="3.5"/><circle cx="44" cy="0" r="3.5"/><circle cx="0" cy="44" r="3.5"/><circle cx="-44" cy="0" r="3.5"/></g></g></g></svg><div class="sp-sheen"></div></div><span>Gleamvault</span></div><script src="boot.js?v=2026.11.25-151"></script>
 <header>
   <div class="hwrap">
     <a class="logo" href="#collection">
@@ -724,6 +724,6 @@ canvas{max-width:100%}
 <nav id="tabbar" class="tabbar" aria-label="Navigation"></nav>
 <div id="modalRoot"></div>
 
-<script src="app.js?v=2026.11.25-150"></script>
+<script src="app.js?v=2026.11.25-151"></script>
 </body>
 </html>

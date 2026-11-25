@@ -1,11 +1,13 @@
 # Regression tests for the v-150 fixes (headless Chrome, no network needed).
-# Run from the repo root:  python3 tests/v150_t.py [folder to serve, default: .]
+# Run from the repo root:  python3 tests/v150_t.py [--slow] [folder to serve, default: .]
 #  1. a card without set name / name / uid (old backup, other device) must not break Collection (sort by set, set filter)
 #  2. « Log out → Erase from this device » must erase nothing when the sync fails (offline)
 import http.server, json, sys, threading, functools
 from playwright.sync_api import sync_playwright
 
-root = sys.argv[1] if len(sys.argv) > 1 else '.'
+SLOW = '--slow' in sys.argv   # 6× slower processor (timing-dependent bugs)
+args = [a for a in sys.argv[1:] if a != '--slow']
+root = args[0] if args else '.'
 class Quiet(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
 srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=root))
@@ -26,6 +28,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
     def open_app(coll):
         pg = b.new_page()
+        if SLOW: pg.context.new_cdp_session(pg).send('Emulation.setCPUThrottlingRate', {'rate': 6})
         pg.errors = []
         pg.on('pageerror', lambda e: pg.errors.append(str(e)))
         pg.route('**/*', lambda r: r.continue_() if r.request.url.startswith('http://127.0.0.1') else r.abort())   # offline: only the app itself
@@ -33,7 +36,7 @@ with sync_playwright() as p:
         pg.add_init_script('if(!sessionStorage.getItem("seeded")){sessionStorage.setItem("seeded",1);' +
                            ''.join(f'localStorage.setItem({json.dumps(k)},{json.dumps(json.dumps(v))});' for k, v in seed.items()) + '}')
         pg.goto(URL)
-        try: pg.wait_for_selector('#cgrid .tile', timeout=10000); return pg
+        try: pg.wait_for_selector('#cgrid .tile', timeout=30000 if SLOW else 10000); return pg
         except Exception: return pg
 
     pg = open_app(COLL)
@@ -51,7 +54,7 @@ with sync_playwright() as p:
     pg.evaluate("""()=>{const fail={from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:null,error:{message:'offline'}})})})}),
         auth:{signOut:async()=>{window.__signedOut=1}}};sb=fail;user={id:'u1',email:'test@example.com'};renderShell()}""")
     pg.click('#accBtn'); pg.click('#aOut'); pg.click('#oWipe')
-    pg.wait_for_timeout(800)
+    pg.wait_for_function('document.querySelector(".toast")||window.__signedOut', timeout=15000); pg.wait_for_timeout(300)
     n = pg.evaluate('collection.length')
     check(n == 1, f'nothing erased when the sync fails ({n} card(s) left)')
     check(not pg.evaluate('!!window.__signedOut'), 'still signed in (so the changes can still be sent)')

@@ -860,7 +860,7 @@ async function openAccount(){
   if(!sb){const m=openModal(`<div class="mpad"><h2 style="margin-top:0">${t('account')}</h2><p>${t('sb_unavailable')}</p></div>`,'sm');return}
   if(user){
     const m=openModal(`<div class="mpad"><h2 style="margin:0 40px 6px 0">${t('account')}</h2>
-      <p class="muted">${esc(user.email)}</p><p id="syncInfo">${syncLabel()}</p>
+      <p class="muted" style="overflow-wrap:anywhere">${esc(user.email)}</p><p id="syncInfo">${syncLabel()}</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="aSync">↻ ${t('sync_now')}</button><button class="btn" id="aOut">${t('logout')}</button></div>
       <h3 style="margin:22px 0 10px;font-size:15px">${t('display')}</h3>${pillControl()}
       <p style="margin:26px 0 0"><button class="linkbtn danger-link" id="aDel" type="button">${t('del_acc')}</button></p></div>`,'sm');
