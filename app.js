@@ -539,7 +539,7 @@ function readExtra(f,prev){
 // local notification: through the service worker when there is one (Chrome on Android refuses new Notification())
 function notifyLocal(title,body,url){
   try{if(!('Notification' in window)||Notification.permission!=='granted'||settings.notif===false)return;
-    const opt={body,icon:'icons/icon-192.png',badge:'icons/icon-192.png',tag:'gv-local',data:{url:url||'./#collection'}};
+    const opt={body,icon:'icons/icon-192.png',badge:'icons/badge-96.png',tag:'gv-local',data:{url:url||'./#collection'}};
     if(navigator.serviceWorker?.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,opt)).catch(()=>{try{new Notification(title,opt)}catch(_){}});
     else new Notification(title,opt)}catch(_){}
 }

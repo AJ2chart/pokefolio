@@ -4,7 +4,7 @@
 // The libraries and font served by CDNs are kept too, so the app works offline and does not wait for them.
 // The app's code is in versioned files (app.js?v=…, boot.js?v=…, named in the page): a cached page is only replaced once
 // the files it names are cached, so an offline launch never finds a page without its code.
-const CACHE = 'gleamvault-v10';
+const CACHE = 'gleamvault-v11';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 const LIBS = /^https:\/\/(cdn\.jsdelivr\.net\/npm\/(@supabase\/supabase-js@2[\d.]*\/|tesseract\.js@5[\d.]*\/dist\/tesseract\.min\.js)|cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/|fonts\.googleapis\.com\/css2|fonts\.gstatic\.com\/)/;
 
@@ -76,13 +76,14 @@ self.addEventListener('fetch', e => {
 });
 
 // Price notifications sent by the server (daily check of the wishlist good deals and bell thresholds).
-// The payload is {title, body, url, tag}; only this app's own addresses are opened.
+// The payload is {title, body, url, tag}; only this app's own addresses are opened. The badge (status bar, notification
+// header) is a white silhouette on transparent: Android paints it plain white, so a colour logo became a white square.
 const safeUrl = u => { try { const x = new URL(u || './', self.registration.scope); return x.href.startsWith(self.registration.scope) ? x.href : self.registration.scope; } catch (_) { return self.registration.scope; } };
 self.addEventListener('push', e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data ? e.data.text() : '' }; }
   const title = String(d.title || 'Gleamvault').slice(0, 80), body = String(d.body || '').slice(0, 300);
-  e.waitUntil(self.registration.showNotification(title, { body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', tag: String(d.tag || 'gv-prices').slice(0, 40), renotify: true, data: { url: safeUrl(d.url) } }));
+  e.waitUntil(self.registration.showNotification(title, { body, icon: 'icons/icon-192.png', badge: 'icons/badge-96.png', tag: String(d.tag || 'gv-prices').slice(0, 40), renotify: true, data: { url: safeUrl(d.url) } }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
