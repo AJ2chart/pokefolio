@@ -13,11 +13,28 @@ const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body)
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
+  // every failure comes back as readable JSON with the CORS headers (otherwise the browser only sees « request failed »)
+  try { return await handle(req); }
+  catch (e) { console.error('notify-prices:', e); return reply({ error: String((e as { message?: string })?.message || e) }, 500); }
+});
+
+// server key: the classic name, or one of the new « secret keys » Supabase may provide instead
+function serverKey(env: (k: string) => string) {
+  if (env('SUPABASE_SERVICE_ROLE_KEY')) return env('SUPABASE_SERVICE_ROLE_KEY');
+  try { const all = JSON.parse(env('SUPABASE_SECRET_KEYS') || '{}'); const v = Object.values(all)[0]; if (typeof v === 'string') return v; } catch (_) { /* not JSON */ }
+  return env('SUPABASE_SECRET_KEY');
+}
+
+async function handle(req: Request) {
   const env = (k: string) => Deno.env.get(k) || '';
-  const db = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'), { auth: { persistSession: false } });
+  const key = serverKey(env);
+  if (!env('SUPABASE_URL') || !key) return reply({ error: 'server key missing (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)' }, 500);
+  const db = createClient(env('SUPABASE_URL'), key, { auth: { persistSession: false } });
   const must = <T>(r: { data: T; error: unknown }) => { if (r.error) throw r.error; return r.data; };
   // sending keys: made once, then always the same (changing them would cut every device's subscription)
-  let keys = must(await db.from('push_runs').select('vapid_pub,vapid_priv').eq('id', 1).maybeSingle()) as { vapid_pub?: string; vapid_priv?: string } | null;
+  const probe = await db.from('push_runs').select('vapid_pub,vapid_priv').eq('id', 1).maybeSingle();
+  if (probe.error) return reply({ error: 'push tables missing or not readable: run supabase/push.sql (' + probe.error.message + ')' }, 500);
+  let keys = probe.data as { vapid_pub?: string; vapid_priv?: string } | null;
   if (!keys?.vapid_pub || !keys?.vapid_priv) {
     const made = await makeVapid();
     // two first calls at the same time: only the first pair is kept (update only while empty), both then read it back
@@ -40,7 +57,7 @@ Deno.serve(async (req: Request) => {
     deleteSub: async (endpoint: string) => { await db.from('push_subs').delete().eq('endpoint', endpoint); },
     send: (s: Record<string, string>, payload: unknown) => sendPush(fetch, s, payload, vapid).catch(() => 0),
   };
-  try {
+  {
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
     if (body?.mode === 'key') return reply({ key: vapid.pub });
     if (body?.mode === 'test') {
@@ -53,5 +70,5 @@ Deno.serve(async (req: Request) => {
       return reply(await runTest(io, u.user.id));
     }
     return reply(await runDaily(io));
-  } catch (e) { return reply({ error: String((e as Error)?.message || e) }, 500); }
-});
+  }
+}
