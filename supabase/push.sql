@@ -59,3 +59,18 @@ end;
 $$;
 revoke all on function public.save_push_sub(text, text, text, int, text) from public, anon;
 grant execute on function public.save_push_sub(text, text, text, int, text) to authenticated;
+
+-- Price history (v-149): the day's price of every card followed by an account, written each morning by the function
+-- (one fetch per card for everybody). Public prices only, nothing personal: readable by signed-in people, written by the server.
+create table if not exists public.card_prices (
+  k text not null check (length(k) < 120),   -- language:card id:version, e.g. fr:sv01-001:holo
+  d date not null,
+  v numeric(12, 2) not null check (v > 0),
+  primary key (k, d)
+);
+alter table public.card_prices enable row level security;
+drop policy if exists "prices: read" on public.card_prices;
+create policy "prices: read" on public.card_prices for select to authenticated using (true);
+revoke all on public.card_prices from anon;
+grant select on public.card_prices to authenticated;
+grant select, insert, update, delete on public.card_prices to service_role;

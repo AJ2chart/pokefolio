@@ -72,7 +72,7 @@ fr:{
  v_normal:'Normale',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1ʳᵉ édition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Enregistrer',delete:'Supprimer',cancel:'Annuler',confirm:'Confirmer',close:'Fermer',saved:'Modifications enregistrées',
- unit_value:'Valeur unitaire',gain:'Plus-value',history:'Historique du prix',
+ unit_value:'Valeur unitaire',gain:'Plus-value',history:'Historique du prix',hist_open:'Historique',hist_30:'30 j',hist_365:'1 an',hist_all:'Tout',hist_loading:'Chargement de l’historique…',hist_low:'Plus bas',hist_high:'Plus haut',hist_chg:'Variation',hist_note:'{n} relevés depuis le {d} · un par jour',hist_none:'Le suivi vient de commencer : l’historique se remplit jour après jour.',hist_none_per:'Pas assez de relevés sur cette période.',hist_nochart:'Graphique indisponible hors ligne.',
  wish_title:'Ma wishlist',wish_empty:'Ta wishlist est vide. Dans « Ajouter », touche le cœur d’une carte pour l’y ajouter.',
  evo_title:'Valeur de la collection',see_value:'Détails',evo_empty:"Le graphique apparaîtra après quelques jours : un point est enregistré chaque jour où la collection ou les prix changent.",value:'Valeur',
  data_title:'Réglages',lang_label:'Langue de l’app',theme_label:'Thème',theme_dark:'Sombre',theme_light:'Clair',exp_json_t:'Exporter une sauvegarde',imp_t:'Restaurer une sauvegarde',exp_csv_t:'Exporter pour Excel',exp_csv_d:'Tableau lisible dans Excel ou Google Sheets.',notif_t:'Notifications',reload_t:'Recharger la base de cartes',reload_d:'Si une extension toute récente n’apparaît pas encore dans la recherche.',import_ok:'{n} cartes importées',import_ok1:'1 carte importée',import_bad:'Fichier invalide',
@@ -122,7 +122,7 @@ en:{
  v_normal:'Normal',v_reverse:'Reverse',v_holo:'Holo',v_firstEdition:'1st edition',
  c_MT:'Mint',c_NM:'Near Mint',c_EX:'Excellent',c_GD:'Good',c_LP:'Light Played',c_PL:'Played',c_PO:'Poor',
  save:'Save',delete:'Delete',cancel:'Cancel',confirm:'Confirm',close:'Close',saved:'Changes saved',
- unit_value:'Unit value',gain:'Gain',history:'Price history',
+ unit_value:'Unit value',gain:'Gain',history:'Price history',hist_open:'History',hist_30:'30 d',hist_365:'1 yr',hist_all:'All',hist_loading:'Loading the history…',hist_low:'Lowest',hist_high:'Highest',hist_chg:'Change',hist_note:'{n} readings since {d} · one a day',hist_none:'Tracking just started: the history fills up day after day.',hist_none_per:'Not enough readings in this period.',hist_nochart:'Chart unavailable offline.',
  wish_title:'Wishlist',wish_empty:'Your wishlist is empty. In “Add”, tap a card’s heart to add it here.',
  evo_title:'Collection value',see_value:'Details',evo_empty:'The chart will appear after a few days: one point is saved each day the collection or prices change.',value:'Value',
  data_title:'Settings',lang_label:'App language',theme_label:'Theme',theme_dark:'Dark',theme_light:'Light',exp_json_t:'Export a backup',imp_t:'Restore a backup',exp_csv_t:'Export for Excel',exp_csv_d:'Spreadsheet readable in Excel or Google Sheets.',notif_t:'Notifications',reload_t:'Reload card database',reload_d:'If a brand-new set does not show up in search yet.',import_ok:'{n} cards imported',import_ok1:'1 card imported',import_bad:'Invalid file',
@@ -2201,6 +2201,47 @@ const COND_D={
   fr:{MT:'parfaite, comme sortie du booster',NM:'quasi neuve, aucun défaut visible',EX:'très légères traces, à peine visibles',GD:'petites traces d’usure sur les bords ou les coins',LP:'usure légère mais nette',PL:'bien jouée, défauts visibles',PO:'abîmée : pli, déchirure ou tache'},
   en:{MT:'perfect, straight out of the pack',NM:'almost new, no visible flaw',EX:'very light marks, barely visible',GD:'minor wear on edges or corners',LP:'light but clear wear',PL:'well played, visible flaws',PO:'damaged: crease, tear or stain'}};
 const condDesc=c=>`${c} · ${t('c_'+c)} : ${(COND_D[settings.lang]||COND_D.fr)[c]||''}`;
+/* ---- price history panel (card sheet): the card's own daily points, completed by the prices the server records every
+   morning (table card_prices, read once per card and session: one small request when the panel opens) ---- */
+let histPer='all';const histCache={};
+const histKey=e=>`${e.lang}:${e.cardId}:${e.variant||'normal'}`;
+function histPanel(e,variant){
+  return `<div class="sh-hist"><div class="ev-seg sh-hseg">${[['30',t('hist_30')],['365',t('hist_365')],['all',t('hist_all')]].map(([v,l])=>`<button type="button" data-hper="${v}" class="${v===histPer?'on':''}">${l}</button>`).join('')}</div>
+    <div class="sh-hbody"><div class="sh-hload muted small">${t('hist_loading')}</div></div></div>`;
+}
+async function histPoints(e){
+  const own=(Array.isArray(e.hist)?e.hist:[]).filter(h=>h&&typeof h.d==='string'&&h.v>0).map(h=>({d:h.d.slice(0,10),v:h.v}));
+  let srv=[];const k=histKey(e);
+  if(sb&&user&&navigator.onLine!==false){
+    const c=histCache[k];
+    if(c&&Date.now()-c.ts<30*60e3)srv=c.pts;
+    else{try{const{data,error}=await sb.from('card_prices').select('d,v').eq('k',k).order('d').limit(1200);if(!error&&Array.isArray(data)){srv=data.filter(r=>r&&typeof r.d==='string'&&+r.v>0).map(r=>({d:r.d.slice(0,10),v:+r.v}));histCache[k]={ts:Date.now(),pts:srv}}}catch(_){}}
+  }
+  const byDay=new Map(srv.map(x=>[x.d,x.v]));for(const x of own)byDay.set(x.d,x.v);   // the card's own point wins on the same day
+  return [...byDay].map(([d,v])=>({d,v})).sort((a,b)=>a.d.localeCompare(b.d));
+}
+async function bindHistPanel(box,e,variant){
+  box.querySelectorAll('[data-hper]').forEach(b=>b.onclick=()=>{histPer=b.dataset.hper;box.querySelectorAll('[data-hper]').forEach(x=>x.classList.toggle('on',x===b));draw()});
+  const all=await histPoints(e);if(!box.isConnected)return;
+  const body=box.querySelector('.sh-hbody');
+  function draw(){
+    const from=histPer==='all'?'':new Date(Date.now()-(+histPer)*864e5).toISOString().slice(0,10);
+    const pts=all.filter(x=>x.d>=from);
+    if(pts.length<2){body.innerHTML=`<p class="muted small sh-hempty">${t(all.length<2?'hist_none':'hist_none_per')}</p>`;return}
+    const vals=pts.map(x=>x.v),mn=Math.min(...vals),mx=Math.max(...vals),chg=(vals[vals.length-1]-vals[0])/vals[0]*100,up=chg>=0;
+    body.innerHTML=`<div class="sh-hchart"><canvas aria-label="${esc(t('history'))}" role="img"></canvas></div>
+      <div class="sh-hstats"><span>${t('hist_low')}<b>${fmtEur(mn)}</b></span><span>${t('hist_high')}<b>${fmtEur(mx)}</b></span><span>${t('hist_chg')}<b class="${up?'pos':'neg'}">${up?'+':''}${fmtPct(chg).replace(/^\+/,'')}</b></span></div>
+      <p class="muted small sh-hnote">${t('hist_note',{n:pts.length,d:fmtDate(pts[0].d)})}</p>`;
+    const cv=body.querySelector('canvas');
+    const go=()=>{if(!cv.isConnected)return;const ctx=cv.getContext('2d'),col=up?getCss('--ok'):getCss('--ko'),grad=ctx.createLinearGradient(0,0,0,150);
+      grad.addColorStop(0,up?'rgba(62,207,142,.30)':'rgba(255,93,93,.26)');grad.addColorStop(1,'rgba(0,0,0,0)');
+      charts.push(new Chart(cv,{type:'line',data:{labels:pts.map(x=>fmtDate(x.d)),datasets:[{data:vals,borderColor:col,backgroundColor:grad,fill:true,tension:.3,pointRadius:pts.length>40?0:2,pointHoverRadius:5,borderWidth:2.2}]},
+        options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{displayColors:false,callbacks:{label:x=>fmtEur(x.parsed.y)}}},
+          scales:{x:{display:false},y:{position:'right',grid:{color:getCss('--line'),drawTicks:false},border:{display:false},ticks:{color:getCss('--muted'),maxTicksLimit:4,padding:6,callback:v=>fmtEur(v).replace(/,00/,'')}}}}}))};
+    if(window.Chart)go();else loadChart().then(go).catch(()=>{const c=body.querySelector('.sh-hchart');if(c)c.outerHTML=`<p class="muted small">${t('hist_nochart')}</p>`});
+  }
+  draw();
+}
 function sparkSvg(vals){
   vals=vals.filter(v=>v>0);if(vals.length<2)return '';
   const W=120,H=44,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
@@ -2276,7 +2317,7 @@ async function openSheet(lang,id,opts={}){
     :`<a class="sh-sold" target="_blank" rel="noopener" href="${esc(ebayUrl((lang==='en'&&card.nameEn)||card.name,pnum,card.setName,'',lang,card.setId,true,gameOf(id),id))}"><span class="sh-sold-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><span class="sh-sold-t"><b>${t('sold_t')}</b><small>${t('sold_d')}</small></span><em>${t('sold_see')} ↗</em></a><div class="sh-sold-alt">${t('sold_login')} · <a target="_blank" rel="noopener" href="https://130point.com/sales/?q=${encodeURIComponent(lang==='ja'?['pokemon japanese',card.setId,num].join(' '):['pokemon',card.name,pnum].join(' '))}">${t('sold_alt')} ↗</a></div>`;
     const links=`<div class="sh-links"><a target="_blank" rel="noopener" href="${esc(ebayUrl((lang==='en'&&card.nameEn)||card.name,pnum,card.setName,'',lang,card.setId,true,gameOf(id),id))}">eBay ↗</a><a target="_blank" rel="noopener" href="${esc(cmUrl(card.nameEn||card.name,card.setName,gameOf(id),d?.mgcm))}">Cardmarket ↗</a></div>`;
     const own=copies().find(x=>x.variant===st.variant)||wishE();
-    const det=`<details class="sh-pdet"${st.detOpen?' open':''}><summary><span>${t('price_detail')}</span>${links}</summary><div class="sh-pdet-in">${d?pricesBlock(d,st.variant):''}${own?.hist?.length>1?`<b class="small">${t('history')}</b><div style="height:140px;position:relative;margin-top:6px"><canvas class="shchart"></canvas></div>`:''}</div></details>`;
+    const det=`<details class="sh-pdet"${st.detOpen?' open':''}><summary><span>${t('price_detail')}</span>${links}</summary><div class="sh-pdet-in">${d?pricesBlock(d,st.variant):''}</div></details>`;
     if(st.myEdit){
       const cur=my?myValue(my,p?.value):(p?.value||'');
       return `<div class="sh-price"><div class="sh-plab">${p?`${t('est_price')} · ${t('v_'+st.variant)}`:t('est_price')}</div>${p?`<div class="sh-pval">${fmtEur(p.value)}</div>`:`<div class="muted" style="margin:6px 0 2px">${t('no_price')}</div>`}
@@ -2319,7 +2360,8 @@ async function openSheet(lang,id,opts={}){
     const r=priceRange(p);
     return `<div class="sh-price">
       <div class="sh-plab"><span>${t('est_price')} · ${t('v_'+st.variant)}</span><span>Cardmarket</span></div>
-      <div class="sh-prow"><div><div class="sh-pval">${fmtEur(p.value)}</div>${chg!=null&&isFinite(chg)?`<div class="sh-pchg ${chg>=0?'pos':'neg'}">${chg>=0?'▲':'▼'} ${fmtPct(chg)} ${hist?t('since_track'):t('over_30d')}</div>`:''}</div>${sparkSvg(series)}</div>
+      <div class="sh-prow"><div><div class="sh-pval">${fmtEur(p.value)}</div>${chg!=null&&isFinite(chg)?`<div class="sh-pchg ${chg>=0?'pos':'neg'}">${chg>=0?'▲':'▼'} ${fmtPct(chg)} ${hist?t('since_track'):t('over_30d')}</div>`:''}</div>${own?`<button type="button" class="sh-sparkbtn${st.histOpen?' on':''}" id="shHist" aria-expanded="${!!st.histOpen}">${sparkSvg(series)}<span>${t('hist_open')} ${st.histOpen?'▴':'›'}</span></button>`:sparkSvg(series)}</div>
+      ${own&&st.histOpen?histPanel(own,st.variant):''}
       ${r&&r.min!==r.max?`<div class="sh-prange">${t('range_short')} ${fmtEur(r.min)} – ${fmtEur(r.max)} · Cardmarket</div>`:''}
       ${sold}
       <div class="sh-myrow"><span class="muted small">${t('my_q')}</span><button type="button" class="linkbtn acc" id="myEdit">${t('my_cta')}</button></div>
@@ -2409,8 +2451,9 @@ async function openSheet(lang,id,opts={}){
       mf.onsubmit=ev=>{ev.preventDefault();const v=parseFloat(String(mf.v.value).replace(',','.'));if(!(v>0))return;setMy(Math.round(v*100)/100,mf.src.value);st.myEdit=false;draw();toast(t('my_saved'))}}
     const det=m.querySelector('.sh-pdet');
     det?.querySelectorAll('.sh-links a').forEach(a=>a.addEventListener('click',e=>e.stopPropagation()));
-    if(det)det.addEventListener('toggle',()=>{st.detOpen=det.open;const cv=det.querySelector('.shchart');const own=copies().find(x=>x.variant===st.variant)||wishE();
-      if(det.open&&cv&&!cv.dataset.on&&own?.hist?.length>1){cv.dataset.on=1;loadChart().then(()=>{if(cv.isConnected)charts.push(new Chart(cv,{type:'line',data:{labels:own.hist.map(h=>fmtDate(h.d)),datasets:[{data:own.hist.map(h=>h.v),borderColor:getCss('--accent'),backgroundColor:'transparent',tension:.3,pointRadius:2}]},options:chartOpts(false)}))}).catch(()=>{cv.dataset.on=''})}});
+    if(det)det.addEventListener('toggle',()=>{st.detOpen=det.open});
+    const hb=m.querySelector('#shHist');if(hb)hb.onclick=()=>{st.histOpen=!st.histOpen;re()};
+    const hp=m.querySelector('.sh-hist');if(hp)bindHistPanel(hp,copies().find(x=>x.variant===st.variant)||wishE(),st.variant);
   }
   function bindRest(){
     // copies: edit inline

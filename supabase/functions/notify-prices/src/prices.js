@@ -76,6 +76,14 @@ export function dealDrop(e, value, todayStr) {
   const points = hist.length + (hist.length && hist[hist.length - 1].d === todayStr ? 0 : 1);
   return h0 && points > 1 ? (value - h0) / h0 * 100 : 0;
 }
+// The day's price of a card version for the history (same as the app's history: Cardmarket estimate; cards with only a
+// TCGplayer price — One Piece — get it converted to euros, so they have a history too)
+export function cardDayValue(detail, variant, usdEur) {
+  const p = pickPrice(detail?.pricing, variant, detail?.variants?.normal);
+  if (p?.value > 0) return p.value;
+  const u = tcpMarket(detail?.pricing?.tcgplayer, variant);
+  return u > 0 ? Math.round(u * usdEur * 100) / 100 : null;
+}
 export function alertHit(e, value) {
   const a = e.alert; if (!a || !(a.price > 0) || value == null) return false;
   return a.dir === 'below' ? value <= a.price : a.dir === 'above' ? value >= a.price : false;

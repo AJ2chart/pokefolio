@@ -1,11 +1,12 @@
 // Daily price notifications (« bonnes affaires » of the wishlist + the bell thresholds), one grouped notification per user.
 // Everything outside (database, network, push sending, clock) comes in through `io`, so the same code runs in the
 // Supabase function and in the tests.
-import { gameOf, mgPricing, opPricing, valueToday, dealDrop, alertHit } from './prices.js';
+import { gameOf, mgPricing, opPricing, valueToday, dealDrop, alertHit, cardDayValue } from './prices.js';
 
 const TCGDEX = 'https://api.tcgdex.net/v2', SCRY = 'https://api.scryfall.com', OPAPI = 'https://optcgapi.com/api';
 export const UA = 'Gleamvault/1.0 (+https://aj2chart.github.io/pokefolio/)';
 const RUN_GAP = 20 * 3600e3;   // the daily job runs at most once every 20 h, whoever calls it
+const HIST_MAX = 2000, HIST_KEEP_DAYS = 1100;   // history: at most 2 000 cards fetched a run; readings kept about 3 years
 
 const T = {
   fr: { one_deal: (n, p, v) => `${n} : −${p} % depuis son ajout à ta wishlist (${v})`, one_below: (n, a, v) => `${n} est passée sous ${a} (${v})`, one_above: (n, a, v) => `${n} a dépassé ${a} (${v})`,
@@ -74,18 +75,30 @@ export function hitsFor(collection, details, dealPct, usdEur, todayStr) {
   return hits;
 }
 
+const okEntry = e => e && typeof e === 'object' && !e.manualCard && typeof e.lang === 'string' && typeof e.cardId === 'string' && /^[\w:.-]{1,80}$/.test(e.cardId) && /^(fr|en|ja)$/.test(e.lang);
+
 export async function runDaily(io) {
   const now = io.now(), last = await io.getLastRun();
   if (last && now - last < RUN_GAP) return { skipped: true };
   await io.setLastRun(now);
   const subs = await io.listSubs();
-  if (!subs.length) return { users: 0, sent: 0 };
   const byUser = new Map(); for (const s of subs) { if (!byUser.has(s.user_id)) byUser.set(s.user_id, []); byUser.get(s.user_id).push(s); }
-  const users = [...byUser.keys()], data = await io.getCollections(users), state = await io.getStates(users);
-  const keys = new Set();
-  for (const u of users) for (const e of data.get(u) || []) if (e && !e.manualCard && (e.status === 'wish' || e.alert) && e.lang && e.cardId) keys.add(e.lang + ':' + e.cardId);
+  const users = [...byUser.keys()];
+  // every account's cards (for the history), each card fetched once for everybody; notification cards first
+  const all = await io.getAllCollections(), state = await io.getStates(users);
+  const keys = new Set(), versions = new Map();
+  for (const u of users) for (const e of all.get(u) || []) if (okEntry(e) && (e.status === 'wish' || e.alert)) keys.add(e.lang + ':' + e.cardId);
+  for (const list of all.values()) for (const e of list || []) if (okEntry(e)) {
+    const k = e.lang + ':' + e.cardId; if (keys.size < HIST_MAX) keys.add(k);
+    if (!versions.has(k)) versions.set(k, new Set()); versions.get(k).add(['normal', 'holo', 'reverse', 'foil'].includes(e.variant) ? e.variant : 'normal');
+  }
   const [details, usdEur] = await Promise.all([fetchDetails(keys, io), io.usdEur()]);
   const todayStr = new Date(now).toISOString().slice(0, 10);
+  const rows = [];
+  for (const [k, d] of details) for (const v of versions.get(k) || ['normal']) { const val = cardDayValue(d, v, usdEur); if (val > 0 && val < 1e7) rows.push({ k: k + ':' + v, d: todayStr, v: val }); }
+  if (rows.length) await io.saveHistory(rows);
+  await io.pruneHistory(new Date(now - HIST_KEEP_DAYS * 864e5).toISOString().slice(0, 10));
+  const data = all;
   let sent = 0, gone = 0;
   for (const u of users) {
     const mine = byUser.get(u), pct = Math.min(25, Math.max(5, Math.max(...mine.map(s => +s.deal_pct || 5))));
@@ -100,7 +113,7 @@ export async function runDaily(io) {
       if (st === 404 || st === 410) { await io.deleteSub(s.endpoint); gone++; } else if (st >= 200 && st < 300) sent++;
     }
   }
-  return { users: users.length, cards: keys.size, sent, gone };
+  return { users: users.length, cards: keys.size, hist: rows.length, sent, gone };
 }
 
 // « Send a test » from the app: only to the devices of the signed-in user, at most once a minute

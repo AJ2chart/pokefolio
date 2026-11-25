@@ -80,6 +80,14 @@ function dealDrop(e, value, todayStr) {
   const points = hist.length + (hist.length && hist[hist.length - 1].d === todayStr ? 0 : 1);
   return h0 && points > 1 ? (value - h0) / h0 * 100 : 0;
 }
+// The day's price of a card version for the history (same as the app's history: Cardmarket estimate; cards with only a
+// TCGplayer price — One Piece — get it converted to euros, so they have a history too)
+function cardDayValue(detail, variant, usdEur) {
+  const p = pickPrice(detail?.pricing, variant, detail?.variants?.normal);
+  if (p?.value > 0) return p.value;
+  const u = tcpMarket(detail?.pricing?.tcgplayer, variant);
+  return u > 0 ? Math.round(u * usdEur * 100) / 100 : null;
+}
 function alertHit(e, value) {
   const a = e.alert; if (!a || !(a.price > 0) || value == null) return false;
   return a.dir === 'below' ? value <= a.price : a.dir === 'above' ? value >= a.price : false;
@@ -153,6 +161,7 @@ async function sendPush(fetchFn, sub, payload, vapid, ttl = 12 * 3600) {
 const TCGDEX = 'https://api.tcgdex.net/v2', SCRY = 'https://api.scryfall.com', OPAPI = 'https://optcgapi.com/api';
 const UA = 'Gleamvault/1.0 (+https://aj2chart.github.io/pokefolio/)';
 const RUN_GAP = 20 * 3600e3;   // the daily job runs at most once every 20 h, whoever calls it
+const HIST_MAX = 2000, HIST_KEEP_DAYS = 1100;   // history: at most 2 000 cards fetched a run; readings kept about 3 years
 
 const T = {
   fr: { one_deal: (n, p, v) => `${n} : −${p} % depuis son ajout à ta wishlist (${v})`, one_below: (n, a, v) => `${n} est passée sous ${a} (${v})`, one_above: (n, a, v) => `${n} a dépassé ${a} (${v})`,
@@ -221,18 +230,30 @@ function hitsFor(collection, details, dealPct, usdEur, todayStr) {
   return hits;
 }
 
+const okEntry = e => e && typeof e === 'object' && !e.manualCard && typeof e.lang === 'string' && typeof e.cardId === 'string' && /^[\w:.-]{1,80}$/.test(e.cardId) && /^(fr|en|ja)$/.test(e.lang);
+
 async function runDaily(io) {
   const now = io.now(), last = await io.getLastRun();
   if (last && now - last < RUN_GAP) return { skipped: true };
   await io.setLastRun(now);
   const subs = await io.listSubs();
-  if (!subs.length) return { users: 0, sent: 0 };
   const byUser = new Map(); for (const s of subs) { if (!byUser.has(s.user_id)) byUser.set(s.user_id, []); byUser.get(s.user_id).push(s); }
-  const users = [...byUser.keys()], data = await io.getCollections(users), state = await io.getStates(users);
-  const keys = new Set();
-  for (const u of users) for (const e of data.get(u) || []) if (e && !e.manualCard && (e.status === 'wish' || e.alert) && e.lang && e.cardId) keys.add(e.lang + ':' + e.cardId);
+  const users = [...byUser.keys()];
+  // every account's cards (for the history), each card fetched once for everybody; notification cards first
+  const all = await io.getAllCollections(), state = await io.getStates(users);
+  const keys = new Set(), versions = new Map();
+  for (const u of users) for (const e of all.get(u) || []) if (okEntry(e) && (e.status === 'wish' || e.alert)) keys.add(e.lang + ':' + e.cardId);
+  for (const list of all.values()) for (const e of list || []) if (okEntry(e)) {
+    const k = e.lang + ':' + e.cardId; if (keys.size < HIST_MAX) keys.add(k);
+    if (!versions.has(k)) versions.set(k, new Set()); versions.get(k).add(['normal', 'holo', 'reverse', 'foil'].includes(e.variant) ? e.variant : 'normal');
+  }
   const [details, usdEur] = await Promise.all([fetchDetails(keys, io), io.usdEur()]);
   const todayStr = new Date(now).toISOString().slice(0, 10);
+  const rows = [];
+  for (const [k, d] of details) for (const v of versions.get(k) || ['normal']) { const val = cardDayValue(d, v, usdEur); if (val > 0 && val < 1e7) rows.push({ k: k + ':' + v, d: todayStr, v: val }); }
+  if (rows.length) await io.saveHistory(rows);
+  await io.pruneHistory(new Date(now - HIST_KEEP_DAYS * 864e5).toISOString().slice(0, 10));
+  const data = all;
   let sent = 0, gone = 0;
   for (const u of users) {
     const mine = byUser.get(u), pct = Math.min(25, Math.max(5, Math.max(...mine.map(s => +s.deal_pct || 5))));
@@ -247,7 +268,7 @@ async function runDaily(io) {
       if (st === 404 || st === 410) { await io.deleteSub(s.endpoint); gone++; } else if (st >= 200 && st < 300) sent++;
     }
   }
-  return { users: users.length, cards: keys.size, sent, gone };
+  return { users: users.length, cards: keys.size, hist: rows.length, sent, gone };
 }
 
 // « Send a test » from the app: only to the devices of the signed-in user, at most once a minute
@@ -316,7 +337,9 @@ async function handle(req: Request) {
     getLastRun: async () => { const d = must(await db.from('push_runs').select('last_run').eq('id', 1).maybeSingle()) as { last_run?: string } | null; return d?.last_run ? Date.parse(d.last_run) : 0; },
     setLastRun: async (t: number) => { must(await db.from('push_runs').upsert({ id: 1, last_run: new Date(t).toISOString() })); },
     listSubs: async () => must(await db.from('push_subs').select('endpoint,user_id,p256dh,auth,deal_pct,lang')) as Array<Record<string, string>>,
-    getCollections: async (ids: string[]) => { const rows = must(await db.from('user_data').select('user_id,data').in('user_id', ids)) as Array<{ user_id: string; data: { collection?: unknown[] } }>; return new Map(rows.map(r => [r.user_id, r.data?.collection || []])); },
+    getAllCollections: async () => { const rows = must(await db.from('user_data').select('user_id,data').limit(1000)) as Array<{ user_id: string; data: { collection?: unknown[] } }>; return new Map(rows.map(r => [r.user_id, Array.isArray(r.data?.collection) ? r.data.collection : []])); },
+    saveHistory: async (rows: Array<{ k: string; d: string; v: number }>) => { for (let i = 0; i < rows.length; i += 500) must(await db.from('card_prices').upsert(rows.slice(i, i + 500))); },
+    pruneHistory: async (before: string) => { await db.from('card_prices').delete().lt('d', before); },
     getStates: async (ids: string[]) => { const rows = must(await db.from('push_state').select('user_id,notified').in('user_id', ids)) as Array<{ user_id: string; notified: Record<string, string> }>; return new Map(rows.map(r => [r.user_id, r.notified || {}])); },
     setState: async (u: string, notified: Record<string, string>) => { must(await db.from('push_state').upsert({ user_id: u, notified, updated_at: new Date().toISOString() })); },
     deleteSub: async (endpoint: string) => { await db.from('push_subs').delete().eq('endpoint', endpoint); },
