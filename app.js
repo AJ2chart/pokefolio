@@ -88,7 +88,7 @@ fr:{
  account_why:'Crée un compte gratuit pour retrouver ta collection sur ton PC et ton téléphone. Sans compte, elle reste sur cet appareil.',
  check_mail:'Compte créé ! Clique sur le lien reçu par e-mail pour le confirmer, puis connecte-toi.',reset_sent:'E-mail envoyé : suis le lien pour choisir un nouveau mot de passe.',
  logged_in:'Connecté ! Synchronisation…',logged_out:'Déconnecté',sync_first:'Collection synchronisée ({n} entrées)',
- logout_q:'Se déconnecter de cet appareil ?',logout_keep:'Garder une copie sur cet appareil',logout_wipe:'Effacer de cet appareil',
+ logout_q:'Se déconnecter de cet appareil ?',logout_keep:'Garder une copie sur cet appareil',logout_wipe:'Effacer de cet appareil',logout_unsynced:'Synchronisation impossible pour l’instant : rien n’a été effacé. Réessaie une fois connecté à internet.',
  sync_now:'Synchroniser maintenant',sync_ok:'synchronisé à {d}',sync_running:'Synchronisation…',sync_error:'Échec de synchronisation (réessai automatique)',sync_off:'Non connecté',
  sb_unavailable:'Le service de comptes est inaccessible pour le moment (connexion internet ?).',
  err_login:'E-mail ou mot de passe incorrect.',err_confirm:"Confirme d'abord ton e-mail (lien reçu à l'inscription).",err_exists:'Un compte existe déjà avec cet e-mail : connecte-toi.',
@@ -138,7 +138,7 @@ en:{
  account_why:'Create a free account to get your collection on both your computer and your phone. Without an account, it stays on this device.',
  check_mail:'Account created! Click the link in the email to confirm it, then log in.',reset_sent:'Email sent: follow the link to choose a new password.',
  logged_in:'Logged in! Syncing…',logged_out:'Logged out',sync_first:'Collection synced ({n} entries)',
- logout_q:'Log out from this device?',logout_keep:'Keep a copy on this device',logout_wipe:'Erase from this device',
+ logout_q:'Log out from this device?',logout_keep:'Keep a copy on this device',logout_wipe:'Erase from this device',logout_unsynced:'Could not sync right now: nothing was erased. Try again once online.',
  sync_now:'Sync now',sync_ok:'synced at {d}',sync_running:'Syncing…',sync_error:'Sync failed (will retry)',sync_off:'Not logged in',
  sb_unavailable:'The account service is unreachable right now (internet connection?).',
  err_login:'Wrong email or password.',err_confirm:'Please confirm your email first (link sent at sign-up).',err_exists:'An account already exists with this email: log in.',
@@ -206,12 +206,13 @@ function cleanEntry(e){
   for(const k of ['date','added','keptSince','keepSince','nameEn'])if(e[k]!=null&&typeof e[k]!=='number')e[k]=String(e[k]).slice(0,k==='nameEn'?300:40);
   if(e.prio!=null)e.prio=!!e.prio;
   if(e.mgTags!=null)e.mgTags=Array.isArray(e.mgTags)?e.mgTags.filter(x=>typeof x==='string').map(x=>x.slice(0,40)).slice(0,12):[];
-  e.uid=/^[\w-]{1,64}$/.test(String(e.uid??''))?String(e.uid):uidGen();
+  e.uid=/^[\w-]{1,64}$/.test(String(e.uid??''))?String(e.uid):uid();
   for(const k of ['cardId','setId','localId','variant','cond','image','official'])if(e[k]!=null)e[k]=safeId(e[k]);
   if(!e.cardId)return null;
   e.lang=['fr','en','ja'].includes(e.lang)?e.lang:'en';
   e.status=e.status==='wish'?'wish':'owned';
   e.qty=Math.min(9999,Math.max(1,parseInt(e.qty)||1));
+  for(const k of ['name','setName'])if(e[k]==null)e[k]='';
   for(const k of ['name','setName','rarity','notes','artist'])if(e[k]!=null){if(typeof e[k]!=='string')e[k]=String(e[k]);if(e[k].length>(k==='notes'?2000:300))e[k]=e[k].slice(0,k==='notes'?2000:300)}
   e.hist=Array.isArray(e.hist)?e.hist.filter(x=>obj(x)&&typeof x.d==='string'&&typeof x.v==='number'&&isFinite(x.v)).slice(-800).map(x=>({d:x.d.slice(0,10),v:money(x.v)})):[];
   if(obj(e.myPrice)){e.myPrice={v:money(e.myPrice.v),est:money(e.myPrice.est),src:MY_SRCS.includes(e.myPrice.src)?e.myPrice.src:'other',d:String(e.myPrice.d??'').slice(0,10)}}else delete e.myPrice;
@@ -219,7 +220,6 @@ function cleanEntry(e){
   return e;
 }
 const cleanList=l=>Array.isArray(l)?l.map(cleanEntry).filter(Boolean):[];
-function uidGen(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36)}
 let collection = cleanList(LS.get('pf_collection',[]));   // quick copy (mirror); the real store is IndexedDB, see « collection storage » below
 // value history (graph of the Value tab): one point a day; from a backup or another device, only well-formed points are kept
 function cleanSnaps(l){
@@ -248,7 +248,7 @@ const fmtPct=v=>settings.hidePrices||v==null||!isFinite(v)?'':(v>=0?'+':'')+v.to
 const fmtDate=d=>d?new Date(d).toLocaleDateString(settings.lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
 const today=()=>new Date().toISOString().slice(0,10);
 const img=(u,q='low')=>u?`${u}/${q}.webp`:'';
-const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36)}   // hoisted: cleanEntry uses it while the stored collection is read, above
 
 /* IndexedDB cache for big card index */
 const idb = {
@@ -444,7 +444,6 @@ async function getDetail(lang,id){
   if(detailCache[k])return detailCache[k];
   if(id.startsWith('mg:')){const d=await mgDetail(lang,id);detailCache[k]=d;return d}
   if(id.startsWith('op:')){const d=await opDetail(id);detailCache[k]=d;return d}
-  if(detailCache[k])return detailCache[k];
   const d=await getJSON(`${API}/${lang}/cards/${encodeURIComponent(id)}`);
   detailCache[k]=d;return d;
 }
@@ -883,7 +882,8 @@ async function openAccount(){
     m.querySelector('#aOut').onclick=()=>{
       const m2=openModal(`<div class="mpad"><p style="margin:10px 30px 18px 0">${t('logout_q')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button class="btn" id="oKeep">${t('logout_keep')}</button><button class="btn danger" id="oWipe">${t('logout_wipe')}</button></div></div>`,'sm');
-      const out=async wipe=>{await syncNow();if(pushOn())await pushOff();await sb.auth.signOut();if(wipe){collection=[];snapshots=[];deleted={};persistColl(true);LS.set('pf_snapshots',[]);LS.set('pf_deleted',{})}closeModal();toast(t('logged_out'));render()};
+      const out=async wipe=>{await syncNow();if(wipe&&syncState!=='ok'){toast(t('logout_unsynced'));return}   // never erase changes the account does not have yet
+        if(pushOn())await pushOff();await sb.auth.signOut();if(wipe){collection=[];snapshots=[];deleted={};persistColl(true);LS.set('pf_snapshots',[]);LS.set('pf_deleted',{})}closeModal();toast(t('logged_out'));render()};
       m2.querySelector('#oKeep').onclick=()=>out(false);m2.querySelector('#oWipe').onclick=()=>out(true);
     };
     return;
@@ -2515,17 +2515,11 @@ async function openSheet(lang,id,opts={}){
     const w=wishE();let msg=t('added',{n:card.name});
     if(w){deleted[w.uid]=Date.now();LS.set('pf_deleted',deleted);collection=collection.filter(x=>x!==w);msg=t('added_from_wish',{n:card.name})}
     saveCollection();closeModal();render();toast(msg);
-    if(checkAlerts(false).length)toast('🔔 '+t('alert_toast',{n:1}));
+    const hits=checkAlerts(false);if(hits.length)toast('🔔 '+t('alert_toast',{n:hits.length}));
   }
   draw();
 }
 const getCss=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-function chartOpts(legend){
-  const c=getCss('--muted'),g=getCss('--line');
-  return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:legend,labels:{color:c}},tooltip:{callbacks:{label:x=>(x.dataset.label?x.dataset.label+' : ':'')+fmtEur(x.parsed.y)}}},
-    scales:{x:{ticks:{color:c,maxTicksLimit:8},grid:{color:g}},y:{ticks:{color:c,callback:v=>fmtEur(v)},grid:{color:g}}}};
-}
 
 /* ============ view: wishlist ============ */
 function viewWish(m){
@@ -3029,6 +3023,7 @@ async function applyUpdate(){
     for(const u of srcs){const r=await fetch(u);if(!r.ok)throw new Error('script '+r.status);await c.put(u,r)}
     await c.put(new URL('index.html',location.href).href,new Response(updReady,{headers:{'content-type':'text/html; charset=utf-8'}}))}}}catch(e){logErr(e.message,'update')}
   try{sessionStorage.setItem('pf_updreload','1')}catch(e){}
+  try{await persistCollNow()}catch(e){}   // a big collection lives only in IndexedDB: finish the write before reloading
   location.reload();
 }
 function showUpdateBar(){

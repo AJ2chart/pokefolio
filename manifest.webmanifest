@@ -1,7 +1,7 @@
 {
   "name": "Gleamvault",
   "short_name": "Gleamvault",
-  "description": "Suivi de collection Pokémon TCG : cartes FR/EN, prix Cardmarket, scan, alertes de prix.",
+  "description": "Suivi de collection de cartes à collectionner (Pokémon, Magic, One Piece) : cartes FR/EN, prix Cardmarket, scan, alertes de prix.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
