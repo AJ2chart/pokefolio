@@ -1,5 +1,5 @@
 {
- "started": "2026-11-25T12:48:01.752Z",
+ "started": "2026-11-26T12:25:58.358Z",
  "sets": {
   "pk-fr": {
    "cards": 22342,
@@ -8,11 +8,11 @@
    "added": 0,
    "errors": 16,
    "sampleErrors": [
-    "sm12-72: HTTP 404",
-    "base5-63: HTTP 404",
-    "xy1-125: HTTP 404",
-    "bw2-93: HTTP 404",
-    "base3-1: HTTP 404"
+    "sv02-108: HTTP 404",
+    "sm5-147: HTTP 404",
+    "swsh11-188: HTTP 404",
+    "base3-1: HTTP 404",
+    "sv08-102: HTTP 404"
    ],
    "after": 18470,
    "remaining": 0,
@@ -25,11 +25,11 @@
    "added": 0,
    "errors": 11,
    "sampleErrors": [
-    "g1-19: HTTP 404",
-    "A1-175: HTTP 404",
-    "ex7-88: HTTP 404",
+    "xy10-79: HTTP 404",
+    "dc1-1: HTTP 404",
     "swsh6-181: HTTP 404",
-    "30th-R: HTTP 404"
+    "30th-R: HTTP 404",
+    "sv10-028: HTTP 404"
    ],
    "after": 22120,
    "remaining": 0,
@@ -42,9 +42,9 @@
    "added": 0,
    "errors": 4,
    "sampleErrors": [
-    "S12a-055: HTTP 404",
     "SV1V-072: HTTP 404",
     "SV1a-043: HTTP 404",
+    "S12a-055: HTTP 404",
     "S9a-062: HTTP 404"
    ],
    "after": 3878,
